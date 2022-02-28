@@ -50,7 +50,7 @@ class Playlist(models.Model):
     editor = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True)
     image = models.CharField(default='', max_length=200000)
     songs = models.ManyToManyField(Song)
-    recommend = models.ManyToManyField(Song, related_name='recommend', blank=True, null=True)
+    recommend = models.ManyToManyField(Song, related_name='recommend', blank=True)
     description = models.CharField(default='', max_length=200)
     isEditable = models.BooleanField(default=False)
 

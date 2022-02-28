@@ -2,6 +2,7 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from numpy import irr
 
 from .models import League, Player, Playlist, Song, Score
 import requests
@@ -320,7 +321,11 @@ def create_playlist(request):
             return render(request, 'create_playlist.html', params)
         if 'playlist' in request.FILES:
             json_data = json.load(request.FILES['playlist'].file)
-            title = json_data['playlistTitle'].replace(' ', '_')
+            title = json_data['playlistTitle']
+            title = title.replace(' ', '_')
+            irregulars = '\\\'|`^"<>)(}{][;/?:@&=+$,%#'
+            for irregular in irregulars:
+                title = title.replace(irregular,'')
             image = json_data['image']
             description = json_data['playlistDescription']
             editor = request.user.player
@@ -346,6 +351,10 @@ def create_playlist(request):
             return redirect('app:playlists')
         if 'title' in post:
             title = post['title']
+            title = title.replace(' ', '_')
+            irregulars = '\\\'|`^"<>)(}{][;/?:@&=+$,%#'
+            for irregular in irregulars:
+                title = title.replace(irregular,'')
             description = post['description']
             if title == '' or description == '':
                 params['error'] = 'ERROR : タイトルと説明文の両方を記入してください。'

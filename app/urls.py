@@ -17,4 +17,5 @@ urlpatterns = [
     path('playlist/<slug:title>', views.playlist, name='playlist'),
     path('download_playlist/<slug:title>',
          views.download_playlist, name='download_playlist'),
+    path('leagues/', views.leagues, name='leagues'),
 ]

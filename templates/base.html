@@ -23,10 +23,22 @@
             <a href="/" style="color:white">Japan Beat Saber League</a>
         </h3>
         <h3>
-            <a href="{% url 'app:playlists' %}">Playlists</a>
+            <a href="{% url 'app:playlists' %}">
+                <img height="40px" width="40px" src= {% static 'pict_playlist.png' %} />
+            Playlists</a>
         </h3>
-        <h3>Leagues</h3>
-        <h3>Players</h3>
+        <h3>
+            <a href={% url 'app:leagues' %}>
+            <img height="40px" width="40px" src= {% static 'pict_league.png' %} />
+            Leagues
+            </a>
+        </h3>
+        <h3>
+            <a href={% url 'app:index' %}>
+                <img height="40px" width="40px" src= {% static 'pict_player.png' %} />
+                Players
+            </a>
+        </h3>
         <p>
             {% if user.is_authenticated %}
                 <a href="{% url 'app:mypage' %}">

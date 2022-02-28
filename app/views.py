@@ -491,3 +491,11 @@ def add_song_to_playlist(request, title, url):
     lid = url.split('/')[-1]
     print(lid)
     return
+
+def leagues(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    return render(request,'leagues.html',params)

@@ -12,8 +12,10 @@
     </p>
     <p>
         Editor :
+        <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
         <img class="icon" src="{{ playlist.editor.imageURL }}" />
         {{ playlist.editor }}
+        </a>
     </p>
     {% if isEditor and playlist.isEditable %}
         <form method="post" enctype="multipart/form-data">

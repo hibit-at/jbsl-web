@@ -39,7 +39,9 @@
                 </td>
                 <td>{{ playlist.description |truncatechars:50 }}</td>
                 <td>
+                    <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
                     <img class="icon" src="{{ playlist.editor.imageURL }}" />
+                    </a>
                 </td>
                 <td>
                     {% if playlist.isEditable %}

@@ -418,8 +418,9 @@ def playlist(request, title):
             gameMode = res['difficulty']['gameMode']
             char = char_dict[gameMode]
             song = create_song_by_hash(hash, diff_num, char, lid)
-            playlist.songs.add(song)
-            playlist.recommend.remove(song)
+            if song is not None:
+                playlist.songs.add(song)
+                playlist.recommend.remove(song)
         if 'recommend_song' in post and post['recommend_song'] != '':
             lid = post['recommend_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
@@ -429,7 +430,8 @@ def playlist(request, title):
             gameMode = res['difficulty']['gameMode']
             char = char_dict[gameMode]
             song = create_song_by_hash(hash, diff_num, char, lid)
-            playlist.recommend.add(song)
+            if song is not None:
+                playlist.recommend.add(song)
         if 'remove_song' in post and post['remove_song'] != '':
             lid = post['remove_song']
             song = Song.objects.get(lid=lid)

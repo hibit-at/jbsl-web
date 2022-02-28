@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if error != '' %}<h3 style="color:red">{{ error }}</h3>{% endif %}
+    {% if user.player.isActivated %}
+        <div class="info-submit">
+            <h3>既存のファイルから作成</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    <Label>File :</Label>
+                    <input type="file" name="playlist" accept=".json,.bplist"/>
+                </p>
+                <p>
+                    <Label>編集可能 :</Label>
+                    <input type="checkbox"
+                           name="editable"
+                           style="transform:scale(2.5);margin-left:10px">
+                </p>
+                <p>
+                    <ul>
+                        <li>「編集可能」をチェックにすると、プレイリストの内容の変更、他プレイヤーからの譜面の推薦が可能になります。</li>
+                        <li>プレイリストの内容を更新する可能性がある場合、共同で作成したい場合はチェックを入れてください。</li>
+                        <li>作成者（エディター）はいつでも編集可能かどうかを切り替えることができます。</li>
+                    </ul>
+                </p>
+            </p>
+            <button class="btn" type="submit">作成</button>
+        </form>
+    </div>
+    <p>
+    </p>
+    <div class="info-submit">
+        <h3>空のプレイリストを新規作成</h3>
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <Label>Title :</Label>
+                <input type="text" size="50px" name="title">
+            </p>
+            <p>
+                <Label>Description :</Label>
+                <input type="textarea" style="width:400px;height:100px" name="description">
+            </p>
+            <p>
+                <ul>
+                    <li>空のプレイリストを新規作成した場合、自動的に「編集可能」となります。</li>
+                    <li>作成者（エディター）はいつでも編集可能かどうかを切り替えることができます。</li>
+                </ul>
+            </p>
+            <button class="btn" type="submit">作成</button>
+        </form>
+    </div>
+{% else %}
+    <p>
+        プレイリストを作成するには、本登録を完了する必要があります。
+    </p>
+{% endif %}
+{% endblock content %}

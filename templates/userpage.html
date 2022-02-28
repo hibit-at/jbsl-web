@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load static %}
+    {% load humanize %}
+    <h3>{{ player.name }}'s Page</h3>
+    <p>
+        <img class="thumb" src={{ player.imageURL }} />
+    </p>
+    <p>
+        <a href="https://scoresaber.com/u/{{ player.sid }}" target="blank">ScoreSaber Link</a>
+    </p>
+    <p>
+        {% if player.twitch != '' %}
+            <a href="https://twitch.tv/{{ player.twitch }}" target="blank">
+                <img width="40px"
+                     height="40px"
+                     src="{% static 'twitch' %}.png"
+                     style="filter:invert()">
+            </a>
+        {% endif %}
+        {% if player.twitter != '' %}
+            <a href="https://twitter.com/{{ player.twitter }}" target="blank">
+                <img width="40px"
+                     height="40px"
+                     src="{% static 'twitter' %}.png"
+                     style="filter:invert()">
+            </a>
+        {% endif %}
+        {% if player.booth != '' %}
+            <a href="https://booth.pm/ja/items/{{ player.booth }}" target="blank">
+                <img width="40px"
+                     height="40px"
+                     src="{% static 'booth' %}.png"
+                     style="filter:invert()">
+            </a>
+        {% endif %}
+    </p>
+    <p>
+        PP : {{ player.pp | intcomma }} (BorderPP : {{ player.borderPP | floatformat:2 | intcomma }})
+    </p>
+    <p>
+        HMD : {{ player.hmd }}
+        <img width="40px"
+             height="40px"
+             src="{% static player.hmd %}.png"
+             style="filter:invert()">
+    </p>
+    {% if isSelf %}
+        <div class="info-submit">
+            <h4>Information</h4>
+            <p>
+                ScoreSaber : https://scoresaber.com/u/{{ player.sid }}
+            </p>
+            <p>
+                Message : {{ player.message }}
+            </p>
+            {% if player.twitch != '' %}
+                <p>
+                    Twitch : https:/twitch.tv/{{ player.twitch }}
+                </p>
+            {% endif %}
+            {% if player.twitter != '' %}
+                <p>
+                    Twitter : https:/twitter.com/{{ player.twitter }}
+                </p>
+            {% endif %}
+            {% if player.booth != '' %}
+                <p>
+                    Booth : https://booth.pm/ja/items/{{ player.booth }}
+                </p>
+            {% endif %}
+            <h4>Change Form</h4>
+            <form method="post">
+                {% csrf_token %}
+                <p>
+                    <label>Message :</label>
+                    <input type="text" size="100" name="message" value={{ player.message }}>
+                </p>
+                <p>
+                    <label>Twitch : https://twitch.tv/</label>
+                    <input type="text" size="40" name="twitch" value={{ player.twitch }}>
+                </p>
+                <p>
+                    <label>Twitter : https://twitter.com/</label>
+                    <input type="text" size="40" name="twitter" value={{ player.twitter }}>
+                </p>
+                <p>
+                    <label>Booth : https://booth.pm/ja/items/</label>
+                    <input type="text" size="40" name="booth" value={{ player.booth }}>
+                </p>
+                <button class="btn" type="submit">変更</button>
+                {% csrf_token %}
+            </form>
+        </div>
+    {% endif %}
+    <h4>Top 10 Scores</h4>
+    <table class="table table-striped table-borderless">
+        <thead>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Diff</th>
+            <th>Accuracy</th>
+            <th>PP</th>
+            <th>Miss</th>
+            <th>BorderPP</th>
+        </thead>
+        {% for t in top10 %}
+            <tr>
+                <td>
+                    <img class="mid-thumb" src="{{ t.song.imageURL }}"/>
+                </td>
+                <td>
+                    <span>{{ t.song.title|truncatechars:50 }}</span>
+                </td>
+                <td>{{ t.song.author }}</td>
+                <td>
+                    <span class="diff" style="color:{{ t.song.color }}">{{ t.song.diff }}</span>
+                </td>
+                <td>{{ t.acc|floatformat:2 }}</td>
+                <td>{{ t.rawPP|floatformat:2 }}</td>
+                <td>
+                    {% if t.miss == 0 %}
+                        <span class="diff" style="color:white">FC</span>
+                    {% else %}
+                        {{ t.miss }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if 2 <= forloop.counter and forloop.counter < 5 %}{{ t.rawPP | floatformat:2 }}{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}

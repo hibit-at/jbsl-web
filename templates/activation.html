@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if error != '' %}<h3 style="color:red">{{ error }}</h3>{% endif %}
+    <h4>ようこそ {{ user }} さん、Japan Beat Saber League へ！</h4>
+    <p>
+        あなたはまだ本登録を完了していません。
+    </p>
+    <p>
+        下のフォームにスコアセイバーのURLを記入して本登録を完了してください。
+    </p>
+    <form action={% url 'app:activate_process' %} method="post">
+        {% csrf_token %}
+        <label for="url">URL</label>
+        <input type="text" name="url" size=60 />
+        <button class="btn btn-success" type="submit">登録</button>
+        <p>
+            記入例：https://scoresaber.com/u/76561198405857645
+        </p>
+    </form>
+    <p>
+        ※必ずご自身のスコアセイバーのIDを登録してください。
+    </p>
+    <p>
+        ※なりすまし等の悪質な行為にはBAN措置をする可能性があります。
+    </p>
+{% endblock content %}

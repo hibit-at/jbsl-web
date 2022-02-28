@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    {% if not user.is_authenticated %}
+    <h3>参加方法</h3>
+    <ul>
+        <li>右上の「Discord 認証」から仮登録を完了してください。</li>
+        <li>登録には Discord のアカウントが必要となります。</li>
+        <li>Discord 認証時、<u>最初の 1 回はエラーが出るようです。</u>（原因不明です。すいません）</li>
+        <li>その場合、ブラウザの「戻る」ボタンを使ってリトライお願いします。</li>
+        <li>仮登録後、ScoreSaber のIDを設定することにより、本登録となります。</li>
+        <li>登録できるのは<u>日本人プレイヤーのみ</u>となります。Sorry, only Japanese players can be registered.</li>
+    </ul>
+    {% endif %}
+    <h3>Players</h3>
+    <table class="table table-striped table-borderless">
+        <thead>
+            <th>Player</th>
+            <th>Social</th>
+            <th>HMD</th>
+            <th>BorderPP</th>
+            <th>Message</th>
+        </thead>
+        {% for a in active_players %}
+            <tr>
+                <td>
+                    <a href={% url 'app:userpage' sid=a.sid %} style="color:black">
+                        <img class="icon" src={{ a.imageURL }} />
+                        {{ a.name }}
+                    </a>
+                </td>
+                <td>
+                    {% if a.twitch != '' %}
+                        <a href="https://twitch.tv/{{ a.twitch }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'twitch.png' %} />
+                        </a>
+                    {% endif %}
+                    {% if a.twitter != '' %}
+                        <a href="https://twitter.com/{{ a.twitter }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'twitter.png' %} />
+                        </a>
+                    {% endif %}
+                    {% if a.booth != '' %}
+                        <a href="https://booth.pm/ja/items/{{ a.booth }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'booth.png' %} />
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    <img width="30px" height="30px" src="{% static a.hmd %}.png" />
+                </td>
+                <td>{{ a.borderPP | floatformat:2 | intcomma }}</td>
+                <td>{{ a.message }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

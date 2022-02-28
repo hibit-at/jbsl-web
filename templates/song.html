@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <h3>{{ song.title }} ({{ song.diff }})</h3>
+    <p>
+        by {{ song.author }}
+    </p>
+    <img class="thumb"
+         src="https://scoresaber.com/imports/images/songs/{{ song.hash }}.png" />
+{%endblock%}

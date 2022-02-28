@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% load static %}
+
+<div style="position:fixed;width:auto;height:auto;right:30px;bottom:30px;background-color:rgba(255,255,255,0.7);border-radius:10px;text-align:center;padding:10px">
+<p><a class="trans" href="#top" style="color:black">▲</a></p>
+<p><a class="trans" href="#{{league}}" style="color:black">{{league}}</a></p>
+{% for LB in LBs %}
+<p>
+<a class="trans" href="#{{LB.map.diff}}" style="color:black">
+{{LB.map.title | truncatechars:15}}
+</a>
+</p>
+{% endfor %}
+</div>
+
+<h2 style="text-align:center;color:{{Linfo.fontcolor}}">{{league}} リーグ Leaderboard</h2>
+<div style="text-align:right">
+
+<p>予選は終了しました</p>
+
+</div>
+<div id="{{league}}" class="border8-target" style="background-color:{{Linfo.bgcolor}};padding:50px;border-radius:20px">
+<table class="table table-striped table-borderless">
+<thead>
+<tr style="color:{{Linfo.fontcolor}}">
+<th>順位</th>
+<th>プレイヤー名</th>
+<th>有効<br>順位点</th>
+<th>有効<br>譜面</th>
+<th>有効<br>精度</th>
+<th>ひとこと</th>
+</tr>
+</thead>
+<tbody style="color:black">
+{% for s in scored_rank %}
+<tr>
+<td width="50px">
+{% if s.abstein or s.acc == 0%}
+--
+{% else %}
+#{{s.rank}}
+{% endif %}
+</td>
+<td width="250px">
+<img src="{% static 'users/' %}{{s.player.sid}}.jpg" style="height:30px;width:30px;border-radius:15px;">
+{{s.player.name}}
+{% if s.player.abstein %}
+（棄権）
+{% else %}
+{% if s.player.twitch|length > 0 %}
+<a class="icon" href="https://twitch.tv/{{s.player.twitch}}" target="blank">
+<img src="{% static 'twitch.png' %}" style="width:15px;height15px">
+</a>
+{% endif %}
+{% endif %}
+</td>
+<td width="70px">
+<span
+{% if s.count_maps %}
+data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+{% for c in s.count_maps %}
+{{c.map.title | truncatechars:20}} ({{c.pos}})<br>
+{% endfor %}
+"
+{% endif %}
+>
+{{s.pos}}
+</span>
+</td>
+<td width="70px">
+<span
+{% if s.count_maps %}
+data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+{% for c in s.count_maps %}
+{{c.map.title | truncatechars:25}}<br>
+{% endfor %}
+"
+{% endif %}
+>
+{{s.valid}}
+</span>
+</td>
+<td width="70px">
+<span
+{% if s.count_maps %}
+data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+{% for c in s.count_maps %}
+{{c.map.title | truncatechars:15}} ({{c.acc | floatformat:2}})<br>
+{% endfor %}
+"
+{% endif %}
+>
+{{s.acc|floatformat:2}}
+</span>
+</td>
+<td>{{s.player.profile}}</td>
+</tr>
+{% if s.rank == 8 %}
+<tr>
+<td colspan="6">
+<hr>
+</td>
+</tr>
+{% endif %}
+{% endfor %}
+</tbody>
+</table>
+<a class = "border8-trigger" href="#{{league}}">すべて表示</a>
+</div>
+<hr>
+<h2 style="text-align:center">譜面別リーグ内順位</h2>
+{% for LB in LBs%}
+
+<p><span style="font-size:22px;font-weight:bold">{{LB.map.title}} <span
+style="color:{{LB.color}}">{{LB.map.label}}</span></span> by {{LB.map.author}}
+<a class="icon" href="https://beatsaver.com/maps/{{LB.map.bsr}}" target="blank">
+<img src="{% static 'beatsaver.png' %}" style="height:20px;width:20px">
+</a>
+<a class="icon" href="https://scoresaber.com/leaderboard/{{LB.map.diff}}" target="blank">
+<img src="{% static 'ScoreSaberLogo.svg' %}" style="height:20px;width:20px">
+</a>
+<a class="icon" href="/mapboard/?map={{LB.map.diff}}">
+<img src="{% static 'icon.png' %}" style="height:20px;width:20px">
+</a>
+</p>
+<div id="{{LB.map.diff}}" class="top5-target" style="background-color:{{Linfo.bgcolor}};padding:30px;border-radius:20px;">
+<div style="display:flex">
+<img src="https://scoresaber.com/imports/images/songs/{{LB.map.hash}}.png"
+style="height:128px;width:128px;border-radius:10px;border:solid;border-color:black">
+<table class="table table-striped table-borderless" style="margin-left:30px">
+<thead>
+<tr style="color:{{Linfo.fontcolor}}">
+<th>順位</th>
+<th>プレイヤー名</th>
+<th>順位点</th>
+<th>精度</th>
+</tr>
+</thead>
+<tbody style="color:black">
+{% for p in LB.players %}
+<tr>
+<td width="50px">
+{% if p.abstein or p.acc == 0 %}
+--
+{% else %}
+#{{p.rank}}
+{% endif %}
+</td>
+<td width="250px">
+<img src="{% static 'users/' %}{{p.player.sid}}.jpg" style="height:30px;width:30px;border-radius:15px;">
+{{p.player.name}}
+{% if p.player.abstein %}（棄権）{% endif %}
+</td>
+<td width="70px">{{p.pos}}</td>
+<td>{{p.acc|floatformat:2}}%</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% if scored_rank|length > 5 %}
+<a class="top5-trigger" href="#{{LB.map.diff}}" style="margin-left:158px">すべて表示</a>
+{% endif %}
+</div>
+{% endfor %}
+{% endblock %}

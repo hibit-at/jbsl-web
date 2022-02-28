@@ -10,4 +10,4 @@ class MyAccountAdapter(DefaultAccountAdapter):
         if os.path.exists('local.py'):
             return 'http://127.0.0.1:8000/mypage'
         else:
-            return 'https://jbsl3-web.herokuapp.com/mypage'
+            return 'https://jbsl-web.herokuapp.com/mypage'

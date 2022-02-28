@@ -2,8 +2,6 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from numpy import irr
-
 from .models import League, Player, Playlist, Song, Score
 import requests
 from allauth.socialaccount.models import SocialAccount

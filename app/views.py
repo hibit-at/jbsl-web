@@ -176,7 +176,7 @@ def top_score_registration(player):
         notes = song.notes
         score = playerScore['score']['modifiedScore']
         pp = playerScore['score']['pp']
-        miss = playerScore['score']['missedNotes']
+        miss = playerScore['score']['missedNotes'] + playerScore['score']['badCuts']
         hmd = hmd_dict[playerScore['score']['hmd']]
         player.hmd = hmd
         defaults = {

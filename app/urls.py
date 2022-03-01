@@ -14,8 +14,8 @@ urlpatterns = [
     path('suicuide/', views.suicuide, name='suicuide'),
     path('create_playlist/', views.create_playlist, name='create_playlist'),
     path('playlists/', views.playlists, name='playlists'),
-    path('playlist/<slug:title>', views.playlist, name='playlist'),
-    path('download_playlist/<slug:title>',
+    path('playlist/<int:pk>', views.playlist, name='playlist'),
+    path('download_playlist/<int:pk>',
          views.download_playlist, name='download_playlist'),
     path('leagues/', views.leagues, name='leagues'),
 ]

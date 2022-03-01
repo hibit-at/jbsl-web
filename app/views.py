@@ -175,7 +175,8 @@ def top_score_registration(player):
         notes = song.notes
         score = playerScore['score']['modifiedScore']
         pp = playerScore['score']['pp']
-        miss = playerScore['score']['missedNotes'] + playerScore['score']['badCuts']
+        miss = playerScore['score']['missedNotes'] + \
+            playerScore['score']['badCuts']
         hmd = hmd_dict[playerScore['score']['hmd']]
         player.hmd = hmd
         defaults = {
@@ -320,10 +321,6 @@ def create_playlist(request):
         if 'playlist' in request.FILES:
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
-            title = title.replace(' ', '_')
-            irregulars = '\\\'|`^"<>)(}{][;/?:@&=+$,%#'
-            for irregular in irregulars:
-                title = title.replace(irregular,'')
             image = json_data['image']
             description = json_data['playlistDescription']
             editor = request.user.player
@@ -349,10 +346,6 @@ def create_playlist(request):
             return redirect('app:playlists')
         if 'title' in post:
             title = post['title']
-            title = title.replace(' ', '_')
-            irregulars = '\\\'|`^"<>)(}{][;/?:@&=+$,%#'
-            for irregular in irregulars:
-                title = title.replace(irregular,'')
             description = post['description']
             if title == '' or description == '':
                 params['error'] = 'ERROR : タイトルと説明文の両方を記入してください。'
@@ -360,26 +353,24 @@ def create_playlist(request):
             if Playlist.objects.filter(title=title).exists():
                 params['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
                 return render(request, 'create_playlist.html', params)
-            title = title.replace(' ', '_')
             editor = request.user.player
             isEditable = True
             url = 'https://4.bp.blogspot.com/-ZHlXgooA38A/Wn1WVe2XBhI/AAAAAAABKJY/5BE6ZAbyeRwv3UlGsVU2YfPWVS_uT0PFQCLcBGAs/s800/text_kakko_kari.png'
             img = Image.open(BytesIO(requests.get(url).content))
             width, height = img.size
-            new_img = Image.new(img.mode, (width, width), (0,0,0,0))
-            new_img.paste(img,(0,width//4))
+            new_img = Image.new(img.mode, (width, width), (0, 0, 0, 0))
+            new_img.paste(img, (0, width//4))
             buffer = BytesIO()
             new_img.save(buffer, 'png')
             img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
-            if not Playlist.objects.filter(title=title).exists():
-                Playlist.objects.create(
-                    title=title,
-                    editor=editor,
-                    description=description,
-                    isEditable=isEditable,
-                    image='base64,' + img_str
-                )
-            return redirect('app:playlist',title=title)
+            playlist = Playlist.objects.create(
+                title=title,
+                editor=editor,
+                description=description,
+                isEditable=isEditable,
+                image='base64,' + img_str
+            )
+            return redirect('app:playlist', pk=playlist.pk)
 
     return render(request, 'create_playlist.html', params)
 
@@ -395,10 +386,10 @@ def playlists(request):
     return render(request, 'playlists.html', params)
 
 
-def playlist(request, title):
+def playlist(request, pk):
     params = {}
     user = request.user
-    playlist = Playlist.objects.get(title=title)
+    playlist = Playlist.objects.get(pk=pk)
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
@@ -462,13 +453,17 @@ def playlist(request, title):
         if 'editable' in post:
             playlist.isEditable = not playlist.isEditable
             playlist.save()
+        if 'title' in post and post['title'] != '':
+            title = post['title']
+            playlist.title = title
+            playlist.save()
     params['playlist'] = playlist
     return render(request, 'playlist.html', params)
 
 
-def download_playlist(request, title):
+def download_playlist(request, pk):
     json_data = {}
-    playlist = Playlist.objects.get(title=title)
+    playlist = Playlist.objects.get(pk=pk)
     json_data['playlistTitle'] = playlist.title
     json_data['playlistAuthor'] = 'JBSL_Web_System'
     json_data['playlistDescription'] = playlist.description
@@ -492,14 +487,15 @@ def download_playlist(request, title):
 
 
 @login_required
-def add_song_to_playlist(request, title, url):
+def add_song_to_playlist(request, pk, url):
     user = request.user
-    playlist = Playlist.objects.get(title=title)
+    playlist = Playlist.objects.get(pk=pk)
     if user.player != playlist.editor:
         return redirect('index.html')
     lid = url.split('/')[-1]
     print(lid)
     return
+
 
 def leagues(request):
     params = {}
@@ -507,4 +503,4 @@ def leagues(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request,'leagues.html',params)
+    return render(request, 'leagues.html', params)

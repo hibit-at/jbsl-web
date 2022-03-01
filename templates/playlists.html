@@ -22,7 +22,7 @@
         {% for playlist in playlists %}
             <tr>
                 <td>
-                    <a href={% url 'app:playlist' title=playlist.title %}>
+                    <a href={% url 'app:playlist' pk=playlist.pk %}>
                         <img class="thumb" src="data:image/png;{{ playlist.image }}" />
                     </a>
                 </td>
@@ -31,7 +31,7 @@
                         {{ playlist.title }}
                     </p>
                     <p>
-                        <a href="{% url 'app:download_playlist' title=playlist.title %}"
+                        <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
                            download="{{ playlist.title }}.json">
                             <span class="dl_link">ダウンロード</span>
                         </a>

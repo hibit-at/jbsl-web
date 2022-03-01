@@ -1,7 +1,9 @@
+from collections import defaultdict
 from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from numpy import append
 from .models import League, Player, Playlist, Song, Score
 import requests
 from allauth.socialaccount.models import SocialAccount
@@ -56,6 +58,14 @@ hmd_dict = {
     64: 'Valve Index',
     128: 'Vive Cosmos',
 }
+
+
+def slope(n):
+    if n == 1:
+        return 0
+    if n == 2:
+        return -3
+    return -(n+2)
 
 
 def index(request):
@@ -503,4 +513,120 @@ def leagues(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
+    active_leagues = League.objects.filter(isOpen=True)
+    params['active_leagues'] = active_leagues
     return render(request, 'leagues.html', params)
+
+
+def leaderboard(request, pk):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    league = League.objects.get(pk=pk)
+    params['league'] = league
+    # リーグ内プレイヤー
+    players = league.player.all()
+    size = len(players)
+    base = size + 3
+    # print(players)
+    # リーグ内マップ
+    songs = league.playlist.songs.all()
+    # print(songs)
+    # マップごとのプレイヤーランキング
+    LBs = []
+    for song in songs:
+        songLB = []
+        for player in players:
+            if Score.objects.filter(player=player, song=song, league=league).exists():
+                score = Score.objects.get(
+                    player=player, song=song, league=league)
+                songLB.append((player, score.acc))
+            else:
+                songLB.append((player, 0))
+        songLB = sorted(songLB, key=lambda x: -x[1])
+        scored_LB = []
+        rank = 1
+
+        for sL in songLB:
+            player = sL[0]
+            acc = sL[1]
+            pos = base + slope(rank)
+            if acc == 0:
+                pos = 0
+            append_data = {
+                'rank' : rank,
+                'player' : player,
+                'acc' : acc,
+                'pos' : pos,
+            }
+            scored_LB.append(append_data)
+            rank += 1
+        append_data = {
+            'song' : song,
+            'players' : scored_LB,
+        }
+        LBs.append(append_data)
+
+    # 順位点をもとにランキングを決定
+
+    total_rank = defaultdict(list)
+    for LB in LBs:
+        for p in LB['players']:
+            pos_acc_map = (p['pos'], p['acc'], LB['song'])
+            total_rank[p['player']].append(pos_acc_map)
+    for t in total_rank:
+        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1]))
+    counted_rank = []
+    count_range = 5
+    for t in total_rank.items():
+        player = t[0]
+        score_list = t[1]
+        print(score_list)
+        valid_count = sum([s[1] > 0 for s in score_list][:count_range])
+        count_pos = sum([s[0] for s in score_list][:valid_count])
+        count_acc = sum([s[1] for s in score_list][:valid_count])
+        count_list = score_list[:valid_count]
+        count_json = []
+        for c in count_list:
+            append_data = {}
+            append_data['pos'] = c[0]
+            append_data['acc'] = c[1]
+            append_data['map'] = c[2]
+            count_json.append(append_data)
+        append_data = (
+            player,
+            count_pos,
+            count_acc,
+            valid_count,
+            count_json,
+        )
+        counted_rank.append(append_data)
+
+    counted_rank = sorted(counted_rank, key=lambda x: (-x[1], -x[2]))
+    scored_rank = []
+    rank = 1
+
+    for c in counted_rank:
+        player = c[0]
+        append_data = {
+            'rank': rank,
+            'player': player,
+            'pos': c[1],
+            'acc': c[2],
+            'valid': c[3],
+            'count_maps': c[4],
+        }
+        scored_rank.append(append_data)
+
+    params = {
+        'scored_rank': scored_rank,
+        'league': league,
+        'LBs': LBs,
+    }
+
+    # print(LBs[0])
+    print(scored_rank)
+
+    return render(request, 'leaderboard.html', params)

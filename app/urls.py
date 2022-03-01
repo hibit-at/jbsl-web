@@ -18,4 +18,5 @@ urlpatterns = [
     path('download_playlist/<int:pk>',
          views.download_playlist, name='download_playlist'),
     path('leagues/', views.leagues, name='leagues'),
+    path('leaderboard/<int:pk>', views.leaderboard, name='leaderboard'),
 ]

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if error != '' %}<h3 style="color:red">{{ error }}</h3>{% endif %}
+    {% if user.player.isActivated %}
+        <div class="info-submit">
+            <form method="post">
+                <h3>新規リーグの開催（工事中です）</h3>
+                {% csrf_token %}
+                <p>
+                    プレイリストを選んでください。
+                </p>
+                <select name="playlist" width="100px" size="10px">
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.pk }}">
+                            {{ playlist.title }} by {{ playlist.editor }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                <label>Title :</label>
+                <input type="text" size="50px" name="title">
+            </p>
+            <p>
+                <p>
+                    <label>Description :</label>
+                    <input type="textarea" style="width:400px;height:100px" name="description">
+                </p>
+            </p>
+            <p>
+                <label>Color :</label>
+                <select name="color">
+                    <option value="lightgreen">
+                        Green
+                    </option>
+                    <option value="lightpink">
+                        Red
+                    </option>
+                    <option value="lightblue">
+                        Blue
+                    </option>
+                    <option value="lightyellow">
+                        Yellow
+                    </option>
+                    <option value="lightsalmon">
+                        Salmon
+                    </option>
+                </select>
+            </p>
+            <p>
+                <label>終了日時 :</label>
+                <input type="datetime-local" name="end" value="{{ default_end_str }}">
+            </p>
+            <p>
+                <Label>公開リーグ :</Label>
+                <input type="checkbox"
+                       name="public"
+                       style="transform:scale(2.5);margin-left:10px">
+            </p>
+            <p>
+                公開リーグは、下の条件に反しない限り、プレイヤーの誰もが自由に参加できます。
+            </p>
+            <p>
+                そうでない場合は、オーナーが個別にインバイトを送る必要があります。
+            </p>
+            <p>
+                <label>borderPPの上限 :</label>
+                <input type="range"
+                       min="0"
+                       max="15000"
+                       value="10000"
+                       style="width:300px"
+                       name="limit">
+            </p>
+            <p>
+                この数値より上の borderPP を持つ人は、公開リーグであっても参加できません。
+            </p>
+        </p>
+        <p>
+            <span class="dl_link">工事中です</span>
+        </p>
+    </form>
+</div>
+{% else %}
+<p>
+    リーグを作成するには、本登録を完了する必要があります。
+</p>
+{% endif %}
+{% endblock content %}

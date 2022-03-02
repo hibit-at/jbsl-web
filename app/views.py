@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, timedelta
 from io import BytesIO
 import json
 from django.http import HttpResponse
@@ -529,10 +530,8 @@ def leaderboard(request, pk):
     players = league.player.all()
     size = len(players)
     base = size + 3
-    # print(players)
     # リーグ内マップ
     songs = league.playlist.songs.all()
-    # print(songs)
     # マップごとのプレイヤーランキング
     LBs = []
     for song in songs:
@@ -582,7 +581,6 @@ def leaderboard(request, pk):
     for t in total_rank.items():
         player = t[0]
         score_list = t[1]
-        print(score_list)
         valid_count = sum([s[1] > 0 for s in score_list][:count_range])
         count_pos = sum([s[0] for s in score_list][:valid_count])
         count_acc = sum([s[1] for s in score_list][:valid_count])
@@ -618,14 +616,44 @@ def leaderboard(request, pk):
             'count_maps': c[4],
         }
         scored_rank.append(append_data)
+        
+    params['scored_rank'] = scored_rank
+    params['league'] = league
+    params['LBs'] = LBs
 
-    params = {
-        'scored_rank': scored_rank,
-        'league': league,
-        'LBs': LBs,
-    }
+    isMember = False
+    if user.player in league.player.all():
+        isMember = True
+    params['isMember'] = isMember
 
-    # print(LBs[0])
-    print(scored_rank)
+    # 参加と脱退
+
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'join' in post and post['join'] != '':
+            sid = post['join']
+            add_player = Player.objects.get(sid=sid)
+            league.player.add(add_player)
+            return redirect('app:leaderboard', pk = league.pk)
+        if 'disjoin' in post and post['disjoin'] != '':
+            sid = post['disjoin']
+            add_player = Player.objects.get(sid=sid)
+            league.player.remove(add_player)
+            return redirect('app:leaderboard', pk=league.pk)
 
     return render(request, 'leaderboard.html', params)
+
+@login_required
+def create_league(request):
+    params = {}
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params['social'] = social
+    default_end = datetime.now() + timedelta(days=14)
+    default_end_str = default_end.strftime('%Y-%m-%dT%H:%M')
+    print(default_end_str)
+    params['default_end_str'] = default_end_str
+    playlists = Playlist.objects.all()
+    params['playlists'] = playlists
+    return render(request, 'create_league.html', params)

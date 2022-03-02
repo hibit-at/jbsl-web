@@ -2,11 +2,16 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
+    {% if user.player.isActivated %}
+        <p style="text-align:right">
+            <button class="btn" onclick="location.href='{% url 'app:create_league' %}'">リーグを開催する</button>
+        </p>
+    {% endif %}
     <h3>
         <img src= {% static 'pict_league.png' %} width="40px" height="40px">
         Leagues
     </h3>
-    <table class="table table-striped table-borderless">
+    <table class="table table-striped table-borderless" style="background-color:gray">
         <thead>
             <th>Cover</th>
             <th>Name</th>
@@ -15,7 +20,7 @@
             <th>End</th>
         </thead>
         {% for league in active_leagues %}
-            <tr>
+            <tr style="background-color:{{league.color}}">
                 <td>
                     <a href= {% url 'app:leaderboard' pk=league.pk %}>
                         <img class="thumb" src={{ league.playlist.image }} />

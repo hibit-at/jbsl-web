@@ -14,16 +14,25 @@
             </p>
         {% endfor %}
     </div>
-    <h2 style="text-align:center;">{{ league.name }}'s Leaderboard</h2>
+    <div style="text-align:center">
+        <h2>{{ league.name }}'s Leaderboard</h2>
+        {% if not isMember %}
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
+            </form>
+        {% endif %}
+    </div>
     <div style="text-align:right">
         <p>
-            予選は終了しました
+            集計終了日時は {{ league.end }} です。
         </p>
     </div>
     <div id="{{ league.name }}"
          class="border8-target"
-         style=";padding:50px;border-radius:20px">
-        <table class="table table-striped table-borderless" style="background-color:{{league.color}}">
+         style="padding:50px;border-radius:20px">
+        <table class="table table-striped table-borderless"
+               style="background-color:{{ league.color }}">
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -56,10 +65,7 @@
                         {% endif %}
                     </td>
                     <td width="250px">
-                        <img src="{{ s.player.imageURL }}"
-                             style="height:30px;
-                                    width:30px;
-                                    border-radius:15px;">
+                        <img src="{{ s.player.imageURL }}" class="icon">
                         {{ s.player.name }}
                         {% if s.player.abstein %}（棄権）{% endif %}
                     </td>
@@ -120,7 +126,8 @@
                 border-radius:20px;">
         <div style="display:flex">
             <img src="{{ LB.song.imageURL }}" class="thumb">
-            <table class="table table-striped table-borderless" style="margin-left;background-color:{{league.color}}">
+            <table class="table table-striped table-borderless"
+                   style="margin-left;background-color:{{ league.color }}">
                 <thead>
                     <tr>
                         <th>Rank</th>
@@ -158,4 +165,14 @@
         {% endif %}
     </div>
 {% endfor %}
-{% endblock %}
+<div style="text-align:center">
+    {% if isMember %}
+        <p>
+            <form method="post">
+                {% csrf_token %}
+                <button class="danger" name="disjoin" type="submit" value="{{ user.player.sid }}">脱退</button>
+            </form>
+        </p>
+    {% endif %}
+</div>
+{% endblock content %}

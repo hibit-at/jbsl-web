@@ -10,8 +10,6 @@ urlpatterns = [
     path('userpage/<int:sid>', views.userpage, name='userpage'),
     path('activate_process/', views.activate_process, name='activate_process'),
     path('song/<int:lid>', views.song, name='song'),
-    path('recalculation/', views.recalculation, name='recalculation'),
-    path('suicuide/', views.suicuide, name='suicuide'),
     path('create_playlist/', views.create_playlist, name='create_playlist'),
     path('playlists/', views.playlists, name='playlists'),
     path('playlist/<int:pk>', views.playlist, name='playlist'),
@@ -19,4 +17,5 @@ urlpatterns = [
          views.download_playlist, name='download_playlist'),
     path('leagues/', views.leagues, name='leagues'),
     path('leaderboard/<int:pk>', views.leaderboard, name='leaderboard'),
+    path('create_league',views.create_league, name='create_league'),
 ]

@@ -616,13 +616,13 @@ def leaderboard(request, pk):
             'count_maps': c[4],
         }
         scored_rank.append(append_data)
-        
+
     params['scored_rank'] = scored_rank
     params['league'] = league
     params['LBs'] = LBs
 
     isMember = False
-    if user.player in league.player.all():
+    if user.is_authenticated and user.player in league.player.all():
         isMember = True
     params['isMember'] = isMember
 

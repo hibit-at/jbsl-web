@@ -581,7 +581,7 @@ def leaderboard(request, pk):
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
     counted_rank = []
-    count_range = 5
+    count_range = league.method
     for t in total_rank.items():
         player = t[0]
         score_list = t[1]

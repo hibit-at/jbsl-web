@@ -133,7 +133,8 @@
                         <th>Rank</th>
                         <th>Player</th>
                         <th>順位点</th>
-                        <th>精度</th>
+                        <th>Accuracy</th>
+                        <th>Miss</th>
                     </tr>
                 </thead>
                 <tbody style="color:black">
@@ -152,7 +153,14 @@
                                 {% if p.player.abstein %}（棄権）{% endif %}
                             </td>
                             <td width="70px">{{ p.pos }}</td>
-                            <td>{{ p.acc|floatformat:2 }}%</td>
+                            <td width="100px">{{ p.score.acc|floatformat:2 }}%</td>
+                            <td>
+                                {% if p.score.miss == 0 %}
+                                    <span class="diff" style="color:white">FC</span>
+                                {% else %}
+                                    {{ p.score.miss }}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -170,7 +178,10 @@
         <p>
             <form method="post">
                 {% csrf_token %}
-                <button class="danger" name="disjoin" type="submit" value="{{ user.player.sid }}">脱退</button>
+                <button class="danger"
+                        name="disjoin"
+                        type="submit"
+                        value="{{ user.player.sid }}">脱退</button>
             </form>
         </p>
     {% endif %}

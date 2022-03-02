@@ -540,23 +540,27 @@ def leaderboard(request, pk):
             if Score.objects.filter(player=player, song=song, league=league).exists():
                 score = Score.objects.get(
                     player=player, song=song, league=league)
-                songLB.append((player, score.acc))
+                songLB.append((player, score))
             else:
-                songLB.append((player, 0))
-        songLB = sorted(songLB, key=lambda x: -x[1])
+                class Dummy:
+                    pass
+                dummy = Dummy()
+                setattr(dummy, 'acc' , 0)
+                songLB.append((player, dummy))
+        songLB = sorted(songLB, key=lambda x: -x[1].acc)
         scored_LB = []
         rank = 1
 
         for sL in songLB:
             player = sL[0]
-            acc = sL[1]
+            score = sL[1]
             pos = base + slope(rank)
-            if acc == 0:
+            if score.acc == 0:
                 pos = 0
             append_data = {
                 'rank' : rank,
                 'player' : player,
-                'acc' : acc,
+                'score' : score,
                 'pos' : pos,
             }
             scored_LB.append(append_data)
@@ -572,24 +576,25 @@ def leaderboard(request, pk):
     total_rank = defaultdict(list)
     for LB in LBs:
         for p in LB['players']:
-            pos_acc_map = (p['pos'], p['acc'], LB['song'])
-            total_rank[p['player']].append(pos_acc_map)
+            pos_score_map = (p['pos'], p['score'], LB['song'])
+            print(pos_score_map)
+            total_rank[p['player']].append(pos_score_map)
     for t in total_rank:
-        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1]))
+        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
     counted_rank = []
     count_range = 5
     for t in total_rank.items():
         player = t[0]
         score_list = t[1]
-        valid_count = sum([s[1] > 0 for s in score_list][:count_range])
+        valid_count = sum([s[1].acc > 0 for s in score_list][:count_range])
         count_pos = sum([s[0] for s in score_list][:valid_count])
-        count_acc = sum([s[1] for s in score_list][:valid_count])
+        count_acc = sum([s[1].acc for s in score_list][:valid_count])
         count_list = score_list[:valid_count]
         count_json = []
         for c in count_list:
             append_data = {}
             append_data['pos'] = c[0]
-            append_data['acc'] = c[1]
+            append_data['score'] = c[1]
             append_data['map'] = c[2]
             count_json.append(append_data)
         append_data = (

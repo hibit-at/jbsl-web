@@ -577,7 +577,6 @@ def leaderboard(request, pk):
     for LB in LBs:
         for p in LB['players']:
             pos_score_map = (p['pos'], p['score'], LB['song'])
-            print(pos_score_map)
             total_rank[p['player']].append(pos_score_map)
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
@@ -636,7 +635,6 @@ def leaderboard(request, pk):
 
     if request.method == 'POST':
         post = request.POST
-        print(post)
         if 'join' in post and post['join'] != '':
             sid = post['join']
             add_player = Player.objects.get(sid=sid)

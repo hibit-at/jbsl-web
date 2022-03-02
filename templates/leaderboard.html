@@ -58,7 +58,7 @@
             {% for s in scored_rank %}
                 <tr>
                     <td width="50px">
-                        {% if s.abstein or s.acc == 0 %}
+                        {% if s.abstein or s.score.acc == 0 %}
                             --
                         {% else %}
                             #{{ s.rank }}
@@ -90,7 +90,7 @@
         </span>
     </td>
     <td width="70px">
-        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.map.title | truncatechars:15 }} ({{ c.acc | floatformat:2 }})
+        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.map.title | truncatechars:15 }} ({{ c.score.acc | floatformat:2 }})
             <br>
         {% endfor %}
         "
@@ -141,7 +141,7 @@
                     {% for p in LB.players %}
                         <tr>
                             <td width="50px">
-                                {% if p.abstein or p.acc == 0 %}
+                                {% if p.abstein or p.score.acc == 0 %}
                                     --
                                 {% else %}
                                     #{{ p.rank }}

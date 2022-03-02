@@ -616,6 +616,7 @@ def leaderboard(request, pk):
             'count_maps': c[4],
         }
         scored_rank.append(append_data)
+        rank += 1
 
     params['scored_rank'] = scored_rank
     params['league'] = league

@@ -268,18 +268,6 @@ def activate_process(request):
         return redirect('app:mypage')
     return render(request, 'activation.html', params)
 
-
-@login_required
-def recalculation(request):
-    for player in Player.objects.all():
-        top_score_registration(player)
-        sid = player.sid
-        url = f'https://scoresaber.com/api/player/{sid}/basic'
-        res = requests.get(url).json()
-        player.pp = res['pp']
-    return redirect('app:mypage')
-
-
 def song(request, lid=0):
     params = {}
     song = Song.objects.get(lid=lid)
@@ -538,27 +526,24 @@ def calculate_scoredrank_LBs(league):
     LBs = []
     for song in songs:
         songLB = []
-        for player in players:
-            if Score.objects.filter(player=player, song=song, league=league).exists():
-                score = Score.objects.get(
-                    player=player, song=song, league=league)
-                songLB.append(score)
-        songLB = sorted(songLB, key=lambda x: -x.acc)
+        # for player in players:
+        #     if Score.objects.filter(player=player, song=song, league=league).exists():
+        #         score = Score.objects.get(
+        #             player=player, song=song, league=league)
+        #         songLB.append(score)
+        # songLB = sorted(songLB, key=lambda x: -x.acc)
         scored_LB = []
-        rank = 1
+        # rank = 1
 
-        for sL in songLB:
-            score = sL
-            pos = base + slope(rank)
-            if score.acc == 0:
-                pos = 0
+        for rank, score in enumerate(Score.objects.filter(song=song, league=league).order_by('-score')):
+            pos = base + slope(rank + 1)
             append_data = {
-                'rank': rank,
+                'rank': rank + 1,
                 'score': score,
                 'pos': pos,
             }
             scored_LB.append(append_data)
-            rank += 1
+            # rank += 1
         append_data = {
             'song': song,
             'scores': scored_LB,

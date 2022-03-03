@@ -67,10 +67,9 @@
                     <td width="250px">
                         <img src="{{ s.player.imageURL }}" class="icon">
                         {{ s.player.name }}
-                        {% if s.player.abstein %}（棄権）{% endif %}
                     </td>
                     <td width="70px">
-                        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.map.title | truncatechars:20 }} ({{ c.pos }})
+                        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:20 }} ({{ c.pos }})
                             <br>
                         {% endfor %}
                         "
@@ -80,7 +79,7 @@
                 </span>
             </td>
             <td width="70px">
-                <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.map.title | truncatechars:25 }}
+                <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:25 }}
                     <br>
                 {% endfor %}
                 "
@@ -90,7 +89,7 @@
         </span>
     </td>
     <td width="70px">
-        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.map.title | truncatechars:15 }} ({{ c.score.acc | floatformat:2 }})
+        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:15 }} ({{ c.score.acc | floatformat:2 }})
             <br>
         {% endfor %}
         "
@@ -138,27 +137,20 @@
                     </tr>
                 </thead>
                 <tbody style="color:black">
-                    {% for p in LB.players %}
+                    {% for score in LB.scores %}
                         <tr>
-                            <td width="50px">
-                                {% if p.abstein or p.score.acc == 0 %}
-                                    --
-                                {% else %}
-                                    #{{ p.rank }}
-                                {% endif %}
-                            </td>
+                            <td width="50px">#{{ score.pos }}</td>
                             <td width="250px">
-                                <img src="{{ p.player.imageURL }}" class="icon">
-                                {{ p.player.name }}
-                                {% if p.player.abstein %}（棄権）{% endif %}
+                                <img src="{{ score.score.player.imageURL }}" class="icon">
+                                {{ score.score.player.name }}
                             </td>
-                            <td width="70px">{{ p.pos }}</td>
-                            <td width="100px">{{ p.score.acc|floatformat:2 }}%</td>
+                            <td width="70px">{{ score.pos }}</td>
+                            <td width="100px">{{ score.score.acc|floatformat:2 }}%</td>
                             <td>
-                                {% if p.score.miss == 0 %}
+                                {% if score.score.miss == 0 %}
                                     <span class="diff" style="color:white">FC</span>
                                 {% else %}
-                                    {{ p.score.miss }}
+                                    {{ score.score.miss }}
                                 {% endif %}
                             </td>
                         </tr>

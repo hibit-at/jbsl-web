@@ -275,13 +275,6 @@ def song(request, lid=0):
     return render(request, 'song.html', params)
 
 
-@login_required
-def suicuide(request):
-    user = request.user
-    user.delete()
-    return redirect('app:index')
-
-
 def search_lid(hash, gameMode, diff_num):
     url = f'https://scoresaber.com/api/leaderboard/get-difficulties/{hash}'
     res = requests.get(url).json()
@@ -540,34 +533,26 @@ def leaderboard(request, pk):
             if Score.objects.filter(player=player, song=song, league=league).exists():
                 score = Score.objects.get(
                     player=player, song=song, league=league)
-                songLB.append((player, score))
-            else:
-                class Dummy:
-                    pass
-                dummy = Dummy()
-                setattr(dummy, 'acc' , 0)
-                songLB.append((player, dummy))
-        songLB = sorted(songLB, key=lambda x: -x[1].acc)
+                songLB.append(score)
+        songLB = sorted(songLB, key=lambda x: -x.acc)
         scored_LB = []
         rank = 1
 
         for sL in songLB:
-            player = sL[0]
-            score = sL[1]
+            score = sL
             pos = base + slope(rank)
             if score.acc == 0:
                 pos = 0
             append_data = {
-                'rank' : rank,
-                'player' : player,
-                'score' : score,
-                'pos' : pos,
+                'rank': rank,
+                'score': score,
+                'pos': pos,
             }
             scored_LB.append(append_data)
             rank += 1
         append_data = {
-            'song' : song,
-            'players' : scored_LB,
+            'song': song,
+            'scores': scored_LB,
         }
         LBs.append(append_data)
 
@@ -575,26 +560,25 @@ def leaderboard(request, pk):
 
     total_rank = defaultdict(list)
     for LB in LBs:
-        for p in LB['players']:
-            pos_score_map = (p['pos'], p['score'], LB['song'])
-            total_rank[p['player']].append(pos_score_map)
+        for p in LB['scores']:
+            pos_score = (p['pos'], p['score'])
+            total_rank[p['score'].player].append(pos_score)
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
     counted_rank = []
     count_range = league.method
-    for t in total_rank.items():
-        player = t[0]
-        score_list = t[1]
-        valid_count = sum([s[1].acc > 0 for s in score_list][:count_range])
-        count_pos = sum([s[0] for s in score_list][:valid_count])
-        count_acc = sum([s[1].acc for s in score_list][:valid_count])
-        count_list = score_list[:valid_count]
+    for player, score_list in total_rank.items():
+        score_list = score_list[:count_range]
+        valid_count = len(score_list)
+        # valid_count = sum([s[1].acc > 0 for s in score_list][:count_range])
+        count_pos = sum([s[0] for s in score_list])
+        count_acc = sum([s[1].acc for s in score_list])
+        count_list = score_list
         count_json = []
         for c in count_list:
             append_data = {}
             append_data['pos'] = c[0]
             append_data['score'] = c[1]
-            append_data['map'] = c[2]
             count_json.append(append_data)
         append_data = (
             player,
@@ -610,10 +594,9 @@ def leaderboard(request, pk):
     rank = 1
 
     for c in counted_rank:
-        player = c[0]
         append_data = {
             'rank': rank,
-            'player': player,
+            'player': c[0],
             'pos': c[1],
             'acc': c[2],
             'valid': c[3],
@@ -639,7 +622,7 @@ def leaderboard(request, pk):
             sid = post['join']
             add_player = Player.objects.get(sid=sid)
             league.player.add(add_player)
-            return redirect('app:leaderboard', pk = league.pk)
+            return redirect('app:leaderboard', pk=league.pk)
         if 'disjoin' in post and post['disjoin'] != '':
             sid = post['disjoin']
             add_player = Player.objects.get(sid=sid)
@@ -647,6 +630,7 @@ def leaderboard(request, pk):
             return redirect('app:leaderboard', pk=league.pk)
 
     return render(request, 'leaderboard.html', params)
+
 
 @login_required
 def create_league(request):

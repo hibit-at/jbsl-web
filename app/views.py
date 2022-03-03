@@ -2,10 +2,8 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from io import BytesIO
 import json
-from sre_compile import isstring
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from torch import le
 from .models import League, Player, Playlist, Song, Score
 import requests
 from allauth.socialaccount.models import SocialAccount

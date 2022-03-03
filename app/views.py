@@ -511,14 +511,7 @@ def leagues(request):
     return render(request, 'leagues.html', params)
 
 
-def leaderboard(request, pk):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    league = League.objects.get(pk=pk)
-    params['league'] = league
+def calculate_scoredrank_LBs(league):
     # リーグ内プレイヤー
     players = league.player.all()
     size = len(players)
@@ -605,13 +598,30 @@ def leaderboard(request, pk):
         scored_rank.append(append_data)
         rank += 1
 
-    params['scored_rank'] = scored_rank
+    return scored_rank, LBs
+
+
+def leaderboard(request, pk):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    league = League.objects.get(pk=pk)
     params['league'] = league
+    scored_rank, LBs = calculate_scoredrank_LBs(league)
+    params['scored_rank'] = scored_rank
     params['LBs'] = LBs
 
     isMember = False
-    if user.is_authenticated and user.player in league.player.all():
-        isMember = True
+    isOwner = False
+    if user.is_authenticated:
+        if user.player in league.player.all():
+            isMember = True
+        if user.player == league.owner:
+            isOwner = True
+
+    params['isOwner'] = isOwner
     params['isMember'] = isMember
 
     # 参加と脱退
@@ -628,6 +638,10 @@ def leaderboard(request, pk):
             add_player = Player.objects.get(sid=sid)
             league.player.remove(add_player)
             return redirect('app:leaderboard', pk=league.pk)
+
+    not_invite_players = Player.objects.exclude(league=league)
+    print(not_invite_players)
+    params['not_invite_players'] = not_invite_players
 
     return render(request, 'leaderboard.html', params)
 

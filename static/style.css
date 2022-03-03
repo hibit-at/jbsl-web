@@ -103,6 +103,19 @@ a:hover::after {
     border-color: black;
 }
 
+.song-index {
+    position: fixed;
+    width: auto;
+    height: auto;
+    right: 30px;
+    bottom: 30px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    color: black;
+}
+
 .thumb {
     height: 128px;
     width: 128px;
@@ -136,16 +149,12 @@ a:hover::after {
 
 .trans {
     text-decoration: none;
-    padding: 0px;
-    border-radius: 0px;
-    background-color: transparent;
+    color: black;
 }
 
 .trans:hover {
     text-decoration: none;
-    padding: 0px;
-    border-radius: 0px;
-    background-color: transparent;
+    color: black;
 }
 
 .top5-trigger {

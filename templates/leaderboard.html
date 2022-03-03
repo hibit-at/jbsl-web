@@ -166,12 +166,14 @@
 {% endfor %}
 {% if isOwner %}
     <form method="post">
-        <select multiple>
+        {% csrf_token %}
+        <select multiple size="{{not_invite_players|length}}">
             {% for not_invite_player in not_invite_players %}
                 <option value={{ not_invite_player }}>{{ not_invite_player }}
                 </option>
             {% endfor %}
         </select>
+        <button class="btn" type="submit">招待</button>
     </form>
 {% endif %}
 <div style="text-align:center">

@@ -117,6 +117,12 @@
 {% for LB in LBs %}
     <p>
         <span style="font-size:22px;font-weight:bold">{{ LB.song.title }} <span style="color:{{ LB.song.color }}">{{ LB.song.diff }}</span></span> by {{ LB.song.author }}
+        <a href="https://scoresaber.com/leaderboard/{{ LB.song.lid }}" style="filter:invert()">
+            <img src={% static 'ScoreSaberLogo.png' %} width="30px" height="30px">
+        </a>
+        <a href="https://beatsaver.com/maps/{{LB.song.bsr}}">
+            　
+        </a>
     </p>
     <div id="{{ LB.song.lid }}"
          class="top5-target"

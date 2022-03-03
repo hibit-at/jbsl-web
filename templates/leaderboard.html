@@ -167,9 +167,9 @@
 {% if isOwner %}
     <form method="post">
         {% csrf_token %}
-        <select multiple size="{{not_invite_players|length}}">
+        <select multiple size="{{not_invite_players|length}}" name="invite">
             {% for not_invite_player in not_invite_players %}
-                <option value={{ not_invite_player }}>{{ not_invite_player }}
+                <option value={{ not_invite_player.sid }}>{{ not_invite_player }}
                 </option>
             {% endfor %}
         </select>

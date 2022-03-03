@@ -2,8 +2,10 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from io import BytesIO
 import json
+from sre_compile import isstring
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from torch import le
 from .models import League, Player, Playlist, Song, Score
 import requests
 from allauth.socialaccount.models import SocialAccount
@@ -95,14 +97,30 @@ def userpage(request, sid=0):
     params['player'] = player
     if request.method == 'POST':
         post = request.POST
-        player.message = post['message'][:50]
-        player.twitter = post['twitter']
-        player.twitch = post['twitch']
-        player.booth = post['booth']
+        if 'message' in post:
+            player.message = post['message'][:50]
+        if 'twitter' in post:
+            player.twitter = post['twitter']
+        if 'twitch' in post:
+            player.twitch = post['twitch']
+        if 'booth' in post:
+            player.booth = post['booth']
         player.save()
+        if 'join' in post:
+            join = post['join']
+            league = League.objects.get(pk=join)
+            league.player.add(player)
+            league.invite.remove(player)
+            return redirect('app:leaderboard', pk=join)
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
     params['top10'] = top10
+    invitations = player.invite.all()
+    print(invitations)
+    params['invitations'] = invitations
+
+    # リーグ参加
+
     return render(request, 'userpage.html', params)
 
 
@@ -628,6 +646,7 @@ def leaderboard(request, pk):
 
     if request.method == 'POST':
         post = request.POST
+        print(post)
         if 'join' in post and post['join'] != '':
             sid = post['join']
             add_player = Player.objects.get(sid=sid)
@@ -638,9 +657,14 @@ def leaderboard(request, pk):
             add_player = Player.objects.get(sid=sid)
             league.player.remove(add_player)
             return redirect('app:leaderboard', pk=league.pk)
+        if 'invite' in post:
+            invites = post.getlist('invite')
+            for invite in invites:
+                invite_player = Player.objects.get(sid=invite)
+                league.invite.add(invite_player)
 
-    not_invite_players = Player.objects.exclude(league=league)
-    print(not_invite_players)
+    not_invite_players = Player.objects.exclude(
+        league=league).exclude(invite=league)
     params['not_invite_players'] = not_invite_players
 
     return render(request, 'leaderboard.html', params)

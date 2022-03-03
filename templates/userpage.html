@@ -89,10 +89,18 @@
                     <input type="text" size="40" name="booth" value={{ player.booth }}>
                 </p>
                 <button class="btn" type="submit">変更</button>
-                {% csrf_token %}
             </form>
         </div>
     {% endif %}
+    {% for league in invitations %}
+        <h3 style="text-align:center;">
+            リーグ <span style="color:{{ league.color }}">{{ league }}</span> から招待が届いています！
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn" type="submit" name="join" value="{{league.pk}}">参加</button>
+            </form>
+        </h3>
+    {% endfor %}
     <h4>Top 10 Scores</h4>
     <table class="table table-striped table-borderless">
         <thead>

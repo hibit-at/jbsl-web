@@ -11,13 +11,13 @@
         <img class="thumb" src="data:image/png;{{ playlist.image }}" />
     </p>
     <p>
-        Title : {{playlist.title}}
+        Title : {{ playlist.title }}
     </p>
     <p>
         Editor :
         <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
-        <img class="icon" src="{{ playlist.editor.imageURL }}" />
-        {{ playlist.editor }}
+            <img class="icon" src="{{ playlist.editor.imageURL }}" />
+            {{ playlist.editor }}
         </a>
     </p>
     {% if isEditor and playlist.isEditable %}
@@ -42,15 +42,15 @@
     {% endif %}
     <p>
         <form method="post">
-            編集：
+            更新：
             {% if playlist.isEditable %}
                 📝可能
+                {% if isEditor %}
+                    {% csrf_token %}
+                    <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
+                {% endif %}
             {% else %}
                 🔐不可能
-            {% endif %}
-            {% if isEditor %}
-                {% csrf_token %}
-                <button class="btn" type="submit" name="editable">変更</button>
             {% endif %}
         </form>
     </p>

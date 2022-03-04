@@ -59,6 +59,15 @@ hmd_dict = {
     128: 'Vive Cosmos',
 }
 
+league_colors = [
+    {'value': 'lightblue', 'text': 'Blue'},
+    {'value': 'lightgreen', 'text': 'Green'},
+    {'value': 'lightsalmon', 'text': 'Orange'},
+    {'value': 'lightpink', 'text': 'Red'},
+    {'value': '#FF99FF', 'text': 'Purple'},
+    {'value': 'lightyellow', 'text': 'Yellow'},
+]
+
 
 def slope(n):
     if n == 1:
@@ -650,14 +659,39 @@ def leaderboard(request, pk):
 
 @login_required
 def create_league(request):
+    print('hoge')
     params = {}
     user = request.user
     social = SocialAccount.objects.get(user=user)
     params['social'] = social
     default_end = datetime.now() + timedelta(days=14)
     default_end_str = default_end.strftime('%Y-%m-%dT%H:%M')
-    print(default_end_str)
     params['default_end_str'] = default_end_str
     playlists = Playlist.objects.all()
     params['playlists'] = playlists
+    params['league_colors'] = league_colors
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        playlist_pk = post['playlist']
+        title = post['title']
+        description = post['description']
+        color = post['color']
+        end = datetime.strptime(post['end'], '%Y-%m-%dT%H:%M')
+        isPublic = ('public' in post)
+        limit = post['limit']
+        valid = post['valid']
+        playlist = Playlist.objects.get(pk=playlist_pk)
+        league = League.objects.create(
+            name=title,  # 名称の不一致。余裕があれば後で直す。
+            owner=user.player,
+            description=description,
+            color=color,
+            end=end,
+            playlist=playlist,
+            method=valid, # 名称の不一致。余裕があれば後で直す。
+            isPublic=isPublic,
+            isOpen=True,
+        )
+        return redirect('app:leaderboard', pk=league.pk)
     return render(request, 'create_league.html', params)

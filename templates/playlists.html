@@ -3,7 +3,7 @@
 {% block content %}
     {% if user.player.isActivated %}
         <p style="text-align:right">
-            <button class="btn" onclick="location.href='{% url 'app:create_playlist' %}'">新規作成</button>
+            <button class="btn" onclick="location.href='{% url 'app:create_playlist' %}'">プレイリストを作成する</button>
         </p>
     {% endif %}
     <h3>
@@ -16,7 +16,7 @@
             <th>Title</th>
             <th>Description</th>
             <th>Editor</th>
-            <th>Editable</th>
+            <th>Update</th>
             <th>Songs</th>
         </thead>
         {% for playlist in playlists %}
@@ -45,9 +45,9 @@
                 </td>
                 <td>
                     {% if playlist.isEditable %}
-                        📝
+                        ◯
                     {% else %}
-                        🔐
+                        -
                     {% endif %}
                 </td>
                 <td>

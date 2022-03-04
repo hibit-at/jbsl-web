@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     {% if error != '' %}<h3 style="color:red">{{ error }}</h3>{% endif %}
     {% if user.player.isActivated %}
         <div class="info-submit">
             <form method="post">
-                <h3>新規リーグの開催（工事中です）</h3>
+                <h3>新規リーグの開催</h3>
                 {% csrf_token %}
                 <p>
                     プレイリストを選んでください。
                 </p>
-                <select name="playlist" width="100px" size="10px">
+                <select name="playlist" width="100px" size="10px" required="required">
                     {% for playlist in playlists %}
                         <option value="{{ playlist.pk }}">
                             {{ playlist.title }} by {{ playlist.editor }}
@@ -19,7 +20,7 @@
             </p>
             <p>
                 <label>Title :</label>
-                <input type="text" size="50px" name="title">
+                <input type="text" size="50px" name="title" required="required" />
             </p>
             <p>
                 <p>
@@ -28,23 +29,15 @@
                 </p>
             </p>
             <p>
-                <label>Color :</label>
+                <label>
+                Color :</label
+                {{ league_colors }}>
                 <select name="color">
-                    <option value="lightgreen">
-                        Green
-                    </option>
-                    <option value="lightpink">
-                        Red
-                    </option>
-                    <option value="lightblue">
-                        Blue
-                    </option>
-                    <option value="lightyellow">
-                        Yellow
-                    </option>
-                    <option value="lightsalmon">
-                        Salmon
-                    </option>
+                    {% for league_color in league_colors %}
+                        <option value="{{ league_color.value }}">
+                            {{ league_color.text }}
+                        </option>
+                    {% endfor %}
                 </select>
             </p>
             <p>
@@ -55,35 +48,66 @@
                 <Label>公開リーグ :</Label>
                 <input type="checkbox"
                        name="public"
-                       style="transform:scale(2.5);margin-left:10px">
+                       style="transform:scale(2.5);margin-left:10px"
+                       checked>
+            </p>
+            <ul>
+                <li>公開リーグは、下の条件に反しない限り、プレイヤーの誰もが自由に参加できます。</li>
+                <li>そうでない場合は、オーナーが個別にインバイトを送る必要があります。</li>
+            </ul>
+            <p>
+                <label>有効譜面数 :</label>
+                <input type="range"
+                       min="0"
+                       max="20"
+                       value="5"
+                       style="width:200px"
+                       name="valid">
+                <span class="indicate-valid">5</span>
             </p>
             <p>
-                公開リーグは、下の条件に反しない限り、プレイヤーの誰もが自由に参加できます。
-            </p>
-            <p>
-                そうでない場合は、オーナーが個別にインバイトを送る必要があります。
+                <ul>
+                    <li>マッププールの中から、どれだけの譜面が有効譜面となるかです。</li>
+                    <li>有効譜面を超える譜面は、あえて詰めなくてもよい譜面となります。</li>
+                    <li>多くの場合は、マッププールの半数程度が適切です。</li>
+                </ul>
             </p>
             <p>
                 <label>borderPPの上限 :</label>
                 <input type="range"
                        min="0"
-                       max="15000"
-                       value="10000"
+                       max="2000"
+                       value="2000"
                        style="width:300px"
                        name="limit">
+                <span class="indicate-limit">2000</span>
             </p>
             <p>
-                この数値より上の borderPP を持つ人は、公開リーグであっても参加できません。
+                <ul>
+                    <li>この数値より上の borderPP を持つ人は、公開リーグであっても参加できません。</li>
+                    <li>初期値は事実上の無限大である 2000（つまり制限なし）に設定されています。</li>
+                </ul>
             </p>
-        </p>
-        <p>
-            <span class="dl_link">工事中です</span>
-        </p>
-    </form>
-</div>
+            <p>
+                <button class="btn" type="submit">作成</button>
+            </p>
+        </form>
+    </div>
 {% else %}
-<p>
-    リーグを作成するには、本登録を完了する必要があります。
-</p>
+    <p>
+        リーグを作成するには、本登録を完了する必要があります。
+    </p>
 {% endif %}
+<script>
+    $("input[name='valid']").on("input", function (e) {
+        var range = e.target
+        $(".indicate-valid").text(range.value)
+    })
+</script>
+<script>
+    $("input[name='limit']").on("input", function (e) {
+        var range = e.target
+        $(".indicate-limit").text(range.value)
+    })
+</script>
 {% endblock content %}

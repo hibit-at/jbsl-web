@@ -27,7 +27,7 @@ def league_update_process():
                 defaults = {
                     'score': score,
                     'acc': score/(115*8*int(notes)-7245)*100,
-                    'rawPP': 0,
+                    'rawPP': rawPP,
                     'miss': miss,
                 }
                 Score.objects.update_or_create(

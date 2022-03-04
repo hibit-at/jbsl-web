@@ -74,10 +74,25 @@ def index(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
+        player = user.player
+        if player.isActivated:
+            invitations = player.invite.all()
+            params['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by('-borderPP')
     params['active_players'] = active_players
-    print(active_players)
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'join' in post and post['join'] != '':
+            join = post['join']
+            league = League.objects.get(pk=join)
+            league.player.add(player)
+            league.invite.remove(player)
+        if 'decline' in post and post['decline'] != '':
+            decline = post['decline']
+            league = League.objects.get(pk=decline)
+            league.invite.remove(player)
     return render(request, 'index.html', params)
 
 
@@ -104,18 +119,9 @@ def userpage(request, sid=0):
         if 'booth' in post:
             player.booth = post['booth']
         player.save()
-        if 'join' in post:
-            join = post['join']
-            league = League.objects.get(pk=join)
-            league.player.add(player)
-            league.invite.remove(player)
-            return redirect('app:leaderboard', pk=join)
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
     params['top10'] = top10
-    invitations = player.invite.all()
-    print(invitations)
-    params['invitations'] = invitations
 
     # リーグ参加
 

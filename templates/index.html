@@ -16,6 +16,18 @@
             </p>
         </div>
     {% endif %}
+    {% for league in invitations %}
+        <div style="text-align:center">
+            <h3>
+                ! リーグ <span style="color:{{ league.color }}">{{ league }}</span> から招待が届いています !
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
+                    <button class="danger" style="transform:scale(0.7);" type="submit" name="decline" value="{{ league.pk }}">拒否</button>
+                </form>
+            </h3>
+        </div>
+    {% endfor %}
     {% if not user.is_authenticated %}
         <h3>参加方法</h3>
         <ul>

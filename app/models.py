@@ -9,6 +9,7 @@ class Player(models.Model):
         User, on_delete=models.CASCADE, primary_key=True)
     discordID = models.CharField(max_length=50)
     isActivated = models.BooleanField(default=False)
+    inDiscord = models.BooleanField(default=False)
     name = models.CharField(max_length=100)
     sid = models.CharField(max_length=100)
     pp = models.FloatField(default=0)

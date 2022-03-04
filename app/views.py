@@ -525,16 +525,7 @@ def calculate_scoredrank_LBs(league):
     # マップごとのプレイヤーランキング
     LBs = []
     for song in songs:
-        songLB = []
-        # for player in players:
-        #     if Score.objects.filter(player=player, song=song, league=league).exists():
-        #         score = Score.objects.get(
-        #             player=player, song=song, league=league)
-        #         songLB.append(score)
-        # songLB = sorted(songLB, key=lambda x: -x.acc)
         scored_LB = []
-        # rank = 1
-
         for rank, score in enumerate(Score.objects.filter(song=song, league=league).order_by('-score')):
             pos = base + slope(rank + 1)
             append_data = {
@@ -543,33 +534,30 @@ def calculate_scoredrank_LBs(league):
                 'pos': pos,
             }
             scored_LB.append(append_data)
-            # rank += 1
         append_data = {
             'song': song,
             'scores': scored_LB,
         }
         LBs.append(append_data)
-
     # 順位点をもとにランキングを決定
-
     total_rank = defaultdict(list)
     for LB in LBs:
         for p in LB['scores']:
             pos_score = (p['pos'], p['score'])
             total_rank[p['score'].player].append(pos_score)
+    # 個人の点数を順位点→精度の順に並べ替える
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
+    # 有効範囲の分だけ合算する
     counted_rank = []
     count_range = league.method
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
         valid_count = len(score_list)
-        # valid_count = sum([s[1].acc > 0 for s in score_list][:count_range])
         count_pos = sum([s[0] for s in score_list])
         count_acc = sum([s[1].acc for s in score_list])
-        count_list = score_list
         count_json = []
-        for c in count_list:
+        for c in score_list:
             append_data = {}
             append_data['pos'] = c[0]
             append_data['score'] = c[1]

@@ -465,7 +465,7 @@ def playlist(request, pk):
             buffer = BytesIO()
             image.save(buffer, 'png')
             img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
-            playlist.image = 'base64,' + img_str
+            playlist.image = 'data:image/png;base64,' + img_str
             playlist.save()
         if 'remove_playlist' in post and post['remove_playlist'] != '':
             confirm = post['confirm']

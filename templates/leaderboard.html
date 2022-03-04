@@ -16,7 +16,7 @@
     </div>
     <div style="text-align:center">
         <h2>{{ league.name }}'s Leaderboard</h2>
-        {% if not isMember and user.is_authenticated %}
+        {% if not isMember and user.player.isActivated and league.isPublic %}
             {% if user.player.borderPP <= league.limit %}
                 <form method="post">
                     {% csrf_token %}

@@ -98,6 +98,7 @@ def index(request):
             league = League.objects.get(pk=join)
             league.player.add(player)
             league.invite.remove(player)
+            return redirect('app:leaderboard', pk=league.pk)
         if 'decline' in post and post['decline'] != '':
             decline = post['decline']
             league = League.objects.get(pk=decline)

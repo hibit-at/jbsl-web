@@ -22,6 +22,8 @@
                 {% csrf_token %}
                 <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
             </form>
+            {% else %}
+            <p>あなたが実力が高すぎるためこのリーグには参加できません……</p>
             {% endif %}
         {% endif %}
     </div>

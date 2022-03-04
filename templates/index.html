@@ -3,12 +3,18 @@
 {% load humanize %}
 {% block content %}
     {% if user.player.isActivated and not user.player.inDiscord %}
-    <div style="text-align:center">
-    <h3>! Discord サーバー参加へのお願い !</h3>
-    <p>あなたはまだ JBSL の Discord サーバーに参加していません。</p>
-    <p>以下のリンクから参加お願いします。</p>
-    <p><span class="dl_link"><a href="https://discord.gg/CqQ6ZD8KRn">参加</a></span></p>
-    </div>
+        <div style="text-align:center">
+            <h3>! Discord サーバー参加へのお願い !</h3>
+            <p>
+                あなたはまだ JBSL の Discord サーバーに参加していません。
+            </p>
+            <p>
+                以下のリンクから参加お願いします。
+            </p>
+            <p>
+                <span class="dl_link"><a href="https://discord.gg/CqQ6ZD8KRn">参加</a></span>
+            </p>
+        </div>
     {% endif %}
     {% if not user.is_authenticated %}
         <h3>参加方法</h3>

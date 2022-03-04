@@ -15,15 +15,17 @@
         {% endfor %}
     </div>
     <div style="text-align:center">
-        <h2>{{ league.name }}'s Leaderboard {{league.limit}} </h2>
-        {% if not isMember %}
+        <h2>{{ league.name }}'s Leaderboard</h2>
+        {% if not isMember and user.is_authenticated %}
             {% if user.player.borderPP <= league.limit %}
-            <form method="post">
-                {% csrf_token %}
-                <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
-            </form>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
+                </form>
             {% else %}
-            <p>あなたが実力が高すぎるためこのリーグには参加できません……</p>
+                <p>
+                    あなたが実力が高すぎるためこのリーグには参加できません……
+                </p>
             {% endif %}
         {% endif %}
     </div>
@@ -32,6 +34,65 @@
             集計終了日時は {{ league.end }} です。
         </p>
     </div>
+    {% if isOwner %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <div class="info-submit">
+            <form method="post">
+                {% csrf_token %}
+                <h3>リーグ情報の変更</h3>
+                <p>
+                    <label>Title :</label>
+                    <input type="text" size="50px" name="title" value="{{ league.name }}" />
+                </p>
+                <p>
+                    <p>
+                        <label>Description :</label>
+                        {{league.description}}
+                    </p>
+                    <input type="textarea" style="width:400px;height:100px" name="description">
+                </p>
+                <p>
+                    <label>終了日時 :</label>
+                    <input type="datetime-local" name="end" value="{{ end_str }}">
+                </p>
+                <p>
+                    <label>有効譜面数 :</label>
+                    <input type="range"
+                           min="0"
+                           max="20"
+                           value="{{ league.method }}"
+                           style="width:200px"
+                           name="valid">
+                    <span class="indicate-valid">{{ league.method }}</span>
+                </p>
+                <p>
+                    <label>borderPPの上限 :</label>
+                    <input type="range"
+                           min="0"
+                           max="2000"
+                           value="{{ league.limit }}"
+                           style="width:300px"
+                           name="limit">
+                    <span class="indicate-limit">{{ league.limit }}</span>
+                </p>
+                <p>
+                    <button class="btn" type="submit">変更</button>
+                </p>
+            </form>
+        </div>
+        <script>
+        $("input[name='valid']").on("input", function (e) {
+            var range = e.target
+            $(".indicate-valid").text(range.value)
+        })
+        </script>
+        <script>
+        $("input[name='limit']").on("input", function (e) {
+            var range = e.target
+            $(".indicate-limit").text(range.value)
+        })
+        </script>
+    {% endif %}
     <div id="{{ league.id }}"
          class="border8-target"
          style="padding:50px;border-radius:20px">
@@ -132,23 +193,39 @@
                    style="margin-left;background-color:{{ league.color }}">
                 <thead>
                     <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>順位点</th>
-                        <th>Accuracy</th>
-                        <th>Miss</th>
+                        <th>
+                            Rank
+                        </th>
+                        <th>
+                            Player
+                        </th>
+                        <th>
+                            順位点
+                        </th>
+                        <th>
+                            Accuracy
+                        </th>
+                        <th>
+                            Miss
+                        </th>
                     </tr>
                 </thead>
                 <tbody style="color:black">
                     {% for score in LB.scores %}
                         <tr>
-                            <td width="50px">#{{ score.rank }}</td>
+                            <td width="50px">
+                                #{{ score.rank }}
+                            </td>
                             <td width="250px">
                                 <img src="{{ score.score.player.imageURL }}" class="icon">
                                 {{ score.score.player.name }}
                             </td>
-                            <td width="70px">{{ score.pos }}</td>
-                            <td width="100px">{{ score.score.acc|floatformat:2 }}%</td>
+                            <td width="70px">
+                                {{ score.pos }}
+                            </td>
+                            <td width="100px">
+                                {{ score.score.acc|floatformat:2 }}%
+                            </td>
                             <td>
                                 {% if score.score.miss == 0 %}
                                     <span class="diff" style="color:white">FC</span>
@@ -171,13 +248,15 @@
 {% if isOwner %}
     <form method="post">
         {% csrf_token %}
-        <select multiple size="{{not_invite_players|length}}" name="invite">
+        <select multiple size="{{ not_invite_players|length }}" name="invite">
             {% for player in not_invite_players %}
-                <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{player.borderPP|floatformat:2}} pp)
+                <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
                 </option>
             {% endfor %}
         </select>
-        <button class="btn" type="submit">招待</button>
+        <button class="btn" type="submit">
+            招待
+        </button>
     </form>
 {% endif %}
 <div style="text-align:center">

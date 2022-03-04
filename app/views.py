@@ -630,7 +630,12 @@ def leaderboard(request, pk):
     params['isOwner'] = isOwner
     params['isMember'] = isMember
 
-    # 参加と脱退
+    end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
+    print(league.end)
+    print(end_str)
+    params['end_str'] = end_str
+
+    # POST
 
     if request.method == 'POST':
         post = request.POST
@@ -650,6 +655,15 @@ def leaderboard(request, pk):
             for invite in invites:
                 invite_player = Player.objects.get(sid=invite)
                 league.invite.add(invite_player)
+        if 'title' in post:
+            league.name = post['title']
+            if post['description'] != '':
+                league.description = post['description']
+            league.end = datetime.strptime(post['end'], '%Y-%m-%dT%H:%M')
+            league.method = post['valid']
+            league.limit = post['limit']
+            league.save()
+
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).order_by('-borderPP')
@@ -660,7 +674,6 @@ def leaderboard(request, pk):
 
 @login_required
 def create_league(request):
-    print('hoge')
     params = {}
     user = request.user
     social = SocialAccount.objects.get(user=user)
@@ -690,7 +703,7 @@ def create_league(request):
             color=color,
             end=end,
             playlist=playlist,
-            method=valid, # 名称の不一致。余裕があれば後で直す。
+            method=valid,  # 名称の不一致。余裕があれば後で直す。
             isPublic=isPublic,
             isOpen=True,
             limit=limit,

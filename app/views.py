@@ -268,6 +268,7 @@ def activate_process(request):
         return redirect('app:mypage')
     return render(request, 'activation.html', params)
 
+
 def song(request, lid=0):
     params = {}
     song = Song.objects.get(lid=lid)
@@ -526,7 +527,7 @@ def calculate_scoredrank_LBs(league):
     LBs = []
     for song in songs:
         scored_LB = []
-        for rank, score in enumerate(Score.objects.filter(song=song, league=league).order_by('-score')):
+        for rank, score in enumerate(Score.objects.filter(song=song, league=league).filter(player__league=league).order_by('-score')):
             pos = base + slope(rank + 1)
             append_data = {
                 'rank': rank + 1,
@@ -635,7 +636,7 @@ def leaderboard(request, pk):
                 league.invite.add(invite_player)
 
     not_invite_players = Player.objects.exclude(
-        league=league).exclude(invite=league)
+        league=league).exclude(invite=league).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
     return render(request, 'leaderboard.html', params)

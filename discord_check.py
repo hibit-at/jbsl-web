@@ -25,9 +25,7 @@ def discord_check_process(channel_id):
         guild = bot.get_guild(int(guild_id))
         channel = await bot.fetch_channel(channel_id)
         members = guild.members
-        print(guild)
         joinIDs = [member.id for member in members]
-        print(joinIDs)
         for player in Player.objects.filter(inDiscord=False):
             social = SocialAccount.objects.get(user=player.user)
             print(social)
@@ -37,7 +35,8 @@ def discord_check_process(channel_id):
                 player.save()
                 await channel.send(f'内部データベースを参加状態にしました。')
             else:
-                await channel.send(f'{player} さんはまだ Discord に参加していません。')
+                await channel.send(f'! {player} さんはまだ Discord に参加していません。')
+        await bot.close()
 
     bot.run(token)
 

@@ -22,7 +22,7 @@ def discord_check_process(channel_id):
 
     @bot.event
     async def on_ready():
-        guild = bot.get_guild(guild_id)
+        guild = bot.get_guild(int(guild_id))
         channel = await bot.fetch_channel(channel_id)
         members = guild.members
         print(guild)

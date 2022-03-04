@@ -15,12 +15,14 @@
         {% endfor %}
     </div>
     <div style="text-align:center">
-        <h2>{{ league.name }}'s Leaderboard</h2>
+        <h2>{{ league.name }}'s Leaderboard {{league.limit}} </h2>
         {% if not isMember %}
+            {% if user.player.borderPP <= league.limit %}
             <form method="post">
                 {% csrf_token %}
                 <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
             </form>
+            {% endif %}
         {% endif %}
     </div>
     <div style="text-align:right">

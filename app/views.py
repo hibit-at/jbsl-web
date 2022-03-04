@@ -692,6 +692,7 @@ def create_league(request):
             method=valid, # 名称の不一致。余裕があれば後で直す。
             isPublic=isPublic,
             isOpen=True,
+            limit=limit,
         )
         return redirect('app:leaderboard', pk=league.pk)
     return render(request, 'create_league.html', params)

@@ -663,6 +663,7 @@ def leaderboard(request, pk):
             league.method = post['valid']
             league.limit = post['limit']
             league.save()
+            return redirect('app:leaderboard', pk = league.pk)
 
 
     not_invite_players = Player.objects.exclude(

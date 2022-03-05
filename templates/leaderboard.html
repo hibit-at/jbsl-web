@@ -8,9 +8,9 @@
         <p>
             <a class="trans" href="#{{ league.id }}">{{ league.name }}</a>
         </p>
-        {% for LB in LBs %}
+        {% for song in LBs %}
             <p>
-                <a class="trans" href="#{{ LB.song.lid }}">{{ LB.song.title | truncatechars:15 }}</a>
+                <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
             </p>
         {% endfor %}
     </div>

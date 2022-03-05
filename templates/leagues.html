@@ -15,8 +15,9 @@
            style="background-color:gray">
         <thead>
             <th>Cover</th>
-            <th>Name</th>
+            <th>Title</th>
             <th>Description</th>
+            <th>Limit</th>
             <th>Owner</th>
             <th>End</th>
             <th>1st</th>
@@ -31,9 +32,18 @@
                     </a>
                 </td>
                 <td>{{ league.name }}</td>
-                <td>{{ league.description }}</td>
+                <td>{{ league.description|truncatechars:50 }}</td>
                 <td>
-                    <a href={% url 'app:userpage' sid=league.owner.sid %} style="color:black">
+                    {% if league.limit == 2000 %}
+                        上限なし
+                    {% else %}
+                        {{ league.limit }}
+                    </td>
+                {% endif %}
+                <td>
+                    <a href
+                       {% url 'app:userpage' sid=league.owner.sid %}
+                       style="color:black">
                         <img class="icon" src="{{ league.owner.imageURL }}" />
                         <br>
                         {{ league.owner.name }}

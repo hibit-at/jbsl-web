@@ -543,7 +543,6 @@ def calculate_scoredrank_LBs(league):
     # リーグ内マップ
     songs = league.playlist.songs.all()
     # マップごとのプレイヤーランキング
-    # LBs = []
     total_rank = defaultdict(list)
     for song in songs:
         query = Score.objects.filter(
@@ -555,11 +554,9 @@ def calculate_scoredrank_LBs(league):
             player = score.player
             total_rank[player].append(score)
         setattr(song, 'scores', query)
-        # LBs.append({'song': song, 'scores': query})
-    print(songs)
     # 順位点→精度でソート
     for t in total_rank:
-        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.score))
+        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
     counted_rank = []
     count_range = league.method
@@ -573,6 +570,7 @@ def calculate_scoredrank_LBs(league):
         setattr(player, 'valid', valid_count)
         setattr(player, 'count_maps', score_list)
         counted_rank.append(player)
+    # 順位点→精度でソート
     counted_rank = sorted(counted_rank, key=lambda x: (-x.count_pos, -x.count_acc))
     for rank, counted in enumerate(counted_rank):
         setattr(counted, 'rank', rank+1)

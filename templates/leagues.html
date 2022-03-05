@@ -11,16 +11,20 @@
         <img src= {% static 'pict_league.png' %} width="40px" height="40px">
         Leagues
     </h3>
-    <table class="table table-striped table-borderless" style="background-color:gray">
+    <table class="table table-striped table-borderless"
+           style="background-color:gray">
         <thead>
             <th>Cover</th>
             <th>Name</th>
             <th>Description</th>
             <th>Owner</th>
             <th>End</th>
+            <th>1st</th>
+            <th>2nd</th>
+            <th>3rd</th>
         </thead>
         {% for league in active_leagues %}
-            <tr style="background-color:{{league.color}}">
+            <tr style="background-color:{{ league.color }}">
                 <td>
                     <a href= {% url 'app:leaderboard' pk=league.pk %}>
                         <img class="thumb" src=" {{ league.playlist.image }}" />
@@ -29,11 +33,35 @@
                 <td>{{ league.name }}</td>
                 <td>{{ league.description }}</td>
                 <td>
-                    <a href={% url 'app:userpage' sid=league.owner.sid %}>
+                    <a href={% url 'app:userpage' sid=league.owner.sid %} style="color:black">
                         <img class="icon" src="{{ league.owner.imageURL }}" />
+                        <br>
+                        {{ league.owner.name }}
                     </a>
                 </td>
                 <td>{{ league.end }}</td>
+                <td>
+                    {% if league.top_players.0.rank > 0 %}
+                        <img class="icon" src={{ league.top_players.0.player.imageURL }}>
+                        <br>
+                        {{ league.top_players.0.player.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.top_players.1.rank > 0 %}
+                        <img class="icon" src={{ league.top_players.1.player.imageURL }}>
+                        <br>
+                        {{ league.top_players.1.player.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.top_players.2.rank > 0 %}
+                        <img class="icon" src={{ league.top_players.2.player.imageURL }}>
+                        <br>
+                        {{ league.top_players.2.player.name }}
+                    {% endif %}
+                </td>
+                <td></td>
             </tr>
         {% endfor %}
     </table>

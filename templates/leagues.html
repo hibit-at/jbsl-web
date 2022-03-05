@@ -42,23 +42,23 @@
                 <td>{{ league.end }}</td>
                 <td>
                     {% if league.top_players.0.rank > 0 %}
-                        <img class="icon" src={{ league.top_players.0.player.imageURL }}>
+                        <img class="icon" src={{ league.top_players.0.imageURL }}>
                         <br>
-                        {{ league.top_players.0.player.name }}
+                        {{ league.top_players.0.name }}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.top_players.1.rank > 0 %}
-                        <img class="icon" src={{ league.top_players.1.player.imageURL }}>
+                        <img class="icon" src={{ league.top_players.1.imageURL }}>
                         <br>
-                        {{ league.top_players.1.player.name }}
+                        {{ league.top_players.1.name }}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.top_players.2.rank > 0 %}
-                        <img class="icon" src={{ league.top_players.2.player.imageURL }}>
+                        <img class="icon" src={{ league.top_players.2.imageURL }}>
                         <br>
-                        {{ league.top_players.2.player.name }}
+                        {{ league.top_players.2.name }}
                     {% endif %}
                 </td>
                 <td></td>

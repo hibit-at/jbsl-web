@@ -124,44 +124,44 @@
                     <th>Message</th>
                 </tr>
             </thead>
-            {% for s in scored_rank %}
+            {% for player in scored_rank %}
                 <tr>
-                    <td width="50px">#{{ s.rank }}</td>
+                    <td width="50px">#{{ player.rank }}</td>
                     <td width="250px">
-                        <img src="{{ s.player.imageURL }}" class="icon">
-                        {{ s.player.name }}
+                        <img src="{{ player.imageURL }}" class="icon">
+                        {{ player.name }}
                     </td>
                     <td width="70px">
-                        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:20 }} ({{ c.pos }})
+                        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:20 }} ({{ score.pos }})
                             <br>
                         {% endfor %}
                         "
                     {% endif %}
                     >
-                    {{ s.pos }}
+                    {{ player.count_pos }}
                 </span>
             </td>
             <td width="70px">
-                <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:25 }}
+                <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:25 }}
                     <br>
                 {% endfor %}
                 "
             {% endif %}
             >
-            {{ s.valid }}
+            {{ player.valid }}
         </span>
     </td>
     <td width="70px">
-        <span {% if s.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for c in s.count_maps %} {{ c.score.song.title | truncatechars:15 }} ({{ c.score.acc | floatformat:2 }})
+        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:15 }} ({{ score.acc | floatformat:2 }})
             <br>
         {% endfor %}
         "
     {% endif %}
     >
-    {{ s.acc|floatformat:2 }}
+    {{ player.count_acc|floatformat:2 }}
 </span>
 </td>
-<td>{{ s.player.message }}</td>
+<td>{{ player.message }}</td>
 </tr>
 {% if s.rank == 8 %}
     <tr>
@@ -221,20 +221,20 @@
                                 #{{ score.rank }}
                             </td>
                             <td width="250px">
-                                <img src="{{ score.score.player.imageURL }}" class="icon">
-                                {{ score.score.player.name }}
+                                <img src="{{ score.player.imageURL }}" class="icon">
+                                {{ score.player.name }}
                             </td>
                             <td width="70px">
                                 {{ score.pos }}
                             </td>
                             <td width="100px">
-                                {{ score.score.acc|floatformat:2 }}%
+                                {{ score.acc|floatformat:2 }}%
                             </td>
                             <td>
-                                {% if score.score.miss == 0 %}
+                                {% if score.miss == 0 %}
                                     <span class="diff" style="color:white">FC</span>
                                 {% else %}
-                                    {{ score.score.miss }}
+                                    {{ score.miss }}
                                 {% endif %}
                             </td>
                         </tr>

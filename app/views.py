@@ -544,70 +544,37 @@ def calculate_scoredrank_LBs(league):
     songs = league.playlist.songs.all()
     # マップごとのプレイヤーランキング
     LBs = []
-    for song in songs:
-        scored_LB = []
-        for rank, score in enumerate(Score.objects.filter(song=song, league=league, player__league=league).order_by('-score')):
-            pos = base + slope(rank + 1)
-            append_data = {
-                'rank': rank + 1,
-                'score': score,
-                'pos': pos,
-            }
-            scored_LB.append(append_data)
-        append_data = {
-            'song': song,
-            'scores': scored_LB,
-        }
-        LBs.append(append_data)
-    # 順位点をもとにランキングを決定
     total_rank = defaultdict(list)
-    for LB in LBs:
-        for p in LB['scores']:
-            pos_score = (p['pos'], p['score'])
-            total_rank[p['score'].player].append(pos_score)
-    # 個人の点数を順位点→精度の順に並べ替える
+    for song in songs:
+        query = Score.objects.filter(
+            song=song, league=league, player__league=league).order_by('-score')
+        for rank, score in enumerate(query):
+            pos = base + slope(rank + 1)
+            setattr(score, 'rank', rank+1)
+            setattr(score, 'pos', pos)
+            player = score.player
+            total_rank[player].append(score)
+        LBs.append({'song': song, 'scores': query})
+    # 順位点→精度でソート
     for t in total_rank:
-        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x[0], -x[1].acc))
+        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.score))
     # 有効範囲の分だけ合算する
     counted_rank = []
     count_range = league.method
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
         valid_count = len(score_list)
-        count_pos = sum([s[0] for s in score_list])
-        count_acc = sum([s[1].acc for s in score_list])
-        count_json = []
-        for c in score_list:
-            append_data = {}
-            append_data['pos'] = c[0]
-            append_data['score'] = c[1]
-            count_json.append(append_data)
-        append_data = (
-            player,
-            count_pos,
-            count_acc,
-            valid_count,
-            count_json,
-        )
-        counted_rank.append(append_data)
-
-    counted_rank = sorted(counted_rank, key=lambda x: (-x[1], -x[2]))
-    scored_rank = []
-    rank = 1
-
-    for c in counted_rank:
-        append_data = {
-            'rank': rank,
-            'player': c[0],
-            'pos': c[1],
-            'acc': c[2],
-            'valid': c[3],
-            'count_maps': c[4],
-        }
-        scored_rank.append(append_data)
-        rank += 1
-
-    return scored_rank, LBs
+        count_pos = sum([s.pos for s in score_list])
+        count_acc = sum([s.acc for s in score_list])
+        setattr(player, 'count_pos', count_pos)
+        setattr(player, 'count_acc', count_acc)
+        setattr(player, 'valid', valid_count)
+        setattr(player, 'count_maps', score_list)
+        counted_rank.append(player)
+    counted_rank = sorted(counted_rank, key=lambda x: (-x.count_pos, -x.count_acc))
+    for rank, counted in enumerate(counted_rank):
+        setattr(counted, 'rank', rank+1)
+    return counted_rank, LBs
 
 
 def leaderboard(request, pk):

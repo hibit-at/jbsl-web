@@ -571,7 +571,8 @@ def calculate_scoredrank_LBs(league):
         setattr(player, 'count_maps', score_list)
         counted_rank.append(player)
     # 順位点→精度でソート
-    counted_rank = sorted(counted_rank, key=lambda x: (-x.count_pos, -x.count_acc))
+    counted_rank = sorted(
+        counted_rank, key=lambda x: (-x.count_pos, -x.count_acc))
     for rank, counted in enumerate(counted_rank):
         setattr(counted, 'rank', rank+1)
     return counted_rank, songs
@@ -617,8 +618,8 @@ def leaderboard(request, pk):
             return redirect('app:leaderboard', pk=league.pk)
         if 'disjoin' in post and post['disjoin'] != '':
             sid = post['disjoin']
-            add_player = Player.objects.get(sid=sid)
-            league.player.remove(add_player)
+            remove_player = Player.objects.get(sid=sid)
+            league.player.remove(remove_player)
             return redirect('app:leaderboard', pk=league.pk)
         if 'invite' in post:
             invites = post.getlist('invite')
@@ -636,7 +637,7 @@ def leaderboard(request, pk):
             return redirect('app:leaderboard', pk=league.pk)
 
     not_invite_players = Player.objects.exclude(
-        league=league).exclude(invite=league).order_by('-borderPP')
+        league=league, invite=league).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
     return render(request, 'leaderboard.html', params)

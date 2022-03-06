@@ -15,11 +15,13 @@
         {% endfor %}
     </div>
     <div style="text-align:center">
-        <h3>{{ league.name }}'s Leaderboard 
+        <h3>
+            {{ league.name }}'s Leaderboard
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">プレイリスト</span>
-            </a></h3>
+            </a>
+        </h3>
         {% if not isMember and user.player.isActivated and league.isPublic %}
             {% if user.player.borderPP <= league.limit %}
                 <form method="post">
@@ -51,7 +53,7 @@
                 <p>
                     <p>
                         <label>Description :</label>
-                        {{league.description}}
+                        {{ league.description }}
                     </p>
                     <input type="textarea" style="width:400px;height:100px" name="description">
                 </p>
@@ -161,7 +163,20 @@
     {{ player.count_acc|floatformat:2 }}
 </span>
 </td>
-<td>{{ player.message }}</td>
+<td>
+    {{ player.comment }}
+    {% if user.player == player %}
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text"
+                   size="80px"
+                   name="leaguecomment"
+                   value="{{ player.comment }}">
+            <button class="btn" type="submit">コメント</button>
+        </form>
+    {% endif %}
+</td>
 </tr>
 {% if player.rank == 8 %}
     <tr>
@@ -186,9 +201,7 @@
         </a>
         <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
     </p>
-    <div id="{{ song.lid }}"
-         class="top5-target"
-         style="padding:30px;">
+    <div id="{{ song.lid }}" class="top5-target" style="padding:30px;">
         <div style="display:flex">
             <img src="{{ song.imageURL }}" class="thumb">
             <table class="table table-striped table-borderless"
@@ -209,6 +222,9 @@
                         </th>
                         <th>
                             Miss
+                        </th>
+                        <th>
+                            Message
                         </th>
                     </tr>
                 </thead>
@@ -235,15 +251,29 @@
                                     {{ score.miss }}
                                 {% endif %}
                             </td>
+                            <td>
+                                {{ score.comment }}
+                                {% if user.player == score.player %}
+                                    <br>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="text"
+                                               size="80px"
+                                               name="scorecomment"
+                                               value="{{ score.comment }}">
+                                        <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
+                                            コメント
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% if scored_rank|length > 5 %}
-            <a class="top5-trigger"
-               href="#{{ song.lid }}"
-               style="margin-left:158px">すべて表示</a>
+            <a class="top5-trigger" href="#{{ song.lid }}" style="margin-left:158px">すべて表示</a>
         {% endif %}
     </div>
 {% endfor %}

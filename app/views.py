@@ -4,7 +4,7 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, Player, Playlist, Song, Score
+from .models import League, LeagueComment, Player, Playlist, Song, Score
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -132,8 +132,6 @@ def userpage(request, sid=0):
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
     params['top10'] = top10
-
-    # リーグ参加
 
     return render(request, 'userpage.html', params)
 
@@ -510,17 +508,6 @@ def download_playlist(request, pk):
     return HttpResponse(download_data)
 
 
-@login_required
-def add_song_to_playlist(request, pk, url):
-    user = request.user
-    playlist = Playlist.objects.get(pk=pk)
-    if user.player != playlist.editor:
-        return redirect('index.html')
-    lid = url.split('/')[-1]
-    print(lid)
-    return
-
-
 def leagues(request):
     params = {}
     user = request.user
@@ -568,12 +555,15 @@ def calculate_scoredrank_LBs(league):
         setattr(player, 'count_acc', count_acc)
         setattr(player, 'valid', valid_count)
         setattr(player, 'count_maps', score_list)
+        if LeagueComment.objects.filter(league=league, player=player).exists():
+            comment = LeagueComment.objects.get(league=league, player=player)
+            setattr(player, 'comment', comment)
         players.append(player)
     # 順位点→精度でソート
     players = sorted(
         players, key=lambda x: (-x.count_pos, -x.count_acc))
-    for rank, counted in enumerate(players):
-        setattr(counted, 'rank', rank+1)
+    for rank, player in enumerate(players):
+        setattr(player, 'rank', rank+1)
     return players, songs
 
 
@@ -631,6 +621,22 @@ def leaderboard(request, pk):
             league.method = post['valid']
             league.limit = post['limit']
             league.save()
+            return redirect('app:leaderboard', pk=league.pk)
+        if 'leaguecomment' in post:
+            comment = post['leaguecomment']
+            defaults = {'message': comment}
+            LeagueComment.objects.update_or_create(
+                league=league,
+                player=user.player,
+                defaults=defaults,
+            )
+            return redirect('app:leaderboard', pk=league.pk)
+        if 'scorecomment' in post:
+            comment = post['scorecomment']
+            lid = post['lid']
+            score = Score.objects.get(song__lid=lid,league=league,player=user.player)
+            score.comment = comment
+            score.save()
             return redirect('app:leaderboard', pk=league.pk)
 
     not_invite_players = Player.objects.exclude(

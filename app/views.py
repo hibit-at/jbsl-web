@@ -536,14 +536,13 @@ def leagues(request):
 
 
 def calculate_scoredrank_LBs(league):
-    # リーグ内プレイヤー
-    players = league.player.all()
-    size = len(players)
-    base = size + 3
+    # リーグ内プレイヤーの人数
+    base = league.player.count() + 3
     # リーグ内マップ
     songs = league.playlist.songs.all()
-    # マップごとのプレイヤーランキング
+    # プレイヤーごとのスコア
     total_rank = defaultdict(list)
+    # マップごとのプレイヤーランキング
     for song in songs:
         query = Score.objects.filter(
             song=song, league=league, player__league=league).order_by('-score')
@@ -558,7 +557,7 @@ def calculate_scoredrank_LBs(league):
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
-    counted_rank = []
+    players = []
     count_range = league.method
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
@@ -569,13 +568,13 @@ def calculate_scoredrank_LBs(league):
         setattr(player, 'count_acc', count_acc)
         setattr(player, 'valid', valid_count)
         setattr(player, 'count_maps', score_list)
-        counted_rank.append(player)
+        players.append(player)
     # 順位点→精度でソート
-    counted_rank = sorted(
-        counted_rank, key=lambda x: (-x.count_pos, -x.count_acc))
-    for rank, counted in enumerate(counted_rank):
+    players = sorted(
+        players, key=lambda x: (-x.count_pos, -x.count_acc))
+    for rank, counted in enumerate(players):
         setattr(counted, 'rank', rank+1)
-    return counted_rank, songs
+    return players, songs
 
 
 def leaderboard(request, pk):
@@ -602,8 +601,6 @@ def leaderboard(request, pk):
     params['isMember'] = isMember
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
-    print(league.end)
-    print(end_str)
     params['end_str'] = end_str
 
     # POST

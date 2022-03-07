@@ -40,7 +40,7 @@
                 <td>{{ playlist.description |truncatechars:50 }}</td>
                 <td>
                     <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
-                    <img class="icon" src="{{ playlist.editor.imageURL }}" />
+                        <img class="icon" src="{{ playlist.editor.imageURL }}" />
                     </a>
                 </td>
                 <td>
@@ -51,6 +51,9 @@
                     {% endif %}
                 </td>
                 <td>
+                    <p>
+                        {{ playlist.songs.all|length }} songs
+                    </p>
                     <ul>
                         {% for song in playlist.songs.all|slice:":4" %}
                             <li>{{ song.title | truncatechars:40 }} ({{ song.diff }}) by {{ song.author }}</li>

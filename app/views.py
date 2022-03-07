@@ -515,7 +515,7 @@ def leagues(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    active_leagues = League.objects.filter(isOpen=True)
+    active_leagues = League.objects.filter(isOpen=True).order_by('end')
     params['active_leagues'] = active_leagues
     return render(request, 'leagues.html', params)
 

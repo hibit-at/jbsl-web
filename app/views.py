@@ -671,6 +671,9 @@ def create_league(request):
         limit = post['limit']
         valid = post['valid']
         playlist = Playlist.objects.get(pk=playlist_pk)
+        if len(playlist.songs.all()) > 20:
+            params['error'] = 'プレイリストの曲数が多すぎます。'
+            return render(request, 'create_league.html', params)
         league = League.objects.create(
             name=title,  # 名称の不一致。余裕があれば後で直す。
             owner=user.player,

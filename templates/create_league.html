@@ -10,6 +10,9 @@
                 <p>
                     プレイリストを選んでください。
                 </p>
+                <p>
+                    なお、当面の目安として、譜面数の上限を 20 とさせていただきます。
+                </p>
                 <select name="playlist" width="100px" size="10px" required="required">
                     {% for playlist in playlists %}
                         <option value="{{ playlist.pk }}">
@@ -68,7 +71,7 @@
                     <ul>
                         <li>マッププールの中から、どれだけの譜面が有効譜面となるかです。</li>
                         <li>有効譜面を超える譜面は、あえて詰めなくてもよい譜面となります。</li>
-                        <li>多くの場合は、マッププールの半数程度が適切です。</li>
+                        <li>多くの場合は、マッププールの半数強程度が適切です。</li>
                     </ul>
                 </p>
                 <p>

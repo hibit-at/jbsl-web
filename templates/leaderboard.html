@@ -149,7 +149,7 @@
                 </span>
                 <td width="100px">
                     {% if player.theoretical == 100 %}
-                        <b>MAX</b>
+                        <span class="diff" style="color:white">MAX</span>
                     {% else %}
                         ({{ player.theoretical|floatformat:2 }} %)
                     {% endif %}

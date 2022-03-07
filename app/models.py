@@ -77,6 +77,9 @@ class League(models.Model):
         Player, blank=True, related_name='virtual')
     playlist = models.ForeignKey(
         Playlist, on_delete=models.CASCADE, null=True, blank=True)
+    first = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='first')
+    second = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='second')
+    third = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='third')
 
     def __str__(self):
         return str(self.name)

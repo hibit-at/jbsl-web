@@ -516,9 +516,6 @@ def leagues(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     active_leagues = League.objects.filter(isOpen=True)
-    for league in active_leagues:
-        scored_rank, LBs = calculate_scoredrank_LBs(league)
-        setattr(league, 'top_players', scored_rank[:3])
     params['active_leagues'] = active_leagues
     return render(request, 'leagues.html', params)
 

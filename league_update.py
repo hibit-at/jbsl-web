@@ -4,10 +4,13 @@ import django
 import requests
 
 
+
+
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import League, Score
+    from app.views import calculate_scoredrank_LBs
     for league in League.objects.filter(end__gt=datetime.now()):
         for player in league.player.all():
             print(player)
@@ -37,6 +40,16 @@ def league_update_process():
                     defaults=defaults,
                 )
                 print('score updated!')
+        print(league)
+        players, songs = calculate_scoredrank_LBs(league)
+        for i, player in enumerate(players[:3]):
+            if i == 0:
+                league.first = player
+            if i == 1:
+                league.second = player
+            if i == 2:
+                league.third = player
+        league.save()
 
 
 if __name__ == '__main__':

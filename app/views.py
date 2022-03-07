@@ -218,7 +218,8 @@ def top_score_registration(player):
         miss = playerScore['score']['missedNotes'] + \
             playerScore['score']['badCuts']
         hmd = hmd_dict[playerScore['score']['hmd']]
-        player.hmd = hmd
+        if hmd != 'Unknown' or player.hmd == 'Unknown':
+            player.hmd = hmd
         defaults = {
             'score': score,
             'acc': score/(115*8*int(notes)-7245)*100,

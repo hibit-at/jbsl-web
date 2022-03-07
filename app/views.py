@@ -641,7 +641,7 @@ def leaderboard(request, pk):
             return redirect('app:leaderboard', pk=league.pk)
 
     not_invite_players = Player.objects.exclude(
-        league=league, invite=league).order_by('-borderPP')
+        league=league).exclude(invite=league).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
     return render(request, 'leaderboard.html', params)

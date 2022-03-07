@@ -2,7 +2,7 @@ import os
 import django
 import sys
 
-def discord_check_process():
+def discord_check_process(channel_id):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
@@ -23,19 +23,25 @@ def discord_check_process():
     @bot.event
     async def on_ready():
         guild = bot.get_guild(int(guild_id))
+        channel = await bot.fetch_channel(channel_id)
         members = guild.members
         joinIDs = [member.id for member in members]
         for player in Player.objects.filter(inDiscord=False):
             social = SocialAccount.objects.get(user=player.user)
             print(social)
             if int(social.uid) in joinIDs:
-                print('joined')
+                await channel.send(f'{player} さんはすでに Discord に参加しています。')
                 player.inDiscord = True
                 player.save()
+                await channel.send(f'内部データベースを参加状態にしました。')
+            else:
+                await channel.send(f'! {player} さんはまだ Discord に参加していません。')
         await bot.close()
 
     bot.run(token)
 
 
 if __name__ == '__main__':
-    discord_check_process()
+    args = sys.argv
+    send_channel_id = int(args[1])
+    discord_check_process(send_channel_id)

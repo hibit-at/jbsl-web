@@ -114,6 +114,8 @@
                         順位点
                     </th>
                     <th>
+                    </th>
+                    <th>
                         有効
                         <br>
                         譜面
@@ -142,6 +144,9 @@
                     >
                     {{ player.count_pos }}
                 </span>
+                <td width="100px">
+                    ({{player.theoretical|floatformat:2}} %)
+                </td>
             </td>
             <td width="70px">
                 <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:25 }}
@@ -153,14 +158,14 @@
             {{ player.valid }}
         </span>
     </td>
-    <td width="70px">
+    <td width="80px">
         <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:15 }} ({{ score.acc | floatformat:2 }})
             <br>
         {% endfor %}
         "
     {% endif %}
     >
-    {{ player.count_acc|floatformat:2 }}
+    {{ player.count_acc|floatformat:2 }} %
 </span>
 </td>
 <td>
@@ -188,7 +193,7 @@
 {% endfor %}
 </tbody>
 </table>
-<a class = "border8-trigger" href="#{{ league }}">すべて表示</a>
+<a class = "border8-trigger" href="#{{ league.id }}">すべて表示</a>
 </div>
 <hr>
 <h2 style="text-align:center">譜面別リーグ内順位</h2>

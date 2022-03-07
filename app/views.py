@@ -550,9 +550,12 @@ def calculate_scoredrank_LBs(league):
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
         valid_count = len(score_list)
+        max_pos = valid_count * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
-        count_acc = sum([s.acc for s in score_list])
+        theoretical = count_pos / max_pos * 100
+        count_acc = sum([s.acc for s in score_list])/valid_count
         setattr(player, 'count_pos', count_pos)
+        setattr(player, 'theoretical', theoretical)
         setattr(player, 'count_acc', count_acc)
         setattr(player, 'valid', valid_count)
         setattr(player, 'count_maps', score_list)

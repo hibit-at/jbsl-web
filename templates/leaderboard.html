@@ -113,7 +113,11 @@
                         <br>
                         順位点
                     </th>
-                    <th></th>
+                    <th>
+                        順位点
+                        <br>
+                        比率
+                    </th>
                     <th>
                         有効
                         <br>
@@ -143,7 +147,13 @@
                     >
                     {{ player.count_pos }}
                 </span>
-                <td width="100px">({{ player.theoretical|floatformat:2 }} %)</td>
+                <td width="100px">
+                    {% if player.theoretical == 100 %}
+                        <b>MAX</b>
+                    {% else %}
+                        ({{ player.theoretical|floatformat:2 }} %)
+                    {% endif %}
+                </td>
             </td>
             <td width="70px">
                 <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:25 }}
@@ -193,9 +203,7 @@
 <a class = "border8-trigger" href="#{{ league.id }}">すべて表示</a>
 </div>
 <hr>
-<h2 style="text-align:center">
-    譜面別リーグ内順位
-</h2>
+<h2 style="text-align:center">譜面別リーグ内順位</h2>
 {% for song in LBs %}
     <p>
         <span style="font-size:22px;font-weight:bold">{{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}</span></span> by {{ song.author }}

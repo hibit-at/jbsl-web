@@ -131,22 +131,6 @@ a:hover::after {
     font-weight: bold;
 }
 
-.inline {
-    color: green;
-    background-color: transparent;
-    text-decoration: none;
-    padding: 5px;
-    border-radius: 10px;
-}
-
-.inline:hover {
-    color: black;
-    background-color: orange;
-    text-decoration: none;
-    padding: 5px;
-    border-radius: 10px;
-}
-
 .trans {
     text-decoration: none;
     color: black;
@@ -191,9 +175,4 @@ a:hover::after {
 
 .border8-target.border8-open tr:nth-child(n+18) {
     display: table-row;
-}
-
-.icon img:hover {
-    transform: scale(1.3, 1.3);
-    transition: 0.1s all;
 }

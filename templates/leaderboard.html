@@ -132,14 +132,14 @@
                 </tr>
             </thead>
             {% for player in scored_rank %}
-                <tr>
+                <tr {% if user.player == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                     <td width="50px">#{{ player.rank }}</td>
                     <td width="250px">
                         <img src="{{ player.imageURL }}" class="icon">
                         {{ player.name }}
                     </td>
                     <td width="70px">
-                        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:20 }} ({{ score.pos }})
+                        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{% for score in player.count_maps %}  {{ score.song.title | truncatechars:20 }} ({{ score.pos }})
                             <br>
                         {% endfor %}
                         "
@@ -230,6 +230,11 @@
                             順位点
                         </th>
                         <th>
+                            有効
+                            <br>
+                            譜面
+                        </th>
+                        <th>
                             Accuracy
                         </th>
                         <th>
@@ -242,7 +247,7 @@
                 </thead>
                 <tbody style="color:black">
                     {% for score in song.scores %}
-                        <tr>
+                        <tr {% if user.player == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                             <td width="50px">
                                 #{{ score.rank }}
                             </td>
@@ -252,6 +257,9 @@
                             </td>
                             <td width="70px">
                                 {{ score.pos }}
+                            </td>
+                            <td>
+                                {{ score.valid }}
                             </td>
                             <td width="100px">
                                 {{ score.acc|floatformat:2 }}%

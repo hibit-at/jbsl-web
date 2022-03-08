@@ -391,7 +391,7 @@ def create_playlist(request):
                 editor=editor,
                 description=description,
                 isEditable=isEditable,
-                image='base64,' + img_str
+                image='data:image/png;base64,' + img_str
             )
             return redirect('app:playlist', pk=playlist.pk)
 
@@ -624,7 +624,7 @@ def leaderboard(request, pk):
             league.save()
             return redirect('app:leaderboard', pk=league.pk)
         if 'leaguecomment' in post:
-            comment = post['leaguecomment']
+            comment = post['leaguecomment'][:50]
             defaults = {'message': comment}
             LeagueComment.objects.update_or_create(
                 league=league,
@@ -633,7 +633,7 @@ def leaderboard(request, pk):
             )
             return redirect('app:leaderboard', pk=league.pk)
         if 'scorecomment' in post:
-            comment = post['scorecomment']
+            comment = post['scorecomment'][:50]
             lid = post['lid']
             score = Score.objects.get(song__lid=lid,league=league,player=user.player)
             score.comment = comment
@@ -672,7 +672,7 @@ def create_league(request):
         valid = post['valid']
         playlist = Playlist.objects.get(pk=playlist_pk)
         if len(playlist.songs.all()) > 20:
-            params['error'] = 'プレイリストの曲数が多すぎます。'
+            params['error'] = 'プレイリストの曲数が多すぎます。上限は 20 です。'
             return render(request, 'create_league.html', params)
         league = League.objects.create(
             name=title,  # 名称の不一致。余裕があれば後で直す。

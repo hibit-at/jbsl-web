@@ -547,7 +547,7 @@ def calculate_scoredrank_LBs(league):
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
         for score in score_list:
-            setattr(score, 'valid', '◯')
+            setattr(score, 'valid', 'O')
         valid_count = len(score_list)
         max_pos = league.method * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])

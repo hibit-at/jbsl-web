@@ -176,3 +176,7 @@ a:hover::after {
 .border8-target.border8-open tr:nth-child(n+18) {
     display: table-row;
 }
+
+.tooltip-inner {
+    max-width: 100%;
+}

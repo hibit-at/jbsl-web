@@ -139,68 +139,53 @@
                         {{ player.name }}
                     </td>
                     <td width="70px">
-                        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{% for score in player.count_maps %}  {{ score.song.title | truncatechars:20 }} ({{ score.pos }})
+                        <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
+                            {{ player.count_pos }}
+                        </span>
+                    </td>
+                    <td width="100px">
+                        {% if player.theoretical == 100 %}
+                            <span class="diff" style="color:white">MAX</span>
+                        {% else %}
+                            ({{ player.theoretical|floatformat:2 }} %)
+                        {% endif %}
+                    </td>
+                    <td width="70px">
+                        <span {% if player.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_valid }}" {% endif %}>
+                            {{ player.valid }}
+                        </span>
+                    </td>
+                    <td width="80px">
+                        <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
+                            {{ player.count_acc|floatformat:2 }} %
+                        </span>
+                    </td>
+                    <td>
+                        {{ player.comment }}
+                        {% if user.player == player %}
                             <br>
-                        {% endfor %}
-                        "
-                    {% endif %}
-                    >
-                    {{ player.count_pos }}
-                </span>
-                <td width="100px">
-                    {% if player.theoretical == 100 %}
-                        <span class="diff" style="color:white">MAX</span>
-                    {% else %}
-                        ({{ player.theoretical|floatformat:2 }} %)
-                    {% endif %}
-                </td>
-            </td>
-            <td width="70px">
-                <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:25 }}
-                    <br>
-                {% endfor %}
-                "
-            {% endif %}
-            >
-            {{ player.valid }}
-        </span>
-    </td>
-    <td width="80px">
-        <span {% if player.count_maps %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title=" {% for score in player.count_maps %} {{ score.song.title | truncatechars:15 }} ({{ score.acc | floatformat:2 }})
-            <br>
-        {% endfor %}
-        "
-    {% endif %}
-    >
-    {{ player.count_acc|floatformat:2 }} %
-</span>
-</td>
-<td>
-    {{ player.comment }}
-    {% if user.player == player %}
-        <br>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text"
-                   size="80px"
-                   name="leaguecomment"
-                   value="{{ player.comment }}">
-            <button class="btn" type="submit">コメント</button>
-        </form>
-    {% endif %}
-</td>
-</tr>
-{% if player.rank == 8 %}
-    <tr>
-        <td colspan="7">
-            <hr>
-        </td>
-    </tr>
-{% endif %}
-{% endfor %}
-</tbody>
-</table>
-<a class = "border8-trigger" href="#{{ league.id }}">すべて表示</a>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="text"
+                                       size="80px"
+                                       name="leaguecomment"
+                                       value="{{ player.comment }}">
+                                <button class="btn" type="submit">コメント</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if player.rank == 8 %}
+                    <tr>
+                        <td colspan="7">
+                            <hr>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class = "border8-trigger" href="#{{ league.id }}">すべて表示</a>
 </div>
 <hr>
 <h2 style="text-align:center">譜面別リーグ内順位</h2>

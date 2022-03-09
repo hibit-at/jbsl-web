@@ -553,11 +553,20 @@ def calculate_scoredrank_LBs(league):
         count_pos = sum([s.pos for s in score_list])
         theoretical = count_pos / max_pos * 100
         count_acc = sum([s.acc for s in score_list])/valid_count
+        tooltip_pos = '<br>'.join(
+            [f'{score.song.title[:20]}... ({score.pos})' for score in score_list])
+        tooltip_valid = '<br>'.join(
+            [f'{score.song.title[:25]}...' for score in score_list])
+        tooltip_acc = '<br>'.join(
+            [f'{score.song.title[:20]}... ({score.acc:.2f})' for score in score_list])
+        print(tooltip_pos)
         setattr(player, 'count_pos', count_pos)
         setattr(player, 'theoretical', theoretical)
         setattr(player, 'count_acc', count_acc)
         setattr(player, 'valid', valid_count)
-        setattr(player, 'count_maps', score_list)
+        setattr(player, 'tooltip_pos', tooltip_pos)
+        setattr(player, 'tooltip_valid', tooltip_valid)
+        setattr(player, 'tooltip_acc', tooltip_acc)
         if LeagueComment.objects.filter(league=league, player=player).exists():
             comment = LeagueComment.objects.get(league=league, player=player)
             setattr(player, 'comment', comment)
@@ -637,7 +646,8 @@ def leaderboard(request, pk):
         if 'scorecomment' in post:
             comment = post['scorecomment'][:50]
             lid = post['lid']
-            score = Score.objects.get(song__lid=lid,league=league,player=user.player)
+            score = Score.objects.get(
+                song__lid=lid, league=league, player=user.player)
             score.comment = comment
             score.save()
             return redirect('app:leaderboard', pk=league.pk)

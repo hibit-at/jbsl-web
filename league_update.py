@@ -24,6 +24,10 @@ def league_update_process():
                 print(res)
                 notes = song.notes
                 scoreData = res['scores'][0]
+                hitname = scoreData['leaderboardPlayerInfo']['name']
+                if player.name != hitname:
+                    print('wrong name!')
+                    continue
                 score = scoreData['modifiedScore']
                 rawPP = scoreData['pp']
                 miss = scoreData['badCuts'] + scoreData['missedNotes']

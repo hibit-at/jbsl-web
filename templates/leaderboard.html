@@ -101,7 +101,7 @@
     {% endif %}
     <div id="{{ league.id }}"
          class="border8-target"
-         style="padding:50px;border-radius:20px">
+         style="background-color:{{ league.color }};padding:20px;border-radius:20px">
         <table class="table table-striped table-borderless"
                style="background-color:{{ league.color }}">
             <thead>
@@ -198,7 +198,7 @@
         </a>
         <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
     </p>
-    <div id="{{ song.lid }}" class="top5-target" style="padding:30px;">
+    <div id="{{ song.lid }}" class="top5-target" style="padding:20px;background-color:{{ league.color}};border-radius:20px">
         <div style="display:flex">
             <img src="{{ song.imageURL }}" class="thumb">
             <table class="table table-striped table-borderless"

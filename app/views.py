@@ -559,7 +559,6 @@ def calculate_scoredrank_LBs(league):
             [f'{score.song.title[:25]}...' for score in score_list])
         tooltip_acc = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
-        print(tooltip_pos)
         setattr(player, 'count_pos', count_pos)
         setattr(player, 'theoretical', theoretical)
         setattr(player, 'count_acc', count_acc)

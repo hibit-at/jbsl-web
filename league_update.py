@@ -5,7 +5,6 @@ import requests
 
 
 
-
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()

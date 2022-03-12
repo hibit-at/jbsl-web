@@ -122,7 +122,10 @@ def userpage(request, sid=0):
         post = request.POST
         print(post)
         if 'imageURL' in post:
-            player.imageURL = post['imageURL']
+            imageURL = post['imageURL']
+            if not imageURL.startswith('https://pbs.twimg.com/profile_images'):
+                print('invalid')
+            player.imageURL = imageURL
         if 'message' in post:
             player.message = post['message'][:50]
         if 'twitter' in post:

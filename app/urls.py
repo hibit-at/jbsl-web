@@ -1,5 +1,4 @@
 from django.urls import path, include
-from graphviz import view
 from . import views
 
 app_name = 'app'

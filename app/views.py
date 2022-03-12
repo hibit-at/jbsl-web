@@ -120,6 +120,9 @@ def userpage(request, sid=0):
     params['player'] = player
     if request.method == 'POST':
         post = request.POST
+        print(post)
+        if 'imageURL' in post:
+            player.imageURL = post['imageURL']
         if 'message' in post:
             player.message = post['message'][:50]
         if 'twitter' in post:

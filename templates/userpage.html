@@ -73,6 +73,14 @@
             <form method="post">
                 {% csrf_token %}
                 <p>
+                    {% if player.imageURL == "https://cdn.scoresaber.com/avatars/steam.png" or player.imageURL == "https://cdn.scoresaber.com/avatars/oculus.png" %}
+                        <label>ImageURL :</label>
+                        <input type="text" size="100" name="imageURL" value= {{ player.imageURL }} />
+                        <p>! スコアセイバーのアイコンが、Oculus マークもしくは「?」になってしまうプレイヤーのための変更機能です。</p>
+                        <p>! 一度変更したら直せないので、十分確認してから変更してください。</p>
+                    {% endif %}
+                </p>
+                <p>
                     <label>Message :</label>
                     <input type="text" size="100" name="message" value={{ player.message }}>
                 </p>

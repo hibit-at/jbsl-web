@@ -525,7 +525,7 @@ def leagues(request):
     return render(request, 'leagues.html', params)
 
 
-def calculate_scoredrank_LBs(league):
+def calculate_scoredrank_LBs(league, virtual=None):
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
     # リーグ内マップ
@@ -533,9 +533,10 @@ def calculate_scoredrank_LBs(league):
     # プレイヤーごとのスコア
     total_rank = defaultdict(list)
     # マップごとのプレイヤーランキング
+    from django.db.models import Q
     for song in songs:
         query = Score.objects.filter(
-            song=song, league=league, player__league=league).order_by('-score')
+            song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score')
         for rank, score in enumerate(query):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)
@@ -597,14 +598,18 @@ def leaderboard(request, pk):
 
     isMember = False
     isOwner = False
+    isVirtual = False
     if user.is_authenticated:
         if user.player in league.player.all():
             isMember = True
         if user.player == league.owner:
             isOwner = True
+        if user.player in league.virtual.all():
+            isVirtual = True
 
     params['isOwner'] = isOwner
     params['isMember'] = isMember
+    params['isVirtual'] = isVirtual
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     params['end_str'] = end_str
@@ -618,12 +623,12 @@ def leaderboard(request, pk):
             sid = post['join']
             add_player = Player.objects.get(sid=sid)
             league.player.add(add_player)
-            return redirect('app:leaderboard', pk=league.pk)
+            return redirect('app:leaderboard', pk=pk)
         if 'disjoin' in post and post['disjoin'] != '':
             sid = post['disjoin']
             remove_player = Player.objects.get(sid=sid)
             league.player.remove(remove_player)
-            return redirect('app:leaderboard', pk=league.pk)
+            return redirect('app:leaderboard', pk=pk)
         if 'invite' in post:
             invites = post.getlist('invite')
             for invite in invites:
@@ -637,7 +642,7 @@ def leaderboard(request, pk):
             league.method = post['valid']
             league.limit = post['limit']
             league.save()
-            return redirect('app:leaderboard', pk=league.pk)
+            return redirect('app:leaderboard', pk=pk)
         if 'leaguecomment' in post:
             comment = post['leaguecomment'][:50]
             defaults = {'message': comment}
@@ -646,7 +651,7 @@ def leaderboard(request, pk):
                 player=user.player,
                 defaults=defaults,
             )
-            return redirect('app:leaderboard', pk=league.pk)
+            return redirect('app:leaderboard', pk=pk)
         if 'scorecomment' in post:
             comment = post['scorecomment'][:50]
             lid = post['lid']
@@ -654,7 +659,12 @@ def leaderboard(request, pk):
                 song__lid=lid, league=league, player=user.player)
             score.comment = comment
             score.save()
-            return redirect('app:leaderboard', pk=league.pk)
+            return redirect('app:leaderboard', pk=pk)
+        if 'virtual_join' in post:
+            sid = post['virtual_join']
+            add_player = Player.objects.get(sid=sid)
+            league.virtual.add(add_player)
+            return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).order_by('-borderPP')
@@ -704,3 +714,31 @@ def create_league(request):
         )
         return redirect('app:leaderboard', pk=league.pk)
     return render(request, 'create_league.html', params)
+
+
+def virtual_league(request, pk):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    league = League.objects.get(pk=pk)
+    if user.player not in league.virtual.all():
+        return redirect('app:leaderboard', pk=pk)
+    params['league'] = league
+    scored_rank, LBs = calculate_scoredrank_LBs(league, user.player)
+    params['scored_rank'] = scored_rank
+    params['LBs'] = LBs
+
+    # POST
+
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'disjoin' in post:
+            sid = post['disjoin']
+            remove_player = Player.objects.get(sid=sid)
+            league.virtual.remove(remove_player)
+            return redirect('app:leaderboard', pk=pk)
+
+    return render(request, 'virtual_league.html', params)

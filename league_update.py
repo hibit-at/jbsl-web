@@ -11,7 +11,7 @@ def league_update_process():
     from app.models import League, Score
     from app.views import calculate_scoredrank_LBs
     for league in League.objects.filter(end__gt=datetime.now()):
-        for player in league.player.all():
+        for player in league.player.all().union(league.virtual.all()):
             print(player)
             for song in league.playlist.songs.all():
                 print(song, song.lid)

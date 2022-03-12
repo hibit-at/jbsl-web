@@ -1,4 +1,5 @@
 from django.urls import path, include
+from graphviz import view
 from . import views
 
 app_name = 'app'
@@ -18,4 +19,5 @@ urlpatterns = [
     path('leagues/', views.leagues, name='leagues'),
     path('leaderboard/<int:pk>', views.leaderboard, name='leaderboard'),
     path('create_league',views.create_league, name='create_league'),
+    path('virtual_league/<int:pk>',views.virtual_league, name='virtual_league'),
 ]

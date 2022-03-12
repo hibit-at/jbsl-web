@@ -537,6 +537,7 @@ def calculate_scoredrank_LBs(league, virtual=None):
     for song in songs:
         query = Score.objects.filter(
             song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score')
+        print(query)
         for rank, score in enumerate(query):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)

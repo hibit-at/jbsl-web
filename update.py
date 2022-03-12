@@ -15,6 +15,8 @@ def update_process():
             user = User.objects.get(player=player)
             social = SocialAccount.objects.get(user=user)
             print(social)
+            if social.extra_data['avatar'] == None:
+                continue
             player.imageURL = f'https://cdn.discordapp.com/avatars/{social.uid}/{social.extra_data["avatar"]}'
             player.save()
 

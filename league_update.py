@@ -3,12 +3,10 @@ import os
 import django
 import requests
 
-
-
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import League, Score
+    from app.models import League, Score, Headline
     from app.views import calculate_scoredrank_LBs, score_to_headline
     for league in League.objects.filter(end__gt=datetime.now()):
         for player in league.player.all().union(league.virtual.all()):
@@ -49,10 +47,28 @@ def league_update_process():
         players, songs = calculate_scoredrank_LBs(league)
         for i, player in enumerate(players[:3]):
             if i == 0:
+                if league.first != player:
+                    Headline.objects.create(
+                        player = player,
+                        time = datetime.now(),
+                        text = f'{player} さんが {league} リーグで 1 位になりました！'
+                    )
                 league.first = player
             if i == 1:
+                if league.second != player:
+                    Headline.objects.create(
+                        player = player,
+                        time = datetime.now(),
+                        text = f'{player} さんが {league} リーグで 2 位になりました！'
+                    )
                 league.second = player
             if i == 2:
+                if league.third != player:
+                    Headline.objects.create(
+                        player = player,
+                        time = datetime.now(),
+                        text = f'{player} さんが {league} リーグで 3 位になりました！'
+                    )
                 league.third = player
         league.save()
 

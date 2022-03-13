@@ -154,13 +154,6 @@ def mypage(request):
         player = Player.objects.create(user=user)
         player.discordID = social.uid
         player.save()
-        text = f'{player} さんが参加しました！　JBSLへようこそ！'
-        Headline.objects.create(
-            player = player,
-            text = text,
-            time = datetime.now()
-        )
-        
     # registration end
     if not user.player.isActivated:
         return render(request, 'activation.html', params)
@@ -316,6 +309,12 @@ def activate_process(request):
         player.isActivated = True
         player.pp = pp
         player.save()
+        text = f'{player} さんが参加しました！　JBSLへようこそ！'
+        Headline.objects.create(
+            player = player,
+            text = text,
+            time = datetime.now()
+        )
         # top score registration
         top_score_registration(player)
         return redirect('app:mypage')

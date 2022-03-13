@@ -65,7 +65,7 @@ class League(models.Model):
         Player, on_delete=models.SET_NULL, null=True, related_name='owner')
     description = models.CharField(default='', max_length=100, blank=True)
     color = models.CharField(default='', max_length=20)
-    player = models.ManyToManyField(Player, blank=True)
+    player = models.ManyToManyField(Player, blank=True, related_name='league')
     method = models.IntegerField(default=0)
     limit = models.FloatField(default=2000)
     end = models.DateTimeField(default=None, blank=True)

@@ -34,7 +34,8 @@ def league_update_process():
                         'rawPP': rawPP,
                         'miss': miss,
                     }
-                    score_to_headline(score, song, player, league)
+                    if league in player.league.all():
+                        score_to_headline(score, song, player, league)
                     Score.objects.update_or_create(
                         player=player,
                         song=song,

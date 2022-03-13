@@ -9,7 +9,7 @@ def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import League, Score
-    from app.views import calculate_scoredrank_LBs
+    from app.views import calculate_scoredrank_LBs, score_to_headline
     for league in League.objects.filter(end__gt=datetime.now()):
         for player in league.player.all().union(league.virtual.all()):
             print(player)
@@ -36,6 +36,7 @@ def league_update_process():
                         'rawPP': rawPP,
                         'miss': miss,
                     }
+                    score_to_headline(score, song, player, league)
                     Score.objects.update_or_create(
                         player=player,
                         song=song,

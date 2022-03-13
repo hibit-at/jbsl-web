@@ -4,7 +4,7 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, LeagueComment, Player, Playlist, Song, Score
+from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -103,6 +103,8 @@ def index(request):
             decline = post['decline']
             league = League.objects.get(pk=decline)
             league.invite.remove(player)
+    headlines = Headline.objects.all().order_by('-time')[:10]
+    params['headlines'] = headlines
     return render(request, 'index.html', params)
 
 
@@ -152,6 +154,13 @@ def mypage(request):
         player = Player.objects.create(user=user)
         player.discordID = social.uid
         player.save()
+        text = f'{player} さんが参加しました！　JBSLへようこそ！'
+        Headline.objects.create(
+            player = player,
+            text = text,
+            time = datetime.now()
+        )
+        
     # registration end
     if not user.player.isActivated:
         return render(request, 'activation.html', params)
@@ -195,11 +204,33 @@ def create_song_by_hash(hash, diff_num, char, lid):
     return Song.objects.get(lid=lid)
 
 
+def score_to_headline(new_score, song, player, league):
+    if Score.objects.filter(player=player,song=song,league=league).exists():
+        old_score = Score.objects.get(player=player,song=song,league=league)
+        if new_score > old_score.score:
+            old_acc = old_score.acc
+            new_acc = new_score/(115*8*int(song.notes)-7245)*100
+            Headline.objects.create(
+                player = player,
+                time = datetime.now(),
+                text = f'{player} さんが {song.title[:30]} のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
+            )
+    else:
+        new_acc = new_score/(115*8*int(song.notes)-7245)*100
+        Headline.objects.create(
+            player = player,
+            time = datetime.now(),
+            text = f'{player} さんが {song.title[:30]} のスコアを更新！ {new_acc:.2f} %'
+        )
+
+
 def top_score_registration(player):
     sid = player.sid
     # pp
     url = f'https://scoresaber.com/api/player/{sid}/basic'
     res = requests.get(url).json()
+    if 'errorMessage' in res:
+        return
     pp = res['pp']
     player.pp = pp
     player.save()
@@ -231,11 +262,13 @@ def top_score_registration(player):
             'rawPP': pp,
             'miss': miss,
         }
+        league = League.objects.get(name='Top10')
+        score_to_headline(score, song, player, league)
         print(defaults)
         Score.objects.update_or_create(
             player=player,
             song=song,
-            league=League.objects.get(name='Top10'),
+            league=league,
             defaults=defaults,
         )
     # if over erase

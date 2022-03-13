@@ -43,6 +43,12 @@
             </li>
         </ul>
     {% endif %}
+    <h3>Headlines</h3>
+    {% for headline in headlines %}
+    <ul>
+        <li> <img src="{{headline.player.imageURL}}" class="icon"/> {{headline.text}} （{{headline.time}}）</li>
+    </ul>
+    {% endfor %}
     <h3>
         <img src= {% static 'pict_player.png' %} width="40px" height="40px">
         Players

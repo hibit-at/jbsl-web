@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Player, Playlist, Song, League, Score, LeagueComment
+from app.models import Player, Playlist, Song, League, Score, LeagueComment, Headline
 
 # Register your models here.
 
@@ -9,3 +9,4 @@ admin.site.register(League)
 admin.site.register(Score)
 admin.site.register(Playlist)
 admin.site.register(LeagueComment)
+admin.site.register(Headline)

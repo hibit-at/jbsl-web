@@ -26,7 +26,7 @@ class Player(models.Model):
     hmd = models.CharField(default='', max_length=50)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.name)
 
 
 class Song(models.Model):
@@ -108,3 +108,12 @@ class LeagueComment(models.Model):
 
     def __str__(self):
         return str(self.message)
+
+
+class Headline(models.Model):
+    player = models.ForeignKey(Player,on_delete=models.CASCADE)
+    text = models.CharField(default='',max_length=200)
+    time = models.DateTimeField()
+
+    def __str__(self):
+        return f'{str(self.player)} -> {str(self.text)}'

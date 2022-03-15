@@ -87,7 +87,7 @@ class League(models.Model):
 
 class Score(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='score')
     league = models.ForeignKey(League, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
     acc = models.FloatField(default=0)

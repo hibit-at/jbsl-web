@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>{{ player }} と {{ player.rival }} のお部屋</h3>
+    <form method="post">
+        {% csrf_token %}
+        <button class="danger" name="no_rival" value="dummy">ライバル解除</button>
+    </form>
+    <h3>対戦結果</h3>
+    <p>{{match}} 試合 {{win}} 勝 {{lose}} 敗</p>
+    <table class="table table-striped table-borderless">
+        <thead>
+            <th>Win</th>
+            <th>SongCover</th>
+            <th>SongTitle</th>
+            <th>YourScore</th>
+            <th>RivalScore</th>
+        </thead>
+        {% for compare in compares %}
+            <tr>
+                <td>
+                    {% if compare.Win %}
+                        <span class="diff" style="color:white">WIN</span>
+                    {% else %}
+                        LOSE
+                    {% endif %}
+                </td>
+                <td>
+                    <img src="{{ compare.your.song.imageURL }}" class="thumb">
+                </td>
+                <td>{{ compare.your.song.title }}</td>
+                <td>
+                    {% if compare.win %}
+                        <span class="diff" style="color:white">{{ compare.your.acc|floatformat:2 }}</span>
+                    {% else %}
+                        {{ compare.your.acc|floatformat:2 }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not compare.win %}
+                        <span class="diff" style="color:white">{{ compare.rival.acc|floatformat:2 }}</span>
+                    {% else %}
+                        {{ compare.rival.acc|floatformat:2 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}

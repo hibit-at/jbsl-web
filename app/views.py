@@ -114,8 +114,6 @@ def userpage(request, sid=0):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-        isSelf = (int(user.player.sid) == sid)
-        params['isSelf'] = isSelf
     if not Player.objects.filter(sid=sid).exists():
         return redirect('app:index')
     player = Player.objects.get(sid=sid)
@@ -135,7 +133,15 @@ def userpage(request, sid=0):
             player.twitch = post['twitch']
         if 'booth' in post:
             player.booth = post['booth']
+        if 'rival' in post:
+            rival_sid = post['rival'] 
+            rival = Player.objects.get(sid=rival_sid)
+            user.player.rival = rival
+            user.player.save()
         player.save()
+    eyebeam = Player.objects.filter(rival=player).count()
+    print(eyebeam)
+    params['eyebeam'] = eyebeam
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
     params['top10'] = top10
@@ -774,3 +780,56 @@ def virtual_league(request, pk):
             return redirect('app:leaderboard', pk=pk)
 
     return render(request, 'virtual_league.html', params)
+
+
+@login_required
+def rivalpage(request):
+    params = {}
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params['social'] = social
+    player = user.player
+    params['player'] = player
+    songs = Song.objects.all()
+    compares = []
+    match = 0
+    win = 0
+    for song in songs:
+        my_scores = song.score.filter(player=player).order_by('-score')
+        rival_scores = song.score.filter(player=player.rival).order_by('-score')
+        if len(my_scores) > 0 and len(rival_scores) > 0:
+            match += 1
+            print(my_scores)
+            print(rival_scores)
+            my_top = my_scores[0]
+            rival_top = rival_scores[0]
+            if my_top.score >= rival_top.score:
+                compares.append({
+                    'your' : my_top,
+                    'rival' : rival_top,
+                    'win' : True  
+                })
+                win += 1
+            else:
+                compares.append({
+                    'your' : my_top,
+                    'rival' : rival_top,
+                    'win' : False 
+                })
+    print(compares)
+    params['compares'] = compares
+    params['match'] = match
+    params['win'] = win
+    params['lose'] = match - win
+
+    # POST
+
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'no_rival' in post:
+            user.player.rival = None
+            user.player.save()
+            return redirect('app:mypage')
+    return render(request, 'rivalpage.html', params)
+    

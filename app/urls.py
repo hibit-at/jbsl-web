@@ -19,5 +19,6 @@ urlpatterns = [
     path('leaderboard/<int:pk>', views.leaderboard, name='leaderboard'),
     path('create_league',views.create_league, name='create_league'),
     path('virtual_league/<int:pk>',views.virtual_league, name='virtual_league'),
-    path('userpage/rival', views.rivalpage, name='rivalpage')
+    path('userpage/rival', views.rivalpage, name='rivalpage'),
+    path('headlines/<int:page>', views.headlines, name='headlines'),
 ]

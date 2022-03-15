@@ -134,7 +134,7 @@ def userpage(request, sid=0):
         if 'booth' in post:
             player.booth = post['booth']
         if 'rival' in post:
-            rival_sid = post['rival'] 
+            rival_sid = post['rival']
             rival = Player.objects.get(sid=rival_sid)
             user.player.rival = rival
             user.player.save()
@@ -204,22 +204,22 @@ def create_song_by_hash(hash, diff_num, char, lid):
 
 
 def score_to_headline(new_score, song, player, league):
-    if Score.objects.filter(player=player,song=song,league=league).exists():
-        old_score = Score.objects.get(player=player,song=song,league=league)
+    if Score.objects.filter(player=player, song=song, league=league).exists():
+        old_score = Score.objects.get(player=player, song=song, league=league)
         if new_score > old_score.score:
             old_acc = old_score.acc
             new_acc = new_score/(115*8*int(song.notes)-7245)*100
             Headline.objects.create(
-                player = player,
-                time = datetime.now(),
-                text = f'{player} さんが {song.title[:30]} のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
+                player=player,
+                time=datetime.now(),
+                text=f'{player} さんが {song.title[:30]} のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
             )
     else:
         new_acc = new_score/(115*8*int(song.notes)-7245)*100
         Headline.objects.create(
-            player = player,
-            time = datetime.now(),
-            text = f'{player} さんが {song.title[:30]} のスコアを更新！ {new_acc:.2f} %'
+            player=player,
+            time=datetime.now(),
+            text=f'{player} さんが {song.title[:30]} のスコアを更新！ {new_acc:.2f} %'
         )
 
 
@@ -317,9 +317,9 @@ def activate_process(request):
         player.save()
         text = f'{player} さんが参加しました！　JBSLへようこそ！'
         Headline.objects.create(
-            player = player,
-            text = text,
-            time = datetime.now()
+            player=player,
+            text=text,
+            time=datetime.now()
         )
         # top score registration
         top_score_registration(player)
@@ -796,7 +796,8 @@ def rivalpage(request):
     win = 0
     for song in songs:
         my_scores = song.score.filter(player=player).order_by('-score')
-        rival_scores = song.score.filter(player=player.rival).order_by('-score')
+        rival_scores = song.score.filter(
+            player=player.rival).order_by('-score')
         if len(my_scores) > 0 and len(rival_scores) > 0:
             match += 1
             print(my_scores)
@@ -805,16 +806,16 @@ def rivalpage(request):
             rival_top = rival_scores[0]
             if my_top.score >= rival_top.score:
                 compares.append({
-                    'your' : my_top,
-                    'rival' : rival_top,
-                    'win' : True  
+                    'your': my_top,
+                    'rival': rival_top,
+                    'win': True
                 })
                 win += 1
             else:
                 compares.append({
-                    'your' : my_top,
-                    'rival' : rival_top,
-                    'win' : False 
+                    'your': my_top,
+                    'rival': rival_top,
+                    'win': False
                 })
     print(compares)
     params['compares'] = compares
@@ -832,4 +833,19 @@ def rivalpage(request):
             user.player.save()
             return redirect('app:mypage')
     return render(request, 'rivalpage.html', params)
-    
+
+
+def headlines(request, page=1):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    start = (page-1) * 100
+    end = page * 100
+    headlines = Headline.objects.all().order_by('-time')[start:end]
+    params['headlines'] = headlines
+    params['old'] = page + 1
+    params['page'] = page
+    params['new'] = page - 1
+    return render(request, 'headlines.html', params)

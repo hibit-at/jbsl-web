@@ -23,7 +23,11 @@
                 <form method="post">
                     {% csrf_token %}
                     <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
-                    <button class="danger" style="transform:scale(0.7);" type="submit" name="decline" value="{{ league.pk }}">拒否</button>
+                    <button class="danger"
+                            style="transform:scale(0.7);"
+                            type="submit"
+                            name="decline"
+                            value="{{ league.pk }}">拒否</button>
                 </form>
             </h3>
         </div>
@@ -45,10 +49,16 @@
     {% endif %}
     <h3>Headlines</h3>
     {% for headline in headlines %}
-    <ul>
-        <li> <img src="{{headline.player.imageURL}}" class="icon"/> {{headline.text}} （{{headline.time}}）</li>
-    </ul>
+        <ul>
+            <li>
+                <img src="{{ headline.player.imageURL }}" class="icon"/>
+                {{ headline.text }} （{{ headline.time }}）
+            </li>
+        </ul>
     {% endfor %}
+    <p>
+        <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
+    </p>
     <h3>
         <img src= {% static 'pict_player.png' %} width="40px" height="40px">
         Players

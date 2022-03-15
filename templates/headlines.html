@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+    <h4>All Headlines</h4>
+    {% for headline in headlines %}
+        <ul>
+            <li>
+                <img src="{{ headline.player.imageURL }}" class="icon"/>
+                {{ headline.text }} （{{ headline.time }}）
+            </li>
+        </ul>
+    {% endfor %}
+    <p>
+        {% if new > 0 %}
+            <a href="{% url 'app:headlines' page=new %}">
+                <span class="dl_link">NEW</span>
+            </a>
+        {% endif %}
+        PAGE {{ page }}
+        <a href="{% url 'app:headlines' page=old %}">
+            <span class="dl_link">OLD</span>
+        </a>
+    </p>
+{% endblock content %}

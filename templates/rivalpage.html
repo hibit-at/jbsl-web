@@ -12,13 +12,13 @@
             <th>Win</th>
             <th>SongCover</th>
             <th>SongTitle</th>
-            <th>YourScore</th>
-            <th>RivalScore</th>
+            <th>YourAcc</th>
+            <th>RivalAcc</th>
         </thead>
         {% for compare in compares %}
             <tr>
                 <td>
-                    {% if compare.Win %}
+                    {% if compare.win %}
                         <span class="diff" style="color:white">WIN</span>
                     {% else %}
                         LOSE

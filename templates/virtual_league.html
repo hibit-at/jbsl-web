@@ -98,18 +98,6 @@
                             </span>
                         </td>
                         <td>
-                            {{ player.comment }}
-                            {% if user.player == player %}
-                                <br />
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <input type="text"
-                                           size="80px"
-                                           name="leaguecomment"
-                                           value="{{ player.comment }}"/>
-                                    <button class="btn" type="submit">コメント</button>
-                                </form>
-                            {% endif %}
                         </td>
                     </tr>
                     {% if player.rank == 8 %}

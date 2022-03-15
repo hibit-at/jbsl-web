@@ -295,7 +295,7 @@
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
-                        <tr {% if user.player == player or user.player.rival == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
+                        <tr {% if user.player == score.player or user.player.rival == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                                 <td width="50px">
                                     #{{ score.rank }}
                                 </td>

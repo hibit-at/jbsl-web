@@ -4,7 +4,7 @@
     {% for headline in headlines %}
         <ul>
             <li>
-                <img src="{{ headline.player.imageURL }}" class="icon"/>
+                {% if headline.player != None %}<img src="{{ headline.player.imageURL }}" class="icon"/>{% endif %}
                 {{ headline.text }} （{{ headline.time }}）
             </li>
         </ul>

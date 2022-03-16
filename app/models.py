@@ -116,7 +116,7 @@ class LeagueComment(models.Model):
 
 
 class Headline(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(default='', max_length=200)
     time = models.DateTimeField()
 

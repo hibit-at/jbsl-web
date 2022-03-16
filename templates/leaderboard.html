@@ -32,7 +32,12 @@
         </p>
         {% if league.isPublic %}
             <p>
-                borderPP の上限 : {{ league.limit }}
+                borderPP の上限 :
+                {% if league.limit == 2000 %}
+                    上限なし
+                {% else %}
+                    {{ league.limit }}
+                {% endif %}
             </p>
         {% endif %}
         {% if user.player.isActivated %}
@@ -51,18 +56,44 @@
                         </span>
                     </p>
                 {% else %}
-                    {% if league.isPublic %}
-                        {% if user.player.borderPP <= league.limit %}
-                            <p>
-                                このリーグに参加できます。
-                            </p>
-                            <form method="post">
-                                {% csrf_token %}
-                                <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
-                            </form>
+                    {% if not league.isLive %}
+                        <p>
+                            終了したリーグに参加することはできません。
+                            {% if not isMember %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button class="btn"
+                                            name="virtual_join"
+                                            type="submit"
+                                            value="{{ user.player.sid }}">バーチャル参加</button>
+                                </form>
+                            {% endif %}
+                        </p>
+                    {% else %}
+                        {% if league.isPublic %}
+                            {% if user.player.borderPP <= league.limit %}
+                                <p>
+                                    このリーグに参加できます。
+                                </p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
+                                </form>
+                            {% else %}
+                                <p>
+                                    あなたは実力が高すぎるためこのリーグには参加できません……
+                                </p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button class="btn"
+                                            name="virtual_join"
+                                            type="submit"
+                                            value="{{ user.player.sid }}">バーチャル参加</button>
+                                </form>
+                            {% endif %}
                         {% else %}
                             <p>
-                                あなたは実力が高すぎるためこのリーグには参加できません……
+                                非公開リーグには参加できません。
                             </p>
                             <form method="post">
                                 {% csrf_token %}
@@ -72,17 +103,6 @@
                                         value="{{ user.player.sid }}">バーチャル参加</button>
                             </form>
                         {% endif %}
-                    {% else %}
-                        <p>
-                            非公開リーグには参加できません。
-                        </p>
-                        <form method="post">
-                            {% csrf_token %}
-                            <button class="btn"
-                                    name="virtual_join"
-                                    type="submit"
-                                    value="{{ user.player.sid }}">バーチャル参加</button>
-                        </form>
                     {% endif %}
                 {% endif %}
             {% endif %}
@@ -295,7 +315,7 @@
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
-                        <tr {% if user.player == score.player or user.player.rival == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
+                            <tr {% if user.player == score.player or user.player.rival == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                                 <td width="50px">
                                     #{{ score.rank }}
                                 </td>
@@ -361,17 +381,23 @@
     {% endif %}
     <div style="text-align:center">
         {% if isMember %}
-            <p>
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="danger"
-                            name="disjoin"
-                            type="submit"
-                            value="{{ user.player.sid }}">
-                        脱退
-                    </button>
-                </form>
-            </p>
+            {% if league.isLive %}
+                <p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button class="danger"
+                                name="disjoin"
+                                type="submit"
+                                value="{{ user.player.sid }}">
+                            脱退
+                        </button>
+                    </form>
+                </p>
+            {% else %}
+                <p>
+                    終了したリーグから脱退することはできません
+                </p>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock content %}

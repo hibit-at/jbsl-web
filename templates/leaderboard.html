@@ -113,68 +113,70 @@
             集計終了日時は {{ league.end }} です。
         </p>
     </div>
-    {% if isOwner and league.isLive %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <div class="info-submit">
-            <form method="post">
-                {% csrf_token %}
-                <h3>リーグ情報の変更</h3>
-                <p>
-                    <label>Title :</label>
-                    <input type="text" size="50px" name="title" value="{{ league.name }}" />
-                </p>
-                <p>
+    {% if isOwner %}
+        {% if league.isLive %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <div class="info-submit">
+                <form method="post">
+                    {% csrf_token %}
+                    <h3>リーグ情報の変更</h3>
                     <p>
-                        <label>Description :</label>
-                        {{ league.description }}
+                        <label>Title :</label>
+                        <input type="text" size="50px" name="title" value="{{ league.name }}" />
                     </p>
-                    <input type="textarea" style="width:400px;height:100px" name="description" />
-                </p>
-                <p>
-                    <label>終了日時 :</label>
-                    <input type="datetime-local" name="end" value="{{ end_str }}" />
-                </p>
-                <p>
-                    <label>有効譜面数 :</label>
-                    <input type="range"
-                           min="0"
-                           max="20"
-                           value="{{ league.method }}"
-                           style="width:200px"
-                           name="valid"/>
-                    <span class="indicate-valid">{{ league.method }}</span>
-                </p>
-                <p>
-                    <label>borderPPの上限 :</label>
-                    <input type="range"
-                           min="0"
-                           max="2000"
-                           value="{{ league.limit }}"
-                           style="width:300px"
-                           name="limit">
-                    <span class="indicate-limit">{{ league.limit }}</span>
-                </p>
-                <p>
-                    <button class="btn" type="submit">変更</button>
-                </p>
-            </form>
-        </div>
-        <script>
+                    <p>
+                        <p>
+                            <label>Description :</label>
+                            {{ league.description }}
+                        </p>
+                        <input type="textarea" style="width:400px;height:100px" name="description" />
+                    </p>
+                    <p>
+                        <label>終了日時 :</label>
+                        <input type="datetime-local" name="end" value="{{ end_str }}" />
+                    </p>
+                    <p>
+                        <label>有効譜面数 :</label>
+                        <input type="range"
+                               min="0"
+                               max="20"
+                               value="{{ league.method }}"
+                               style="width:200px"
+                               name="valid"/>
+                        <span class="indicate-valid">{{ league.method }}</span>
+                    </p>
+                    <p>
+                        <label>borderPPの上限 :</label>
+                        <input type="range"
+                               min="0"
+                               max="2000"
+                               value="{{ league.limit }}"
+                               style="width:300px"
+                               name="limit">
+                        <span class="indicate-limit">{{ league.limit }}</span>
+                    </p>
+                    <p>
+                        <button class="btn" type="submit">変更</button>
+                    </p>
+                </form>
+            </div>
+            <script>
         $("input[name='valid']").on("input", function (e) {
             var range = e.target
             $(".indicate-valid").text(range.value)
         })
-        </script>
-        <script>
+            </script>
+            <script>
         $("input[name='limit']").on("input", function (e) {
             var range = e.target
             $(".indicate-limit").text(range.value)
         })
-        </script>
-    {% else %}
-        <p>
-            終了したリーグの情報を変更することはできません
-        </p>
+            </script>
+        {% else %}
+            <p>
+                終了したリーグの情報を変更することはできません
+            </p>
+        {% endif %}
     {% endif %}
     <div id="{{ league.id }}"
          class="border8-target"

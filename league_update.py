@@ -1,14 +1,46 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import os
 import django
 import requests
+
 
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import League, Score, Headline
     from app.views import calculate_scoredrank_LBs, score_to_headline
-    for league in League.objects.filter(end__gt=datetime.now()):
+    for league in League.objects.filter(isLive=True):
+        end = league.end
+        now = datetime.now(timezone.utc)
+        print(end,now)
+        if now > end:
+            print('end')
+            league.isLive = False
+            if league.third != None:
+                Headline.objects.create(
+                    player=league.third,
+                    time=end,
+                    text=f'{league.third} さんが 3 位！',
+                )
+            if league.second != None:
+                Headline.objects.create(
+                    player=league.second,
+                    time=end + timedelta(seconds=1),
+                    text=f'{league.second} さんが 2 位！',
+                )
+            if league.first != None:
+                Headline.objects.create(
+                    player=league.first,
+                    time=end + timedelta(seconds=2),
+                    text=f'{league.first} さんが 1 位！',
+                )
+            Headline.objects.create(
+                player=None,
+                time=end + timedelta(seconds=3),
+                text=f'{league} リーグが終了しました！'
+            )
+            league.save()
+            continue
         for player in league.player.all().union(league.virtual.all()):
             print(player)
             for song in league.playlist.songs.all():
@@ -50,25 +82,25 @@ def league_update_process():
             if i == 0:
                 if league.first != player:
                     Headline.objects.create(
-                        player = player,
-                        time = datetime.now(),
-                        text = f'{player} さんが {league} リーグで 1 位になりました！'
+                        player=player,
+                        time=datetime.now(),
+                        text=f'{player} さんが {league} リーグで 1 位になりました！'
                     )
                 league.first = player
             if i == 1:
                 if league.second != player:
                     Headline.objects.create(
-                        player = player,
-                        time = datetime.now(),
-                        text = f'{player} さんが {league} リーグで 2 位になりました！'
+                        player=player,
+                        time=datetime.now(),
+                        text=f'{player} さんが {league} リーグで 2 位になりました！'
                     )
                 league.second = player
             if i == 2:
                 if league.third != player:
                     Headline.objects.create(
-                        player = player,
-                        time = datetime.now(),
-                        text = f'{player} さんが {league} リーグで 3 位になりました！'
+                        player=player,
+                        time=datetime.now(),
+                        text=f'{player} さんが {league} リーグで 3 位になりました！'
                     )
                 league.third = player
         league.save()

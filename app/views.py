@@ -558,8 +558,10 @@ def leagues(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    active_leagues = League.objects.filter(isOpen=True).order_by('end')
+    active_leagues = League.objects.filter(isOpen=True, isLive=True).order_by('end')
+    end_leagues = League.objects.filter(isOpen=True, isLive=False).order_by('-end')
     params['active_leagues'] = active_leagues
+    params['end_leagues'] = end_leagues
     return render(request, 'leagues.html', params)
 
 

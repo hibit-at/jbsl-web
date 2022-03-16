@@ -72,14 +72,18 @@ class League(models.Model):
     isPermanent = models.BooleanField(default=False)
     isOpen = models.BooleanField(default=False)
     isPublic = models.BooleanField(default=True)
+    isLive = models.BooleanField(default=True)
     invite = models.ManyToManyField(Player, blank=True, related_name='invite')
     virtual = models.ManyToManyField(
         Player, blank=True, related_name='virtual')
     playlist = models.ForeignKey(
         Playlist, on_delete=models.CASCADE, null=True, blank=True)
-    first = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='first')
-    second = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='second')
-    third = models.ForeignKey(Player,on_delete=models.SET_NULL,null=True,blank=True, related_name='third')
+    first = models.ForeignKey(
+        Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='first')
+    second = models.ForeignKey(
+        Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='second')
+    third = models.ForeignKey(
+        Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='third')
 
     def __str__(self):
         return str(self.name)
@@ -87,7 +91,8 @@ class League(models.Model):
 
 class Score(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='score')
+    song = models.ForeignKey(
+        Song, on_delete=models.CASCADE, related_name='score')
     league = models.ForeignKey(League, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
     acc = models.FloatField(default=0)
@@ -111,8 +116,8 @@ class LeagueComment(models.Model):
 
 
 class Headline(models.Model):
-    player = models.ForeignKey(Player,on_delete=models.CASCADE)
-    text = models.CharField(default='',max_length=200)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
+    text = models.CharField(default='', max_length=200)
     time = models.DateTimeField()
 
     def __str__(self):

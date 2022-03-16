@@ -75,4 +75,70 @@
             </tr>
         {% endfor %}
     </table>
+    <h3>End Leagues</h3>
+    <table class="table table-striped table-borderless"
+           style="background-color:gray">
+        <thead>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Limit</th>
+            <th>Owner</th>
+            <th>End</th>
+            <th>1st</th>
+            <th>2nd</th>
+            <th>3rd</th>
+        </thead>
+        {% for league in end_leagues %}
+            <tr style="background-color:{{ league.color }}">
+                <td>
+                    <a href= {% url 'app:leaderboard' pk=league.pk %}>
+                        <img class="thumb" src=" {{ league.playlist.image }}" />
+                    </a>
+                </td>
+                <td>{{ league.name }}</td>
+                <td>{{ league.description|truncatechars:50 }}</td>
+                <td>
+                    {% if league.limit == 2000 %}
+                        上限なし
+                    {% else %}
+                        {{ league.limit }}
+                    </td>
+                {% endif %}
+                <td>
+                    <a href
+                       {% url 'app:userpage' sid=league.owner.sid %}
+                       style="color:black">
+                        <img class="icon" src="{{ league.owner.imageURL }}" />
+                        <br>
+                        {{ league.owner.name }}
+                    </a>
+                </td>
+                <td>{{ league.end }}</td>
+                <td>
+                    {% if league.first != None %}
+                        <img class="icon" src={{ league.first.imageURL }}>
+                        <br>
+                        {{ league.first.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.second != None %}
+                        <img class="icon" src={{ league.second.imageURL }}>
+                        <br>
+                        {{ league.second.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.third != None %}
+                        <img class="icon" src={{ league.third.imageURL }}>
+                        <br>
+                        {{ league.third.name }}
+                    {% endif %}
+                </td>
+                <td>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock content %}

@@ -365,7 +365,7 @@
             {% endif %}
         </div>
     {% endfor %}
-    {% if isOwner %}
+    {% if isOwner and league.isLive %}
         <form method="post">
             {% csrf_token %}
             <select multiple size="{{ not_invite_players|length }}" name="invite">

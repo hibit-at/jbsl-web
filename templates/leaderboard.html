@@ -113,7 +113,7 @@
             集計終了日時は {{ league.end }} です。
         </p>
     </div>
-    {% if isOwner %}
+    {% if isOwner and league.isLive %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <div class="info-submit">
             <form method="post">
@@ -171,6 +171,10 @@
             $(".indicate-limit").text(range.value)
         })
         </script>
+    {% else %}
+        <p>
+            終了したリーグの情報を変更することはできません
+        </p>
     {% endif %}
     <div id="{{ league.id }}"
          class="border8-target"

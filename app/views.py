@@ -449,7 +449,7 @@ def playlists(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    playlists = Playlist.objects.all()
+    playlists = Playlist.objects.all().order_by('-pk')
     params['playlists'] = playlists
     return render(request, 'playlists.html', params)
 

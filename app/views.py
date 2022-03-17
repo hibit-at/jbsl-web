@@ -105,6 +105,8 @@ def index(request):
             league.invite.remove(player)
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
+    active_leagues = League.objects.filter(isOpen=True, isLive=True).order_by('end')
+    params['active_leagues'] = active_leagues
     return render(request, 'index.html', params)
 
 

@@ -19,92 +19,113 @@
     {% for league in invitations %}
         <div style="text-align:center">
             <h3>
-                ! リーグ <span style="color:{{ league.color }}">{{ league }}</span> から招待が届いています !
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
-                    <button class="danger"
-                            style="transform:scale(0.7);"
-                            type="submit"
-                            name="decline"
-                            value="{{ league.pk }}">拒否</button>
-                </form>
-            </h3>
-        </div>
+            ! リーグ <span style="color:{{ league.color }}">{{ league }}</span> から招待が届いています !
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
+                <button class="danger"
+                        style="transform:scale(0.7);"
+                        type="submit"
+                        name="decline"
+                        value="{{ league.pk }}">拒否</button>
+            </form>
+        </h3>
+    </div>
+{% endfor %}
+{% if not user.is_authenticated %}
+    <h3>参加方法</h3>
+    <ul>
+        <li>右上の「Discord 認証」から仮登録を完了してください。</li>
+        <li>登録には Discord のアカウントが必要となります。</li>
+        <li>
+        Discord 認証時、<u>最初の 1 回はエラーが出るようです。</u>（原因不明です。すいません）
+    </li>
+    <li>その場合、ブラウザの「戻る」ボタンを使ってリトライお願いします。</li>
+    <li>仮登録後、ScoreSaber のIDを設定することにより、本登録となります。</li>
+    <li>
+    登録できるのは<u>日本人プレイヤーのみ</u>となります。Sorry, only Japanese players can be registered.
+</li>
+</ul>
+{% endif %}
+<h3>Headlines</h3>
+{% for headline in headlines %}
+    <ul>
+        <li>
+            {% if headline.player != None %}
+                <a href="{% url 'app:userpage' sid=headline.player.sid %}">
+                    <img src="{{ headline.player.imageURL }}" class="icon"/>
+                </a>
+            {% endif %}
+            {{ headline.text }} （{{ headline.time }}）
+        </li>
+    </ul>
+{% endfor %}
+<p>
+    <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
+</p>
+<h3>Live Leagues</h3>
+<table class="table table-striped table-borderless"
+       style="background-color:gray">
+    <thead>
+        <th>Cover</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Limit</th>
+        <th>Owner</th>
+        <th>End</th>
+        <th>1st</th>
+        <th>2nd</th>
+        <th>3rd</th>
+    </thead>
+    {% for league in active_leagues %}
+        <tr style="background-color:{{ league.color }}">
+            <td>
+                <a href= {% url 'app:leaderboard' pk=league.pk %}>
+                    <img class="thumb" src=" {{ league.playlist.image }}" />
+                </a>
+            </td>
+            <td>{{ league.name }}</td>
+            <td>{{ league.description|truncatechars:50 }}</td>
+            <td>
+                {% if league.limit == 2000 %}
+                    上限なし
+                {% else %}
+                    {{ league.limit }}
+                </td>
+            {% endif %}
+            <td>
+                <a href
+                   {% url 'app:userpage' sid=league.owner.sid %}
+                   style="color:black">
+                    <img class="icon" src="{{ league.owner.imageURL }}" />
+                    <br>
+                    {{ league.owner.name }}
+                </a>
+            </td>
+            <td>{{ league.end }}</td>
+            <td>
+                {% if league.first != None %}
+                    <img class="icon" src={{ league.first.imageURL }}>
+                    <br>
+                    {{ league.first.name }}
+                {% endif %}
+            </td>
+            <td>
+                {% if league.second != None %}
+                    <img class="icon" src={{ league.second.imageURL }}>
+                    <br>
+                    {{ league.second.name }}
+                {% endif %}
+            </td>
+            <td>
+                {% if league.third != None %}
+                    <img class="icon" src={{ league.third.imageURL }}>
+                    <br>
+                    {{ league.third.name }}
+                {% endif %}
+            </td>
+            <td></td>
+        </tr>
     {% endfor %}
-    {% if not user.is_authenticated %}
-        <h3>参加方法</h3>
-        <ul>
-            <li>右上の「Discord 認証」から仮登録を完了してください。</li>
-            <li>登録には Discord のアカウントが必要となります。</li>
-            <li>
-                Discord 認証時、<u>最初の 1 回はエラーが出るようです。</u>（原因不明です。すいません）
-            </li>
-            <li>その場合、ブラウザの「戻る」ボタンを使ってリトライお願いします。</li>
-            <li>仮登録後、ScoreSaber のIDを設定することにより、本登録となります。</li>
-            <li>
-                登録できるのは<u>日本人プレイヤーのみ</u>となります。Sorry, only Japanese players can be registered.
-            </li>
-        </ul>
-    {% endif %}
-    <h3>Headlines</h3>
-    {% for headline in headlines %}
-        <ul>
-            <li>
-                {% if headline.player != None %}<img src="{{ headline.player.imageURL }}" class="icon"/>{% endif %}
-                {{ headline.text }} （{{ headline.time }}）
-            </li>
-        </ul>
-    {% endfor %}
-    <p>
-        <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
-    </p>
-    <h3>
-        <img src= {% static 'pict_player.png' %} width="40px" height="40px">
-        Players
-    </h3>
-    <table class="table table-striped table-borderless">
-        <thead>
-            <th>Player</th>
-            <th>Social</th>
-            <th>HMD</th>
-            <th>BorderPP</th>
-            <th>Message</th>
-        </thead>
-        {% for a in active_players %}
-            <tr>
-                <td>
-                    <a href={% url 'app:userpage' sid=a.sid %} style="color:black">
-                        <img class="icon" src={{ a.imageURL }} />
-                        {{ a.name }}
-                    </a>
-                </td>
-                <td>
-                    {% if a.twitch != '' %}
-                        <a href="https://twitch.tv/{{ a.twitch }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'twitch.png' %} />
-                        </a>
-                    {% endif %}
-                    {% if a.twitter != '' %}
-                        <a href="https://twitter.com/{{ a.twitter }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'twitter.png' %} />
-                        </a>
-                    {% endif %}
-                    {% if a.booth != '' %}
-                        <a href="https://booth.pm/ja/items/{{ a.booth }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'booth.png' %} />
-                        </a>
-                    {% endif %}
-                </td>
-                <td>
-                    <img width="30px" height="30px" src="{% static a.hmd %}.png" />
-                </td>
-                <td>{{ a.borderPP | floatformat:2 | intcomma }}</td>
-                <td>{{ a.message }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <p>
-        Welcome, {{ active_players|length }} players!
-    </p>
+</table>
 {% endblock %}

@@ -2,3 +2,4 @@ __pycache__
 db.sqlite3
 local.py
 sudosebug.bat
+discord_manual_message.py

@@ -4,7 +4,11 @@
     {% for headline in headlines %}
         <ul>
             <li>
-                {% if headline.player != None %}<img src="{{ headline.player.imageURL }}" class="icon"/>{% endif %}
+                {% if headline.player != None %}
+                    <a href="{% url 'app:userpage' sid=headline.player.sid %}">
+                        <img src="{{ headline.player.imageURL }}" class="icon"/>
+                    </a>
+                {% endif %}
                 {{ headline.text }} （{{ headline.time }}）
             </li>
         </ul>

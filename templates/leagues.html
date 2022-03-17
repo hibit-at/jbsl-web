@@ -41,8 +41,7 @@
                     </td>
                 {% endif %}
                 <td>
-                    <a href
-                       {% url 'app:userpage' sid=league.owner.sid %}
+                    <a href="{% url 'app:userpage' sid=league.owner.sid %}"
                        style="color:black">
                         <img class="icon" src="{{ league.owner.imageURL }}" />
                         <br>
@@ -52,23 +51,32 @@
                 <td>{{ league.end }}</td>
                 <td>
                     {% if league.first != None %}
-                        <img class="icon" src={{ league.first.imageURL }}>
-                        <br>
-                        {{ league.first.name }}
+                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
+                           style="color:black">
+                            <img class="icon" src={{ league.first.imageURL }}>
+                            <br>
+                            {{ league.first.name }}
+                        </a>
                     {% endif %}
                 </td>
                 <td>
                     {% if league.second != None %}
-                        <img class="icon" src={{ league.second.imageURL }}>
-                        <br>
-                        {{ league.second.name }}
+                        <a href="{% url 'app:userpage' sid=league.second.sid %}"
+                           style="color:black">
+                            <img class="icon" src={{ league.second.imageURL }}>
+                            <br>
+                            {{ league.second.name }}
+                        </a>
                     {% endif %}
                 </td>
                 <td>
                     {% if league.third != None %}
-                        <img class="icon" src={{ league.third.imageURL }}>
-                        <br>
-                        {{ league.third.name }}
+                        <a href="{% url 'app:userpage' sid=league.third.sid %}"
+                           style="color:black">
+                            <img class="icon" src={{ league.third.imageURL }}>
+                            <br>
+                            {{ league.third.name }}
+                        </a>
                     {% endif %}
                 </td>
                 <td></td>
@@ -114,7 +122,9 @@
                         {{ league.owner.name }}
                     </a>
                 </td>
-                <td>{{ league.end }}</td>
+                <td>
+                    {{ league.end }}
+                </td>
                 <td>
                     {% if league.first != None %}
                         <img class="icon" src={{ league.first.imageURL }}>

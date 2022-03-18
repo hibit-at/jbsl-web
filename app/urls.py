@@ -21,4 +21,5 @@ urlpatterns = [
     path('virtual_league/<int:pk>',views.virtual_league, name='virtual_league'),
     path('userpage/rival', views.rivalpage, name='rivalpage'),
     path('headlines/<int:page>', views.headlines, name='headlines'),
+    path('players/',views.players, name='players'),
 ]

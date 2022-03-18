@@ -853,3 +853,18 @@ def headlines(request, page=1):
     params['page'] = page
     params['new'] = page - 1
     return render(request, 'headlines.html', params)
+
+def players(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+        player = user.player
+        if player.isActivated:
+            invitations = player.invite.all()
+            params['invitations'] = invitations
+    active_players = Player.objects.filter(
+        isActivated=True).order_by('-borderPP')
+    params['active_players'] = active_players
+    return render(request, 'players.html', params)

@@ -868,3 +868,12 @@ def players(request):
         isActivated=True).order_by('-borderPP')
     params['active_players'] = active_players
     return render(request, 'players.html', params)
+
+
+def debug(request):
+    if not request.user.is_staff:
+        return redirect('app:index')
+    active_players = Player.objects.filter(isActivated=True)
+    params = {}
+    params['active_players'] = active_players
+    return render(request, 'debug.html', params)

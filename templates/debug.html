@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for player in active_players %}
+        <ul>
+            <li>
+                {{ player }}
+                {% for league in player.leagues.all %}<li>{{ league }}</li>{% endfor %}
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock content %}

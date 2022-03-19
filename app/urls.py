@@ -22,4 +22,5 @@ urlpatterns = [
     path('userpage/rival', views.rivalpage, name='rivalpage'),
     path('headlines/<int:page>', views.headlines, name='headlines'),
     path('players/',views.players, name='players'),
+    path('debug/',views.debug, name='debug'),
 ]

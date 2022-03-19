@@ -873,7 +873,7 @@ def players(request):
 def debug(request):
     if not request.user.is_staff:
         return redirect('app:index')
-    active_players = Player.objects.filter(isActivated=True)
+    active_players = Player.objects.filter(isActivated=True).order_by('-pp')
     params = {}
     params['active_players'] = active_players
     return render(request, 'debug.html', params)

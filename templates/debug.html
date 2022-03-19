@@ -4,7 +4,7 @@
         <ul>
             <li>
                 {{ player }}
-                {% for league in player.leagues.all %}<li>{{ league }}</li>{% endfor %}
+                {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
             </li>
         </ul>
     {% endfor %}

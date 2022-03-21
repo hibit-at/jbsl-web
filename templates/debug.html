@@ -3,14 +3,12 @@
     {% for player in active_players %}
         <ul>
             <li>
-                {{ player }}
+                {{ player }} (rival : {{ player.rival }})
                 <ul>
                     {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
                 </ul>
                 {% if player.virtual.all|length > 0 %}
-                    <p>
-                        virtual
-                    </p>
+                    virtual
                     <ul>
                         {% for league in player.virtual.all %}<li>{{ league }}</li>{% endfor %}
                     </ul>

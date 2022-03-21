@@ -8,6 +8,9 @@
                     {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
                 </ul>
                 {% if player.virtual.all|length > 0 %}
+                    <p>
+                        virtual
+                    </p>
                     <ul>
                         {% for league in player.virtual.all %}<li>{{ league }}</li>{% endfor %}
                     </ul>

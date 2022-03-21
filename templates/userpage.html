@@ -122,7 +122,7 @@
     {% else %}
         <p>
             {% if player.rival != None %}
-                あなたは {{ player.rival }} さんをライバルに設定しています。
+                あなたは {{ player.rival }} さんをライバルに設定しています。→<a href="{% url 'app:rivalpage' %}"><span class="dl_link">二人のお部屋</span></a>
             {% else %}
                 ライバルに設定した人は誰もいないようです。
             {% endif %}

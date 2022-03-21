@@ -3,7 +3,8 @@
     {% for player in active_players %}
         <ul>
             <li>
-                {{ player }} (rival : {{ player.rival }})
+                {{ player }}
+                {% if player.rival != None %} (rival : {{ player.rival }}){% endif %}
                 <ul>
                     {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
                 </ul>

@@ -140,6 +140,11 @@ def userpage(request, sid=0):
             rival = Player.objects.get(sid=rival_sid)
             user.player.rival = rival
             user.player.save()
+        if 'icon_scoresaber' in post:
+            player.imageURL = f'https://cdn.scoresaber.com/avatars/{player.sid}.jpg'
+        if 'icon_discord' in post:
+            if social.extra_data['avatar'] != None:
+                player.imageURL = f'https://cdn.discordapp.com/avatars/{social.uid}/{social.extra_data["avatar"]}'
         player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)

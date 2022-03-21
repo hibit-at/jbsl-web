@@ -7,6 +7,14 @@
         <img class="thumb" src={{ player.imageURL }} />
     </p>
     <p>
+        <form method="post">
+            {% csrf_token %}
+            <label>Image :</label>
+            <button class="btn" name="icon_scoresaber">ScoreSaber</button>
+            <button class="btn" name="icon_discord">Discord</button>
+        </form>
+    </p>
+    <p>
         <a href="https://scoresaber.com/u/{{ player.sid }}" target="blank">ScoreSaber Link</a>
     </p>
     <p>
@@ -73,21 +81,6 @@
             <form method="post">
                 {% csrf_token %}
                 <p>
-                    {% if player.imageURL == "https://cdn.scoresaber.com/avatars/steam.png" or player.imageURL == "https://cdn.scoresaber.com/avatars/oculus.png" %}
-                        <label>ImageURL :</label>
-                        <input type="text" size="100" name="imageURL" value= {{ player.imageURL }} />
-                        <p>
-                            ! スコアセイバーのアイコンが、Oculus マークもしくは「?」になってしまうプレイヤーのための変更機能です。
-                        </p>
-                        <p>
-                            ! Twitter のアイコン画像を推奨しています。それ以外の形式の URL だと弾きます。
-                        </p>
-                        <p>
-                            記入例：https://pbs.twimg.com/profile_images/1135549606597615616/h6UVW0Ux_400x400.png
-                        </p>
-                    {% endif %}
-                </p>
-                <p>
                     <label>Message :</label>
                     <input type="text" size="100" name="message" value={{ player.message }}>
                 </p>
@@ -151,11 +144,15 @@
                 <td>
                     <span>{{ t.song.title|truncatechars:50 }}</span>
                 </td>
-                <td>{{ t.song.author }}</td>
+                <td>
+                    {{ t.song.author }}
+                </td>
                 <td>
                     <span class="diff" style="color:{{ t.song.color }}">{{ t.song.diff }}</span>
                 </td>
-                <td>{{ t.acc|floatformat:2 }}</td>
+                <td>
+                    {{ t.acc|floatformat:2 }}
+                </td>
                 <td>
                     {{ t.rawPP|floatformat:2 }}
                 </td>

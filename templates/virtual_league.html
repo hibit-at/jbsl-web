@@ -172,19 +172,6 @@
                                 </td>
                                 <td>
                                     {{ score.comment }}
-                                    {% if user.player == score.player %}
-                                        <br />
-                                        <form method="post">
-                                            {% csrf_token %}
-                                            <input type="text"
-                                                   size="80px"
-                                                   name="scorecomment"
-                                                   value="{{ score.comment }}"/>
-                                            <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
-                                                コメント
-                                            </button>
-                                        </form>
-                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

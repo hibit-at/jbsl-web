@@ -64,7 +64,7 @@ league_colors = [
     {'value': 'lightgreen', 'text': 'Green'},
     {'value': 'lightsalmon', 'text': 'Orange'},
     {'value': 'lightpink', 'text': 'Red'},
-    {'value': '#FF99FF', 'text': 'Purple'},
+    {'value': '#FFCCFF', 'text': 'Purple'},
     {'value': 'lightyellow', 'text': 'Yellow'},
 ]
 

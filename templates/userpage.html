@@ -6,14 +6,16 @@
     <p>
         <img class="thumb" src={{ player.imageURL }} />
     </p>
-    <p>
-        <form method="post">
-            {% csrf_token %}
-            <label>Image :</label>
-            <button class="btn" name="icon_scoresaber">ScoreSaber</button>
-            <button class="btn" name="icon_discord">Discord</button>
-        </form>
-    </p>
+    {% if user.player == player %}
+        <p>
+            <form method="post">
+                {% csrf_token %}
+                <label>Image :</label>
+                <button class="btn" name="icon_scoresaber">ScoreSaber</button>
+                <button class="btn" name="icon_discord">Discord</button>
+            </form>
+        </p>
+    {% endif %}
     <p>
         <a href="https://scoresaber.com/u/{{ player.sid }}" target="blank">ScoreSaber Link</a>
     </p>

@@ -42,11 +42,7 @@
                 {% endif %}
                 <td>
                     <a href="{% url 'app:userpage' sid=league.owner.sid %}"
-                       style="color:black">
-                        <img class="icon" src="{{ league.owner.imageURL }}" />
-                        <br>
-                        {{ league.owner.name }}
-                    </a>
+                       style="color:black">{{ league.owner.name }}</a>
                 </td>
                 <td>{{ league.end }}</td>
                 <td>
@@ -87,7 +83,6 @@
     <table class="table table-striped table-borderless"
            style="background-color:gray">
         <thead>
-            <th>Cover</th>
             <th>Title</th>
             <th>Description</th>
             <th>Limit</th>
@@ -98,13 +93,10 @@
             <th>3rd</th>
         </thead>
         {% for league in end_leagues %}
-            <tr style="background-color:{{ league.color }}">
+            <tr style="background-color:{{ league.color }};">
                 <td>
-                    <a href= {% url 'app:leaderboard' pk=league.pk %}>
-                        <img class="thumb" src=" {{ league.playlist.image }}" />
-                    </a>
+                    <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name }}</a>
                 </td>
-                <td>{{ league.name }}</td>
                 <td>{{ league.description|truncatechars:50 }}</td>
                 <td>
                     {% if league.limit == 2000 %}
@@ -117,8 +109,6 @@
                     <a href
                        {% url 'app:userpage' sid=league.owner.sid %}
                        style="color:black">
-                        <img class="icon" src="{{ league.owner.imageURL }}" />
-                        <br>
                         {{ league.owner.name }}
                     </a>
                 </td>
@@ -145,8 +135,6 @@
                         <br>
                         {{ league.third.name }}
                     {% endif %}
-                </td>
-                <td>
                 </td>
             </tr>
         {% endfor %}

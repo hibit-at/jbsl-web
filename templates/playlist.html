@@ -125,7 +125,9 @@
             {% for song in playlist.recommend.all %}
                 <tr>
                     <td>
-                        <img class="mid-thumb" src="{{ song.imageURL }}"/>
+                        <a href="https://beatsaver.com/maps/{{ song.bsr }}">
+                            <img class="mid-thumb" src="{{ song.imageURL }}"/>
+                        </a>
                     </td>
                     <td>{{ song.title|truncatechars:50 }}</td>
                     <td>{{ song.author }}</td>

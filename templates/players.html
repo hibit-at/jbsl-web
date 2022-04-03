@@ -19,8 +19,15 @@
                 <td>
                     <a href={% url 'app:userpage' sid=a.sid %} style="color:black">
                         <img class="icon" src={{ a.imageURL }} />
-                        {{ a.name }}
+                        {% if a.isSupporter %}
+                            <span style="color:firebrick;font-weight:bold">{{ a.name }}</span>
+                        {% else %}
+                            {{ a.name }}
+                        {% endif %}
                     </a>
+                    {% if a.isSupporter %}
+                        <img src="{% static 'Check.png' %}" height="15px" width="15px">
+                    {% endif %}
                 </td>
                 <td>
                     {% if a.twitch != '' %}

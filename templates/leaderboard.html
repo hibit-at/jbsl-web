@@ -216,7 +216,11 @@
                         <td width="50px">#{{ player.rank }}</td>
                         <td width="250px">
                             <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                            {{ player.name }}
+                            {% if player.isSupporter %}
+                                <span style="color:firebrick;font-weight:bold">{{ player.name }}</span>
+                            {% else %}
+                                {{ player.name }}
+                            {% endif %}
                         </td>
                         <td width="70px">
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>

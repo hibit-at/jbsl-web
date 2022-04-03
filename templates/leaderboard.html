@@ -331,7 +331,11 @@
                                 </td>
                                 <td width="250px">
                                     <img src="{{ score.player.imageURL }}" class="icon">
-                                    {{ score.player.name }}
+                                    {% if score.player.isSupporter %}
+                                        <span style="color:firebrick;font-weight:bold">{{ score.player.name }}</span>
+                                    {% else %}
+                                        {{ score.player.name }}
+                                    {% endif %}
                                 </td>
                                 <td width="70px">
                                     {{ score.pos }}

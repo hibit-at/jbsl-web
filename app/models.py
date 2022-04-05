@@ -24,6 +24,7 @@ class Player(models.Model):
     imageURL = models.CharField(default='', max_length=100)
     hmd = models.CharField(default='', max_length=50)
     isSupporter = models.BooleanField(default=False)
+    userColor = models.CharField(default='firebrick', max_length=100)
 
     def __str__(self):
         return str(self.name)

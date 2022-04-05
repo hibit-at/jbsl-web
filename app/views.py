@@ -145,6 +145,9 @@ def userpage(request, sid=0):
         if 'icon_discord' in post:
             if social.extra_data['avatar'] != None:
                 player.imageURL = f'https://cdn.discordapp.com/avatars/{social.uid}/{social.extra_data["avatar"]}'
+        if 'color' in post:
+            userColor = post['color']
+            player.userColor = userColor
         player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)

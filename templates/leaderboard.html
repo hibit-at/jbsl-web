@@ -217,7 +217,7 @@
                         <td width="250px">
                             <img src="{{ player.imageURL }}" class="icon" alt="icon" />
                             {% if player.isSupporter %}
-                                <span style="color:firebrick;font-weight:bold">{{ player.name }}</span>
+                                <span style="color:{{ player.userColor }};font-weight:bold">{{ player.name }}</span>
                             {% else %}
                                 {{ player.name }}
                             {% endif %}
@@ -332,7 +332,7 @@
                                 <td width="250px">
                                     <img src="{{ score.player.imageURL }}" class="icon">
                                     {% if score.player.isSupporter %}
-                                        <span style="color:firebrick;font-weight:bold">{{ score.player.name }}</span>
+                                        <span style="color:{{score.player.userColor}};font-weight:bold">{{ score.player.name }}</span>
                                     {% else %}
                                         {{ score.player.name }}
                                     {% endif %}

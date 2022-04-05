@@ -2,7 +2,14 @@
 {% block content %}
     {% load static %}
     {% load humanize %}
-    <h3>{{ player.name }}'s Page</h3>
+    {% if player.isSupporter %}
+        <h3>
+            <span style="color:{{ player.userColor }}">{{ player.name }}</span>'s Page
+            <span class="diff" style="font-size:20px">Supporter</span>
+        </h3>
+    {% else %}
+        <h3>{{ player.name }}'s Page'</h3>
+    {% endif %}
     <p>
         <img class="thumb" src={{ player.imageURL }} />
     </p>
@@ -82,6 +89,12 @@
             <h4>Change Form</h4>
             <form method="post">
                 {% csrf_token %}
+                {% if user.player.isSupporter %}
+                    <p>
+                        UserColor:
+                        <input type="color" name="color" value="{{ player.userColor }}">
+                    </p>
+                {% endif %}
                 <p>
                     <label>Message :</label>
                     <input type="text" size="100" name="message" value={{ player.message }}>
@@ -136,7 +149,9 @@
             <th>Accuracy</th>
             <th>PP</th>
             <th>Miss</th>
-            <th>BorderPP</th>
+            <th>
+                BorderPP
+            </th>
         </thead>
         {% for t in top10 %}
             <tr>

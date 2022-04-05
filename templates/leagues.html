@@ -51,7 +51,11 @@
                            style="color:black">
                             <img class="icon" src={{ league.first.imageURL }}>
                             <br>
-                            {{ league.first.name }}
+                            {% if league.first.isSupporter %}
+                                <span style="font-weight:bold;color:{{ league.first.userColor }}">{{ league.first.name }}</span>
+                            {% else %}
+                                {{ league.first.name }}
+                            {% endif %}
                         </a>
                     {% endif %}
                 </td>
@@ -61,7 +65,11 @@
                            style="color:black">
                             <img class="icon" src={{ league.second.imageURL }}>
                             <br>
-                            {{ league.second.name }}
+                            {% if league.second.isSupporter %}
+                                <span style="font-weight:bold;color:{{ league.second.userColor }}">{{ league.second.name }}</span>
+                            {% else %}
+                                {{ league.second.name }}
+                            {% endif %}
                         </a>
                     {% endif %}
                 </td>
@@ -71,7 +79,11 @@
                            style="color:black">
                             <img class="icon" src={{ league.third.imageURL }}>
                             <br>
-                            {{ league.third.name }}
+                            {% if league.third.isSupporter %}
+                                <span style="font-weight:bold;color:{{ league.third.userColor }}">{{ league.third.name }}</span>
+                            {% else %}
+                                {{ league.third.name }}
+                            {% endif %}
                         </a>
                     {% endif %}
                 </td>
@@ -90,14 +102,18 @@
             <th>End</th>
             <th>1st</th>
             <th>2nd</th>
-            <th>3rd</th>
+            <th>
+                3rd
+            </th>
         </thead>
         {% for league in end_leagues %}
             <tr style="background-color:{{ league.color }};">
                 <td>
                     <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name }}</a>
                 </td>
-                <td>{{ league.description|truncatechars:50 }}</td>
+                <td>
+                    {{ league.description|truncatechars:50 }}
+                </td>
                 <td>
                     {% if league.limit == 2000 %}
                         上限なし
@@ -119,21 +135,33 @@
                     {% if league.first != None %}
                         <img class="icon" src={{ league.first.imageURL }}>
                         <br>
-                        {{ league.first.name }}
+                        {% if league.first.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.first.userColor }}"> {{ league.first.name }} </span>
+                        {% else %}
+                            {{ league.first.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.second != None %}
                         <img class="icon" src={{ league.second.imageURL }}>
                         <br>
-                        {{ league.second.name }}
+                        {% if league.second.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.second.userColor }}">{{ league.second.name }}</span>
+                        {% else %}
+                            {{ league.second.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.third != None %}
                         <img class="icon" src={{ league.third.imageURL }}>
                         <br>
-                        {{ league.third.name }}
+                        {% if league.third.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.third.userColor }}">{{ league.third.name }}</span>
+                        {% else %}
+                            {{ league.third.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

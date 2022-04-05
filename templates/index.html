@@ -103,21 +103,33 @@
                     {% if league.first != None %}
                         <img class="icon" src={{ league.first.imageURL }}>
                         <br>
-                        {{ league.first.name }}
+                        {% if league.first.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.first.userColor }}">{{ league.first.name }}</span>
+                        {% else %}
+                            {{ league.first.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.second != None %}
                         <img class="icon" src={{ league.second.imageURL }}>
                         <br>
-                        {{ league.second.name }}
+                        {% if league.second.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.second.userColor }}">{{ league.second.name }}</span>
+                        {% else %}
+                            {{ league.second.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
                     {% if league.third != None %}
                         <img class="icon" src={{ league.third.imageURL }}>
                         <br>
-                        {{ league.third.name }}
+                        {% if league.third.isSupporter %}
+                            <span style="font-weight:bold;color:{{ league.third.userColor }}">{{ league.third.name }}</span>
+                        {% else %}
+                            {{ league.third.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>

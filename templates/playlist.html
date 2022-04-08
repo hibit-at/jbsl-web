@@ -73,7 +73,7 @@
             <th>Diff</th>
             <th>Edit</th>
         </thead>
-        {% for song in playlist.songs.all %}
+        {% for song in playlist.sorted_songs %}
             <tr>
                 <td>
                     <a href="https://beatsaver.com/maps/{{ song.bsr }}">
@@ -93,6 +93,9 @@
                                     type="submit"
                                     name="remove_song"
                                     value="{{ song.lid }}">削除</button>
+                            <button class="btn" name="up" value="{{ song.lid }}">▲</button>
+                            <button class="btn" name="down" value="{{ song.lid }}">▼</button>
+                            {{ song.order }}
                         </form>
                     {% endif %}
                 </td>
@@ -129,8 +132,12 @@
                             <img class="mid-thumb" src="{{ song.imageURL }}"/>
                         </a>
                     </td>
-                    <td>{{ song.title|truncatechars:50 }}</td>
-                    <td>{{ song.author }}</td>
+                    <td>
+                        {{ song.title|truncatechars:50 }}
+                    </td>
+                    <td>
+                        {{ song.author }}
+                    </td>
                     <td>
                         <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
                     </td>

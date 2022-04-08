@@ -52,13 +52,13 @@
                 </td>
                 <td>
                     <p>
-                        {{ playlist.songs.all|length }} songs
+                        {{ playlist.playlist_songs|length }} songs
                     </p>
                     <ul>
-                        {% for song in playlist.songs.all|slice:":4" %}
+                        {% for song in playlist.playlist_songs|slice:":4" %}
                             <li>{{ song.title | truncatechars:40 }} ({{ song.diff }}) by {{ song.author }}</li>
                         {% endfor %}
-                        {% if playlist.songs.all|length > 4 %}...{% endif %}
+                        {% if playlist.playlist_songs|length > 4 %}...{% endif %}
                     </ul>
                 </td>
             </tr>

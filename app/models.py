@@ -60,6 +60,14 @@ class Playlist(models.Model):
         return self.title
 
 
+class SongInfo(models.Model):
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    order = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.playlist} {self.song} {self.order}'
+
 class League(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(

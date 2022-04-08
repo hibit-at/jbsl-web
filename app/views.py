@@ -4,7 +4,7 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline
+from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -105,7 +105,8 @@ def index(request):
             league.invite.remove(player)
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
-    active_leagues = League.objects.filter(isOpen=True, isLive=True).order_by('end')
+    active_leagues = League.objects.filter(
+        isOpen=True, isLive=True).order_by('end')
     params['active_leagues'] = active_leagues
     return render(request, 'index.html', params)
 
@@ -249,7 +250,7 @@ def top_score_registration(player):
     playerScores = res['playerScores']
     # initialize
     league = League.objects.get(name='Top10')
-    for score in Score.objects.filter(league=league,player=player):
+    for score in Score.objects.filter(league=league, player=player):
         score.delete()
     # add
     for playerScore in playerScores:
@@ -455,6 +456,31 @@ def create_playlist(request):
     return render(request, 'create_playlist.html', params)
 
 
+def make_sorted_playlists(playlists):
+    playlist_songs = defaultdict(list)
+    for playlist in playlists:
+        for song in playlist.songs.all():
+            print(playlist, song)
+            if SongInfo.objects.filter(song=song, playlist=playlist).exists():
+                songinfo = SongInfo.objects.get(song=song, playlist=playlist)
+                setattr(song, 'order', songinfo.order)
+            else:
+                SongInfo.objects.create(
+                    song=song,
+                    playlist=playlist,
+                )
+                setattr(song, 'order', 0)
+            playlist_songs[playlist].append(song)
+        print(type(playlist_songs[playlist]))
+        playlist_songs[playlist] = sorted(
+            playlist_songs[playlist], key=lambda x: x.order)
+        print(playlist)
+        print(playlist_songs[playlist])
+    for playlist in playlists:
+        setattr(playlist, 'playlist_songs', playlist_songs[playlist])
+    return playlists
+
+
 def playlists(request):
     params = {}
     user = request.user
@@ -462,8 +488,28 @@ def playlists(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     playlists = Playlist.objects.all().order_by('-pk')
+    playlists = make_sorted_playlists(playlists)
     params['playlists'] = playlists
     return render(request, 'playlists.html', params)
+
+
+def make_sorted_playlist(playlist):
+    sorted_songs = []
+    for song in playlist.songs.all():
+        print(playlist, song)
+        if SongInfo.objects.filter(song=song, playlist=playlist).exists():
+            songinfo = SongInfo.objects.get(song=song, playlist=playlist)
+            setattr(song, 'order', songinfo.order)
+        else:
+            SongInfo.objects.create(
+                song=song,
+                playlist=playlist,
+            )
+            setattr(song, 'order', 0)
+        sorted_songs.append(song)
+    sorted_songs = sorted(sorted_songs, key=lambda x: x.order)
+    setattr(playlist, 'sorted_songs', sorted_songs)
+    return playlist
 
 
 def playlist(request, pk):
@@ -537,6 +583,20 @@ def playlist(request, pk):
             title = post['title']
             playlist.title = title
             playlist.save()
+        if 'up' in post:
+            lid = post['up']
+            song = Song.objects.get(lid=lid)
+            songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+            songInfo.order -= 1
+            songInfo.save()
+        if 'down' in post:
+            lid = post['down']
+            song = Song.objects.get(lid=lid)
+            songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+            songInfo.order += 1
+            songInfo.save()
+    playlist = make_sorted_playlist(playlist)
+    print(playlist)
     params['playlist'] = playlist
     return render(request, 'playlist.html', params)
 
@@ -544,11 +604,12 @@ def playlist(request, pk):
 def download_playlist(request, pk):
     json_data = {}
     playlist = Playlist.objects.get(pk=pk)
+    playlist = make_sorted_playlist(playlist)
     json_data['playlistTitle'] = playlist.title
     json_data['playlistAuthor'] = 'JBSL_Web_System'
     json_data['playlistDescription'] = playlist.description
     songs = []
-    for song in playlist.songs.all():
+    for song in playlist.sorted_songs:
         append_dict = {}
         append_dict['songName'] = song.title
         append_dict['levelAuthorName'] = song.author
@@ -572,8 +633,10 @@ def leagues(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    active_leagues = League.objects.filter(isOpen=True, isLive=True).order_by('end')
-    end_leagues = League.objects.filter(isOpen=True, isLive=False).order_by('-end')
+    active_leagues = League.objects.filter(
+        isOpen=True, isLive=True).order_by('end')
+    end_leagues = League.objects.filter(
+        isOpen=True, isLive=False).order_by('-end')
     params['active_leagues'] = active_leagues
     params['end_leagues'] = end_leagues
     return render(request, 'leagues.html', params)
@@ -583,7 +646,9 @@ def calculate_scoredrank_LBs(league, virtual=None):
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
     # リーグ内マップ
-    songs = league.playlist.songs.all()
+    playlist = league.playlist
+    playlist = make_sorted_playlist(playlist)
+    songs = league.playlist.sorted_songs
     # プレイヤーごとのスコア
     total_rank = defaultdict(list)
     # マップごとのプレイヤーランキング
@@ -865,6 +930,7 @@ def headlines(request, page=1):
     params['page'] = page
     params['new'] = page - 1
     return render(request, 'headlines.html', params)
+
 
 def players(request):
     params = {}

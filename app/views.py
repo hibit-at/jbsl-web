@@ -488,7 +488,7 @@ def playlists(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     playlists = Playlist.objects.all().order_by('-pk')
-    playlists = make_sorted_playlists(playlists)
+    # playlists = make_sorted_playlists(playlists)
     params['playlists'] = playlists
     return render(request, 'playlists.html', params)
 

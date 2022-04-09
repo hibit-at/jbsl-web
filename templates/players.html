@@ -14,45 +14,45 @@
             <th>BorderPP</th>
             <th>Message</th>
         </thead>
-        {% for a in active_players %}
+        {% for player in active_players %}
             <tr>
                 <td>
-                    <a href={% url 'app:userpage' sid=a.sid %} style="color:black">
-                        <img class="icon" src={{ a.imageURL }} />
-                        {% if a.isSupporter %}
-                        <span style="font-weight:bold;color:{{ a.userColor }}">{{a }}</a>
-                        <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                    {% else %}
-                        {{ a }}
+                    <a href={% url 'app:userpage' sid=player.sid %} style="color:black">
+                        <img class="icon" src={{ player.imageURL }} />
+                        {% if player.isSupporter %}
+                            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                            <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                        {% else %}
+                            {{ player }}
+                        {% endif %}
+                    </a>
+                </td>
+                <td>
+                    {% if player.twitch != '' %}
+                        <a href="https://twitch.tv/{{ player.twitch }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'twitch.png' %} />
+                        </a>
                     {% endif %}
-                </a>
-            </td>
-            <td>
-                {% if a.twitch != '' %}
-                    <a href="https://twitch.tv/{{ a.twitch }}" target="blank">
-                        <img width="30px" height="30px" src={% static 'twitch.png' %} />
-                    </a>
-                {% endif %}
-                {% if a.twitter != '' %}
-                    <a href="https://twitter.com/{{ a.twitter }}" target="blank">
-                        <img width="30px" height="30px" src={% static 'twitter.png' %} />
-                    </a>
-                {% endif %}
-                {% if a.booth != '' %}
-                    <a href="https://booth.pm/ja/items/{{ a.booth }}" target="blank">
-                        <img width="30px" height="30px" src={% static 'booth.png' %} />
-                    </a>
-                {% endif %}
-            </td>
-            <td>
-                <img width="30px" height="30px" src="{% static a.hmd %}.png" />
-            </td>
-            <td>{{ a.borderPP | floatformat:2 | intcomma }}</td>
-            <td>{{ a.message }}</td>
-        </tr>
-    {% endfor %}
-</table>
-<p>
-    Welcome, {{ active_players|length }} players!
-</p>
+                    {% if player.twitter != '' %}
+                        <a href="https://twitter.com/{{ player.twitter }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'twitter.png' %} />
+                        </a>
+                    {% endif %}
+                    {% if player.booth != '' %}
+                        <a href="https://booth.pm/ja/items/{{ player.booth }}" target="blank">
+                            <img width="30px" height="30px" src={% static 'booth.png' %} />
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    <img width="30px" height="30px" src="{% static player.hmd %}.png" />
+                </td>
+                <td>{{ player.borderPP | floatformat:2 | intcomma }}</td>
+                <td>{{ player.message }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <p>
+        Welcome, {{ active_players|length }} players!
+    </p>
 {% endblock %}

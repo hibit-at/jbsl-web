@@ -149,6 +149,13 @@ def userpage(request, sid=0):
         if 'color' in post:
             userColor = post['color']
             player.userColor = userColor
+        if 'bg'in post:
+            bgColor = post['bg']
+            player.bgColor = bgColor
+        if 'shadow' in post:
+            player.isShadow = True
+        else:
+            player.isShadow = False
         player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)

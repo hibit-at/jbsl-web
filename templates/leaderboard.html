@@ -217,9 +217,10 @@
                         <td width="250px">
                             <img src="{{ player.imageURL }}" class="icon" alt="icon" />
                             {% if player.isSupporter %}
-                                <span style="color:{{ player.userColor }};font-weight:bold">{{ player.name }}</span>
+                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                <img src="{% static 'Check.png' %}" height="15px" width="15px" />
                             {% else %}
-                                {{ player.name }}
+                                {{ player }}
                             {% endif %}
                         </td>
                         <td width="70px">
@@ -331,11 +332,14 @@
                                 </td>
                                 <td width="250px">
                                     <img src="{{ score.player.imageURL }}" class="icon">
-                                    {% if score.player.isSupporter %}
-                                        <span style="color:{{score.player.userColor}};font-weight:bold">{{ score.player.name }}</span>
-                                    {% else %}
-                                        {{ score.player.name }}
-                                    {% endif %}
+                                    {% with score.player as player %}
+                                        {% if player.isSupporter %}
+                                            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                            <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                                        {% else %}
+                                            {{ player }}
+                                        {% endif %}
+                                    {% endwith %}
                                 </td>
                                 <td width="70px">
                                     {{ score.pos }}

@@ -25,6 +25,8 @@ class Player(models.Model):
     hmd = models.CharField(default='', max_length=50)
     isSupporter = models.BooleanField(default=False)
     userColor = models.CharField(default='firebrick', max_length=100)
+    bgColor = models.CharField(default='#000000',max_length=100)
+    isShadow = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)

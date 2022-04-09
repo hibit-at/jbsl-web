@@ -4,7 +4,7 @@
     {% load humanize %}
     {% if player.isSupporter %}
         <h3>
-            <span style="color:{{ player.userColor }}">{{ player.name }}</span>'s Page
+            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>'s Page
             <span class="diff" style="font-size:20px">Supporter</span>
         </h3>
     {% else %}
@@ -92,7 +92,14 @@
                 {% if user.player.isSupporter %}
                     <p>
                         UserColor:
-                        <input type="color" name="color" value="{{ player.userColor }}">
+                        <input type="color" name="color" value="{{ player.userColor }}" />
+                        BGColor:
+                        <input type="color" name="bg" value="{{ player.bgColor }}" />
+                        Shadow:
+                        <input type="checkbox"
+                               name="shadow"
+                               style="transform:scale(2.5);margin-left:10px"
+                               {% if user.player.isShadow %}checked{% endif %}/>
                     </p>
                 {% endif %}
                 <p>

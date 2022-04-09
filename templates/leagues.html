@@ -49,41 +49,47 @@
                     {% if league.first != None %}
                         <a href="{% url 'app:userpage' sid=league.first.sid %}"
                            style="color:black">
-                            <img class="icon" src={{ league.first.imageURL }}>
-                            <br>
-                            {% if league.first.isSupporter %}
-                                <span style="font-weight:bold;color:{{ league.first.userColor }}">{{ league.first.name }}</span>
-                            {% else %}
-                                {{ league.first.name }}
-                            {% endif %}
+                            {% with league.first as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     {% endif %}
                 </td>
                 <td>
                     {% if league.second != None %}
-                        <a href="{% url 'app:userpage' sid=league.second.sid %}"
+                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
                            style="color:black">
-                            <img class="icon" src={{ league.second.imageURL }}>
-                            <br>
-                            {% if league.second.isSupporter %}
-                                <span style="font-weight:bold;color:{{ league.second.userColor }}">{{ league.second.name }}</span>
-                            {% else %}
-                                {{ league.second.name }}
-                            {% endif %}
+                            {% with league.second as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     {% endif %}
                 </td>
                 <td>
                     {% if league.third != None %}
-                        <a href="{% url 'app:userpage' sid=league.third.sid %}"
+                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
                            style="color:black">
-                            <img class="icon" src={{ league.third.imageURL }}>
-                            <br>
-                            {% if league.third.isSupporter %}
-                                <span style="font-weight:bold;color:{{ league.third.userColor }}">{{ league.third.name }}</span>
-                            {% else %}
-                                {{ league.third.name }}
-                            {% endif %}
+                            {% with league.third as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     {% endif %}
                 </td>

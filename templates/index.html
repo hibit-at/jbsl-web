@@ -119,7 +119,23 @@
                     {% if league.second != None %}
                         <a href="{% url 'app:userpage' sid=league.first.sid %}"
                            style="color:black">
-                            {% with league.second as player %}
+                            {% with league. as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.third != None %}
+                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
+                           style="color:black">
+                            {% with league.third as player %}
                                 <img class="icon" src={{ player.imageURL }}>
                                 <br>
                                 {% if player.isSupporter %}

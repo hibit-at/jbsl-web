@@ -119,7 +119,7 @@
                     {% if league.second != None %}
                         <a href="{% url 'app:userpage' sid=league.first.sid %}"
                            style="color:black">
-                            {% with league. as player %}
+                            {% with league.second as player %}
                                 <img class="icon" src={{ player.imageURL }}>
                                 <br>
                                 {% if player.isSupporter %}

@@ -552,9 +552,11 @@ def playlist(request, pk):
             song = create_song_by_hash(hash, diff_num, char, lid)
             if song is not None:
                 playlist.songs.add(song)
-                songInfo = SongInfo.objects.get(playlist=playlist,song=song)
-                songInfo.order = len(playlist.songs.all()) - 1
-                songInfo.save()
+                SongInfo.objects.create(
+                    song=song,
+                    playlist=playlist,
+                    order=playlist.songs.all().count() - 1,
+                )
                 playlist.recommend.remove(song)
         if 'recommend_song' in post and post['recommend_song'] != '':
             lid = post['recommend_song'].split('/')[-1]

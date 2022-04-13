@@ -25,7 +25,7 @@
             {% csrf_token %}
             <p>
                 タイトルの変更
-                <input type="text" size="40px" name="title"/>
+                <input type="text" size="40px" name="title" value=" {{playlist.title}} "/>
                 <button class="btn" type="submit">変更</button>
             </p>
         </form>
@@ -60,7 +60,7 @@
     {% if isEditor and playlist.isEditable %}
         <form method='post'>
             {% csrf_token %}
-            <textarea name="description" style="width:400px;height:100px"></textarea>
+            <textarea name="description" style="width:400px;height:100px">{{playlist.description}}</textarea>
             <button class="btn">変更</button>
         </form>
     {% endif %}

@@ -149,7 +149,7 @@ def userpage(request, sid=0):
         if 'color' in post:
             userColor = post['color']
             player.userColor = userColor
-        if 'bg'in post:
+        if 'bg' in post:
             bgColor = post['bg']
             player.bgColor = bgColor
         if 'shadow' in post:
@@ -503,7 +503,6 @@ def playlists(request):
 def make_sorted_playlist(playlist):
     sorted_songs = []
     for song in playlist.songs.all():
-        print(playlist, song)
         if SongInfo.objects.filter(song=song, playlist=playlist).exists():
             songinfo = SongInfo.objects.get(song=song, playlist=playlist)
             setattr(song, 'order', songinfo.order)
@@ -523,6 +522,15 @@ def playlist(request, pk):
     params = {}
     user = request.user
     playlist = Playlist.objects.get(pk=pk)
+
+    # reorder
+    playlist = make_sorted_playlist(playlist)
+    for i, song in enumerate(playlist.sorted_songs):
+        print(song)
+        songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+        songInfo.order = i
+        songInfo.save()
+
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
@@ -544,6 +552,9 @@ def playlist(request, pk):
             song = create_song_by_hash(hash, diff_num, char, lid)
             if song is not None:
                 playlist.songs.add(song)
+                songInfo = SongInfo.objects.get(playlist=playlist,song=song)
+                songInfo.order = len(playlist.songs.all()) - 1
+                songInfo.save()
                 playlist.recommend.remove(song)
         if 'recommend_song' in post and post['recommend_song'] != '':
             lid = post['recommend_song'].split('/')[-1]
@@ -596,14 +607,24 @@ def playlist(request, pk):
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
             songInfo.order -= 1
             songInfo.save()
+            # swap
+            for swapped_song in SongInfo.objects.filter(playlist=playlist, order=songInfo.order):
+                print(swapped_song)
+                swapped_song.order += 1
+                swapped_song.save()
+            songInfo.save()
         if 'down' in post:
             lid = post['down']
             song = Song.objects.get(lid=lid)
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
             songInfo.order += 1
+            # swap
+            for swapped_song in SongInfo.objects.filter(playlist=playlist, order=songInfo.order):
+                print(swapped_song)
+                swapped_song.order -= 1
+                swapped_song.save()
             songInfo.save()
     playlist = make_sorted_playlist(playlist)
-    print(playlist)
     params['playlist'] = playlist
     return render(request, 'playlist.html', params)
 

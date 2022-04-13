@@ -524,12 +524,13 @@ def playlist(request, pk):
     playlist = Playlist.objects.get(pk=pk)
 
     # reorder
-    playlist = make_sorted_playlist(playlist)
-    for i, song in enumerate(playlist.sorted_songs):
-        print(song)
-        songInfo = SongInfo.objects.get(song=song, playlist=playlist)
-        songInfo.order = i
-        songInfo.save()
+    if playlist.editor == user.player:
+        playlist = make_sorted_playlist(playlist)
+        for i, song in enumerate(playlist.sorted_songs):
+            print(song)
+            songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+            songInfo.order = i
+            songInfo.save()
 
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
@@ -552,10 +553,11 @@ def playlist(request, pk):
             song = create_song_by_hash(hash, diff_num, char, lid)
             if song is not None:
                 playlist.songs.add(song)
-                SongInfo.objects.create(
-                    song=song,
-                    playlist=playlist,
-                    order=playlist.songs.all().count() - 1,
+                # if not SongInfo.objects.filter(song=song,playlist=playlist).exists():
+                SongInfo.objects.update_or_create(
+                    song = song,
+                    playlist = playlist,
+                    defaults = {'order' : playlist.songs.all().count()},
                 )
                 playlist.recommend.remove(song)
         if 'recommend_song' in post and post['recommend_song'] != '':

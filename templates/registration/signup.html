@@ -1,23 +1,28 @@
-{% extends 'base.html' %} {% block content%}
-<h3>仮登録</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ userForm.as_p }}
-    <p>ScoreSaberURL {{ playerForm.sid}}（例：https://scoresaber.com/u/76561198405857645）</p>
-    <p>DiscordName {{ playerForm.discordName}}（例：hibit#6202）</p>
-    <button class="btn btn-success" type="submit">登録</button>
-</form>
-<h3>登録の手順</h3>
-<ol>
-    <li>上のフォームから仮登録をしてください。</li>
-    <li>Discordサーバー内でリアクションを押すことにより、本登録が完了します。</li>
-</ol>
-<h3>注意事項</h3>
-<ul>
-    <li>ユーザー名は、大会期間中変更できません。</li>
-    <li>必ず自身のスコアセイバーID、Discord名を指定してください。</li>
-    <li>仮登録で指定したDiscordアカウントがリアクションを行うことにより本人確認を行い、本登録とします。</li>
-    <li>なりすまし等の迷惑行為についてはBAN措置を行う可能性があります。</li>
-    <li>パスワードリセット機能は実装していないので、失念した場合は管理者に申し出てください。なるべく忘れないでね……</li>
-</ul>
+{% extends 'base.html' %}
+{% block content %}
+    <h3>仮登録</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ userForm.as_p }}
+        <p>
+            ScoreSaberURL {{ playerForm.sid }}（例：https://scoresaber.com/u/76561198405857645）
+        </p>
+        <p>
+            DiscordName {{ playerForm.discordName }}（例：hibit#6202）
+        </p>
+        <button class="btn btn-success" type="submit">登録</button>
+    </form>
+    <h3>登録の手順</h3>
+    <ol>
+        <li>上のフォームから仮登録をしてください。</li>
+        <li>Discordサーバー内でリアクションを押すことにより、本登録が完了します。</li>
+    </ol>
+    <h3>注意事項</h3>
+    <ul>
+        <li>ユーザー名は、大会期間中変更できません。</li>
+        <li>必ず自身のスコアセイバーID、Discord名を指定してください。</li>
+        <li>仮登録で指定したDiscordアカウントがリアクションを行うことにより本人確認を行い、本登録とします。</li>
+        <li>なりすまし等の迷惑行為についてはBAN措置を行う可能性があります。</li>
+        <li>パスワードリセット機能は実装していないので、失念した場合は管理者に申し出てください。なるべく忘れないでね……</li>
+    </ul>
 {% endblock %}

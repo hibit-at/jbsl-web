@@ -53,10 +53,9 @@
             <li>
                 {% if headline.player != None %}
                     <a href="{% url 'app:userpage' sid=headline.player.sid %}">
-                        <img src="{{ headline.player.imageURL }}" class="icon"/>
-                    </a>
+                        <img src="{{ headline.player.imageURL }}" class="icon" />
+                    </a> {{ headline.text }} （{{ headline.time }}）
                 {% endif %}
-                {{ headline.text }} （{{ headline.time }}）
             </li>
         </ul>
     {% endfor %}
@@ -80,7 +79,7 @@
         {% for league in active_leagues %}
             <tr style="background-color:{{ league.color }}">
                 <td>
-                    <a href= {% url 'app:leaderboard' pk=league.pk %}>
+                    <a href={ % url 'app:leaderboard' pk=league.pk %}>
                         <img class="thumb" src=" {{ league.playlist.image }}" />
                     </a>
                 </td>

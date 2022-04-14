@@ -524,13 +524,14 @@ def playlist(request, pk):
     playlist = Playlist.objects.get(pk=pk)
 
     # reorder
-    if playlist.editor == user.player:
-        playlist = make_sorted_playlist(playlist)
-        for i, song in enumerate(playlist.sorted_songs):
-            print(song)
-            songInfo = SongInfo.objects.get(song=song, playlist=playlist)
-            songInfo.order = i
-            songInfo.save()
+    if user.is_authenticated:
+        if playlist.editor == user.player:
+            playlist = make_sorted_playlist(playlist)
+            for i, song in enumerate(playlist.sorted_songs):
+                print(song)
+                songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+                songInfo.order = i
+                songInfo.save()
 
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)

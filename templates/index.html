@@ -55,6 +55,8 @@
                     <a href="{% url 'app:userpage' sid=headline.player.sid %}">
                         <img src="{{ headline.player.imageURL }}" class="icon" />
                     </a> {{ headline.text }} （{{ headline.time }}）
+                {% else %}
+                    {{ headline.text }}
                 {% endif %}
             </li>
         </ul>
@@ -113,7 +115,6 @@
                             {% endwith %}
                         </a>
                     {% endif %}
-                    {{ headline.text }}
                 </td>
                 <td>
                     {% if league.second != None %}

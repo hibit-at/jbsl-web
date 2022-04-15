@@ -26,10 +26,7 @@ def league_distribution():
         guild = bot.get_guild(int(guild_id))
         members = guild.members
         for member in members:
-            # print(member)
-            # print(member.id)
             if not Player.objects.filter(discordID=member.id).exists():
-                # print('not in JBSL-Web')
                 continue
             player = Player.objects.get(discordID=member.id)
             print(player)

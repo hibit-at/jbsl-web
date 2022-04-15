@@ -30,7 +30,7 @@ def league_update_process():
             if league.first != None:
                 Headline.objects.create(
                     player=league.first,
-                    time=end + timedelta(seconds=2),
+                    time=end + timedelta(seconds=time_count),
                     text=f'{league.first} さんが 1 位！',
                 )
                 discord_message += f'\n#1 {league.first} さん'
@@ -38,7 +38,7 @@ def league_update_process():
             if league.second != None:
                 Headline.objects.create(
                     player=league.second,
-                    time=end + timedelta(seconds=1),
+                    time=end + timedelta(seconds=time_count),
                     text=f'{league.second} さんが 2 位！',
                 )
                 discord_message += f'\n#2 {league.second} さん'
@@ -46,7 +46,7 @@ def league_update_process():
             if league.third != None:
                 Headline.objects.create(
                     player=league.third,
-                    time=end,
+                    time=end + timedelta(seconds=time_count),
                     text=f'{league.third} さんが 3 位！',
                 )
                 discord_message += f'\n#3 {league.third} さん'

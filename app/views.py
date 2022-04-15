@@ -227,10 +227,15 @@ def score_to_headline(new_score, song, player, league):
         if new_score > old_score.score:
             old_acc = old_score.acc
             new_acc = new_score/(115*8*int(song.notes)-7245)*100
+            title = song.title
+            tail = ''
+            if len(title) > 30:
+                tail = '...'
+            title = title[:30] + tail
             Headline.objects.create(
                 player=player,
                 time=datetime.now(),
-                text=f'{player} さんが {song.title[:30]} のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
+                text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
             )
     else:
         new_acc = new_score/(115*8*int(song.notes)-7245)*100
@@ -813,9 +818,10 @@ def leaderboard(request, pk):
             score.save()
             return redirect('app:leaderboard', pk=pk)
         if 'virtual_join' in post:
-            sid = post['virtual_join']
-            add_player = Player.objects.get(sid=sid)
-            league.virtual.add(add_player)
+            # sid = post['virtual_join']
+            # add_player = Player.objects.get(sid=sid)
+            # league.virtual.add(add_player)
+            print('工事中')
             return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(

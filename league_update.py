@@ -19,6 +19,7 @@ def league_update_process():
             print('end')
             discord_message = ''
             league.isLive = False
+            league.save()
             Headline.objects.create(
                 player=None,
                 time=end + timedelta(seconds=time_count),
@@ -51,9 +52,8 @@ def league_update_process():
                 discord_message += f'\n#3 {league.third} さん'
                 time_count -= 1
             discord_message_process(discord_message)
-            league.save()
             continue
-        for player in league.player.all().union(league.virtual.all()):
+        for player in league.player.all():
             print(player)
             for song in league.playlist.songs.all():
                 print(song, song.lid)

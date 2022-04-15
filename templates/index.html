@@ -81,7 +81,7 @@
         {% for league in active_leagues %}
             <tr style="background-color:{{ league.color }}">
                 <td>
-                    <a href={ % url 'app:leaderboard' pk=league.pk %}>
+                    <a href={% url 'app:leaderboard' pk=league.pk %}>
                         <img class="thumb" src=" {{ league.playlist.image }}" />
                     </a>
                 </td>

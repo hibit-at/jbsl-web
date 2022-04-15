@@ -222,16 +222,16 @@ def create_song_by_hash(hash, diff_num, char, lid):
 
 
 def score_to_headline(new_score, song, player, league):
+    title = song.title
+    tail = ''
+    if len(title) > 30:
+        tail = '...'
+    title = title[:30] + tail
     if Score.objects.filter(player=player, song=song, league=league).exists():
         old_score = Score.objects.get(player=player, song=song, league=league)
         if new_score > old_score.score:
             old_acc = old_score.acc
             new_acc = new_score/(115*8*int(song.notes)-7245)*100
-            title = song.title
-            tail = ''
-            if len(title) > 30:
-                tail = '...'
-            title = title[:30] + tail
             Headline.objects.create(
                 player=player,
                 time=datetime.now(),
@@ -242,7 +242,7 @@ def score_to_headline(new_score, song, player, league):
         Headline.objects.create(
             player=player,
             time=datetime.now(),
-            text=f'{player} さんが {song.title[:30]} のスコアを更新！ {new_acc:.2f} %'
+            text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {new_acc:.2f} %'
         )
 
 

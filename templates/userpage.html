@@ -10,7 +10,7 @@
     {% else %}
         <h3>{{ player.name }}'s Page</h3>
     {% endif %}
-    <p> 
+    <p>
         <img class="thumb" src={{ player.imageURL }} />
     </p>
     {% if user.player == player %}
@@ -122,29 +122,31 @@
             </form>
         </div>
     {% endif %}
-    <h4>ライバル関係</h4>
-    {% if user.player != player %}
-        {% if user.player.rival == player %}
-            <p>
-                あなたは {{ player }} さんをライバルに設定しています。→<a href="{% url 'app:rivalpage' %}"><span class="dl_link">二人のお部屋</span></a>
-            </p>
-        {% else %}
-            <form method="post">
-                {% csrf_token %}
-                <button class="btn" name="rival" value="{{ player.sid }}">ライバル認定</button>
-            </form>
-        {% endif %}
-    {% else %}
-        <p>
-            {% if player.rival != None %}
-                あなたは {{ player.rival }} さんをライバルに設定しています。→<a href="{% url 'app:rivalpage' %}"><span class="dl_link">二人のお部屋</span></a>
+    {% if user.player.isActivated %}
+        <h4>ライバル関係</h4>
+        {% if user.player != player %}
+            {% if user.player.rival == player %}
+                <p>
+                    あなたは {{ player }} さんをライバルに設定しています。→<a href="{% url 'app:rivalpage' %}"><span class="dl_link">二人のお部屋</span></a>
+                </p>
             {% else %}
-                ライバルに設定した人は誰もいないようです。
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn" name="rival" value="{{ player.sid }}">ライバル認定</button>
+                </form>
             {% endif %}
-        </p>
-        <p>
-            {{ eyebeam }} 人から視線を感じる……。
-        </p>
+        {% else %}
+            <p>
+                {% if player.rival != None %}
+                    あなたは {{ player.rival }} さんをライバルに設定しています。→<a href="{% url 'app:rivalpage' %}"><span class="dl_link">二人のお部屋</span></a>
+                {% else %}
+                    ライバルに設定した人は誰もいないようです。
+                {% endif %}
+            </p>
+            <p>
+                {{ eyebeam }} 人から視線を感じる……。
+            </p>
+        {% endif %}
     {% endif %}
     <h4>Top 10 Scores</h4>
     <table class="table table-striped table-borderless">

@@ -717,7 +717,7 @@ def calculate_scoredrank_LBs(league, virtual=None):
         theoretical = count_pos / max_pos * 100
         count_acc = sum([s.acc for s in score_list])/valid_count
         tooltip_pos = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
+            [f'{score.song.title[:25]}... ({score.pos})' + '★' if score.pos == (base + slope(1)) else None for score in score_list])
         tooltip_valid = '<br>'.join(
             [f'{score.song.title[:25]}...' for score in score_list])
         tooltip_acc = '<br>'.join(

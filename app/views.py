@@ -874,30 +874,51 @@ def create_league(request):
     return render(request, 'create_league.html', params)
 
 
+@login_required
 def virtual_league(request, pk):
     params = {}
     user = request.user
+    player = user.player
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     league = League.objects.get(pk=pk)
-    if user.player not in league.virtual.all():
-        return redirect('app:leaderboard', pk=pk)
+    for song in league.playlist.songs.all():
+        print(song, song.lid)
+        url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={player.name}'
+        res = requests.get(url).json()
+        if 'errorMessage' in res:
+            print('no score')
+            continue
+        print(res)
+        notes = song.notes
+        for scoreData in res['scores']:
+            hitname = scoreData['leaderboardPlayerInfo']['name']
+            if player.name != hitname:
+                print('wrong name!')
+                continue
+            score = scoreData['modifiedScore']
+            rawPP = scoreData['pp']
+            miss = scoreData['badCuts'] + scoreData['missedNotes']
+            defaults = {
+                'score': score,
+                'acc': score/(115*8*int(notes)-7245)*100,
+                'rawPP': rawPP,
+                'miss': miss,
+            }
+            if league in player.league.all():
+                score_to_headline(score, song, player, league)
+            Score.objects.update_or_create(
+                player=player,
+                song=song,
+                league=league,
+                defaults=defaults,
+            )
+            print('score updated!')
     params['league'] = league
     scored_rank, LBs = calculate_scoredrank_LBs(league, user.player)
     params['scored_rank'] = scored_rank
     params['LBs'] = LBs
-
-    # POST
-
-    if request.method == 'POST':
-        post = request.POST
-        print(post)
-        if 'disjoin' in post:
-            sid = post['disjoin']
-            remove_player = Player.objects.get(sid=sid)
-            league.virtual.remove(remove_player)
-            return redirect('app:leaderboard', pk=pk)
 
     return render(request, 'virtual_league.html', params)
 

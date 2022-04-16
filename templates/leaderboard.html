@@ -71,12 +71,8 @@
                         </p>
                     {% endif %}
                 {% endif %}
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="btn"
-                            name="virtual_join"
-                            type="submit"
-                            value="{{ user.player.sid }}">バーチャル参加（工事中）</button>
+                <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
+                    <button class="btn">バーチャル参加（工事中）</button>
                 </form>
             {% endif %}
         {% endif %}
@@ -255,7 +251,9 @@
     </h2>
     {% for song in LBs %}
         <p>
-            <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }} {% if song.char == 'Lawless' %}{{song.char}}{% endif %}</span></span> by {{ song.author }}
+            <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+                {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
+            </span></span> by {{ song.author }}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
                style="filter:invert()">
                 <img src="{% static 'ScoreSaberLogo.png' %}"

@@ -183,17 +183,4 @@
             {% endif %}
         </div>
     {% endfor %}
-    <div style="text-align:center">
-        <p>
-            <form method="post">
-                {% csrf_token %}
-                <button class="danger"
-                        name="disjoin"
-                        type="submit"
-                        value="{{ user.player.sid }}">
-                    バーチャル脱退
-                </button>
-            </form>
-        </p>
-    </div>
 {% endblock content %}

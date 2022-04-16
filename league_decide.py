@@ -2,7 +2,6 @@ import os
 import django
 import sys
 
-
 def league_decide_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()

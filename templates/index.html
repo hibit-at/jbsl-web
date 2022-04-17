@@ -151,4 +151,23 @@
             </tr>
         {% endfor %}
     </table>
+    <h3>
+        JBSL3 開催中特別企画～気になるライバル関係～
+    </h3>
+    <p>
+        両想い（お互いライバル関係）は <span style="font-size:30px">{{ love_pair }}</span> 組いるようです。
+    </p>
+    <p>
+        最もライバル視されている人は
+    </p>
+    <ul>
+        {% for player in love_sort %}
+            <li>
+                <img class="icon" src={{ player.imageURL }}>{{ player }} さん
+            </li>
+        {% endfor %}
+    </ul>
+    <p>
+        {{ love_max }} 人から熱い視線を向けられている……
+    </p>
 {% endblock %}

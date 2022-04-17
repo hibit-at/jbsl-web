@@ -108,6 +108,22 @@ def index(request):
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('end')
     params['active_leagues'] = active_leagues
+
+    love_pair = 0
+    love_sort = defaultdict(int)
+    love_max = 0
+    for player in active_players:
+        if player.rival != None:
+            love_sort[player.rival] += 1
+            love_max = max(love_max, love_sort[player.rival])
+            if player.rival.rival == player:
+                love_pair += 1
+    love_pair = int(love_pair/2)
+    love_sort = [k for k, v in love_sort.items() if v == love_max]
+    params['love_max'] = love_max
+    params['love_pair'] = love_pair
+    params['love_sort'] = love_sort
+
     return render(request, 'index.html', params)
 
 
@@ -561,9 +577,9 @@ def playlist(request, pk):
                 playlist.songs.add(song)
                 # if not SongInfo.objects.filter(song=song,playlist=playlist).exists():
                 SongInfo.objects.update_or_create(
-                    song = song,
-                    playlist = playlist,
-                    defaults = {'order' : playlist.songs.all().count()},
+                    song=song,
+                    playlist=playlist,
+                    defaults={'order': playlist.songs.all().count()},
                 )
                 playlist.recommend.remove(song)
         if 'recommend_song' in post and post['recommend_song'] != '':

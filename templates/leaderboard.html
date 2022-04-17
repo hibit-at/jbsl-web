@@ -306,7 +306,7 @@
                                     #{{ score.rank }}
                                 </td>
                                 <td width="250px">
-                                    <a href="{% url 'app:userpage' sid=score.player.sid %}" stlye="color:black">
+                                    <a href="{% url 'app:userpage' sid=score.player.sid %}" style="color:black">
                                         <img src="{{ score.player.imageURL }}" class="icon">
                                         {% with score.player as player %}
                                             {% if player.isSupporter %}

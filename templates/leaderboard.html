@@ -188,13 +188,15 @@
                     <tr {% if user.player == player or user.player.rival == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                         <td width="50px">#{{ player.rank }}</td>
                         <td width="250px">
-                            <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                            {% if player.isSupporter %}
-                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                            {% else %}
-                                {{ player }}
-                            {% endif %}
+                            <a href="{% url 'app:userpage' sid=player.sid %}">
+                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                    <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                                {% else %}
+                                    {{ player }}
+                                {% endif %}
+                            </a>
                         </td>
                         <td width="70px">
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
@@ -304,15 +306,17 @@
                                     #{{ score.rank }}
                                 </td>
                                 <td width="250px">
-                                    <img src="{{ score.player.imageURL }}" class="icon">
-                                    {% with score.player as player %}
-                                        {% if player.isSupporter %}
-                                            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                            <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                                        {% else %}
-                                            {{ player }}
-                                        {% endif %}
-                                    {% endwith %}
+                                    <a href="{% url 'app:userpage' sid=score.player.sid %}">
+                                        <img src="{{ score.player.imageURL }}" class="icon">
+                                        {% with score.player as player %}
+                                            {% if player.isSupporter %}
+                                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                                <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                                            {% else %}
+                                                {{ player }}
+                                            {% endif %}
+                                        {% endwith %}
+                                    </a>
                                 </td>
                                 <td width="70px">
                                     {{ score.pos }}

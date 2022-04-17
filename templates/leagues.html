@@ -63,7 +63,7 @@
                 </td>
                 <td>
                     {% if league.second != None %}
-                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
+                        <a href="{% url 'app:userpage' sid=league.second.sid %}"
                            style="color:black">
                             {% with league.second as player %}
                                 <img class="icon" src={{ player.imageURL }}>
@@ -79,7 +79,7 @@
                 </td>
                 <td>
                     {% if league.third != None %}
-                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
+                        <a href="{% url 'app:userpage' sid=league.third.sid %}"
                            style="color:black">
                             {% with league.third as player %}
                                 <img class="icon" src={{ player.imageURL }}>

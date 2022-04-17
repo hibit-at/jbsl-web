@@ -188,7 +188,7 @@
                     <tr {% if user.player == player or user.player.rival == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
                         <td width="50px">#{{ player.rank }}</td>
                         <td width="250px">
-                            <a href="{% url 'app:userpage' sid=player.sid %}">
+                            <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
                                 <img src="{{ player.imageURL }}" class="icon" alt="icon" />
                                 {% if player.isSupporter %}
                                     <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
@@ -306,7 +306,7 @@
                                     #{{ score.rank }}
                                 </td>
                                 <td width="250px">
-                                    <a href="{% url 'app:userpage' sid=score.player.sid %}">
+                                    <a href="{% url 'app:userpage' sid=score.player.sid %}" stlye="color:black">
                                         <img src="{{ score.player.imageURL }}" class="icon">
                                         {% with score.player as player %}
                                             {% if player.isSupporter %}

@@ -34,12 +34,16 @@
                 <td>{{ league.name }}</td>
                 <td>{{ league.description|truncatechars:50 }}</td>
                 <td>
-                    {% if league.limit == 2000 %}
-                        上限なし
+                    {% if league.isPublic %}
+                        {% if league.limit == 2000 %}
+                            上限なし
+                        {% else %}
+                            {{ league.limit }}
+                        {% endif %}
                     {% else %}
-                        {{ league.limit }}
-                    </td>
-                {% endif %}
+                        Private
+                    {% endif %}
+                </td>
                 <td>
                     <a href="{% url 'app:userpage' sid=league.owner.sid %}"
                        style="color:black">{{ league.owner.name }}</a>

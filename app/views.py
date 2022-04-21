@@ -8,6 +8,7 @@ from .models import League, LeagueComment, Player, Playlist, Song, Score, Headli
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
+import networkx
 
 from PIL import Image
 import base64
@@ -270,7 +271,9 @@ def top_score_registration(player):
     if 'errorMessage' in res:
         return
     pp = res['pp']
+    name = res['name']
     player.pp = pp
+    player.name = name
     player.save()
     # top10
     url = f'https://scoresaber.com/api/player/{sid}/scores?limit=10&sort=top'

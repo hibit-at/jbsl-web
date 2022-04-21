@@ -4,3 +4,4 @@ db_backup.sqlite3
 local.py
 sudosebug.bat
 discord_manual_message.py
+dataclip*

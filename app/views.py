@@ -8,7 +8,6 @@ from .models import League, LeagueComment, Player, Playlist, Song, Score, Headli
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
-import networkx
 
 from PIL import Image
 import base64

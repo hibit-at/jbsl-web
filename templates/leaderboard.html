@@ -306,7 +306,8 @@
                                     #{{ score.rank }}
                                 </td>
                                 <td width="250px">
-                                    <a href="{% url 'app:userpage' sid=score.player.sid %}" style="color:black">
+                                    <a href="{% url 'app:userpage' sid=score.player.sid %}"
+                                       style="color:black">
                                         <img src="{{ score.player.imageURL }}" class="icon">
                                         {% with score.player as player %}
                                             {% if player.isSupporter %}
@@ -378,7 +379,7 @@
         {% if isMember %}
             {% if league.isLive %}
                 <p>
-                    <form method="post">
+                    <form method="post" onSubmit="return check()">
                         {% csrf_token %}
                         <button class="danger"
                                 name="disjoin"
@@ -395,4 +396,16 @@
             {% endif %}
         {% endif %}
     </div>
+    <script>
+        function check(){
+            if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
+                return true; // 「OK」時は送信を実行
+            }
+            else{ // 「キャンセル」時の処理
+                window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
+                return false; // 送信を中止
+            }
+        
+        }
+    </script>
 {% endblock content %}

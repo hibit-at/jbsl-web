@@ -17,13 +17,15 @@ def league_decide_process():
         pp = player.borderPP
         print(player, pp)
         if 1050 <= pp:
+            league = League.objects.get(name="JBSL3 J1予選")
+            league.player.add(player)
             continue
-        elif 800 <= pp:
-            league = League.objects.get(name="JBSL3 J2予選")
-            league.player.add(player)
-        else:
-            league = League.objects.get(name="JBSL3 J3予選")
-            league.player.add(player)
+        # elif 800 <= pp:
+        #     league = League.objects.get(name="JBSL3 J2予選")
+        #     league.player.add(player)
+        # else:
+        #     league = League.objects.get(name="JBSL3 J3予選")
+        #     league.player.add(player)
 
 
 if __name__ == '__main__':

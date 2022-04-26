@@ -4,6 +4,7 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from pytz import timezone
 from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo
 import requests
 from allauth.socialaccount.models import SocialAccount
@@ -845,6 +846,12 @@ def leaderboard(request, pk):
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
+
+    from datetime import timezone
+
+    close_line = league.end - timedelta(days=3)
+    isClose = datetime.now(timezone.utc) >= close_line
+    params['isClose'] = isClose
 
     return render(request, 'leaderboard.html', params)
 

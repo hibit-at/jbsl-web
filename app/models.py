@@ -95,6 +95,7 @@ class League(models.Model):
         Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='second')
     third = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='third')
+    isOfficial = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)

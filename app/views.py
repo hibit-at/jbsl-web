@@ -850,7 +850,8 @@ def leaderboard(request, pk):
     from datetime import timezone
 
     close_line = league.end - timedelta(days=3)
-    isClose = datetime.now(timezone.utc) >= close_line
+    isClose = datetime.now(timezone.utc) >= close_line and league.isOfficial
+    print(isClose)
     params['isClose'] = isClose
 
     return render(request, 'leaderboard.html', params)

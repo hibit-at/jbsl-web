@@ -378,17 +378,23 @@
     <div style="text-align:center">
         {% if isMember %}
             {% if league.isLive %}
-                <p>
-                    <form method="post" onSubmit="return check()">
-                        {% csrf_token %}
-                        <button class="danger"
-                                name="disjoin"
-                                type="submit"
-                                value="{{ user.player.sid }}">
-                            脱退
-                        </button>
-                    </form>
-                </p>
+                {% if isClose %}
+                    <p>
+                        公式リーグでは、終了 72 時間前を過ぎると脱退することはできません
+                    </p>
+                {% else %}
+                    <p>
+                        <form method="post" onSubmit="return check()">
+                            {% csrf_token %}
+                            <button class="danger"
+                                    name="disjoin"
+                                    type="submit"
+                                    value="{{ user.player.sid }}">
+                                脱退
+                            </button>
+                        </form>
+                    </p>
+                {% endif %}
             {% else %}
                 <p>
                     終了したリーグから脱退することはできません

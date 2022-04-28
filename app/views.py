@@ -434,7 +434,11 @@ def create_playlist(request):
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
             image = json_data['image']
-            description = json_data['playlistDescription']
+            if image.startswith('base64'):
+                image = 'data:image/png;' + image
+            description = ''
+            if 'playlistDescription' in json_data:
+                description = json_data['playlistDescription']
             editor = request.user.player
             isEditable = False
             if 'editable' in request.POST:

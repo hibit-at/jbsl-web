@@ -1040,4 +1040,21 @@ def debug(request):
     active_players = Player.objects.filter(isActivated=True).order_by('-pp')
     params = {}
     params['active_players'] = active_players
+    for player in active_players:
+        check = defaultdict(int)
+        print(player)
+        rivals = []
+        if player.rival == None:
+            continue
+        rival = player
+        while True:
+            check[rival] += 1
+            if check[rival] > 1:
+                rivals.append(rival)
+                break
+            print('...', rival)
+            rivals.append(rival)
+            rival = rival.rival
+        setattr(player,'rivals',rivals[1:])
+
     return render(request, 'debug.html', params)

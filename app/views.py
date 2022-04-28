@@ -1054,6 +1054,8 @@ def debug(request):
                 break
             print('...', rival)
             rivals.append(rival)
+            if rival.rival == None:
+                break
             rival = rival.rival
         setattr(player,'rivals',rivals[1:])
 

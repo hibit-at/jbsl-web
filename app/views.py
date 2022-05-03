@@ -1066,7 +1066,6 @@ def debug(request):
     return render(request, 'debug.html', params)
 
 def api_leaderboard(request, pk):
-    import pytz
     params = {}
     league = League.objects.get(pk=pk)
     params['league'] = league

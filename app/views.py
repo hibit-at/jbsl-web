@@ -1081,6 +1081,7 @@ def api_leaderboard(request, pk):
             'name' : rank.name,
             'pos' : rank.count_pos,
         })
+        print(rank.name)
     ans['maps'] = []
     for LB in LBs:
         append_score = []
@@ -1098,4 +1099,4 @@ def api_leaderboard(request, pk):
             'bsr' : LB.bsr,
             'scores' : append_score,
         })
-    return HttpResponse(json.dumps(ans,indent=4))
+    return HttpResponse(json.dumps(ans,indent=4,ensure_ascii=False))

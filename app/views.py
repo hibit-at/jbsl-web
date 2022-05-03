@@ -1064,3 +1064,39 @@ def debug(request):
         setattr(player,'rivals',rivals[1:])
 
     return render(request, 'debug.html', params)
+
+def api_leaderboard(request, pk):
+    import pytz
+    params = {}
+    league = League.objects.get(pk=pk)
+    params['league'] = league
+    scored_rank, LBs = calculate_scoredrank_LBs(league)
+    ans = {}
+    ans['league_id'] = pk
+    ans['league_title'] = league.name
+    ans['total_rank'] = []
+    for i,rank in enumerate(scored_rank):
+        ans['total_rank'].append({
+            'standing' : i+1,
+            'sid' : rank.sid,
+            'name' : rank.name,
+            'pos' : rank.count_pos,
+        })
+    ans['maps'] = []
+    for LB in LBs:
+        append_score = []
+        for i, score in enumerate(LB.scores):
+            append_score.append({
+                'standing' : i+1,
+                'sid' : score.player.sid,
+                'name' : score.player.name,
+                'acc' : score.acc,
+                'pos' : score.pos,
+            })
+        ans['maps'].append({
+            'title' : LB.title,
+            'lid' : LB.lid,
+            'bsr' : LB.bsr,
+            'scores' : append_score,
+        })
+    return HttpResponse(json.dumps(ans,indent=4))

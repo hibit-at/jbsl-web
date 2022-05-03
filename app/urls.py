@@ -23,4 +23,5 @@ urlpatterns = [
     path('headlines/<int:page>', views.headlines, name='headlines'),
     path('players/',views.players, name='players'),
     path('debug/',views.debug, name='debug'),
+    path('leaderboard/api/<int:pk>',views.api_leaderboard, name='api_leaderboard'),
 ]

@@ -24,4 +24,5 @@ urlpatterns = [
     path('players/',views.players, name='players'),
     path('debug/',views.debug, name='debug'),
     path('leaderboard/api/<int:pk>',views.api_leaderboard, name='api_leaderboard'),
+    path('bsr_checker/', views.bsr_checker, name='bsr_checker'),
 ]

@@ -4,7 +4,6 @@ from io import BytesIO
 import json
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from pytz import timezone
 from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo
 import requests
 from allauth.socialaccount.models import SocialAccount
@@ -1061,9 +1060,10 @@ def debug(request):
             if rival.rival == None:
                 break
             rival = rival.rival
-        setattr(player,'rivals',rivals[1:])
+        setattr(player, 'rivals', rivals[1:])
 
     return render(request, 'debug.html', params)
+
 
 def api_leaderboard(request, pk):
     params = {}
@@ -1074,12 +1074,12 @@ def api_leaderboard(request, pk):
     ans['league_id'] = pk
     ans['league_title'] = league.name
     ans['total_rank'] = []
-    for i,rank in enumerate(scored_rank):
+    for i, rank in enumerate(scored_rank):
         ans['total_rank'].append({
-            'standing' : i+1,
-            'sid' : rank.sid,
-            'name' : rank.name,
-            'pos' : rank.count_pos,
+            'standing': i+1,
+            'sid': rank.sid,
+            'name': rank.name,
+            'pos': rank.count_pos,
         })
         print(rank.name)
     ans['maps'] = []
@@ -1087,16 +1087,111 @@ def api_leaderboard(request, pk):
         append_score = []
         for i, score in enumerate(LB.scores):
             append_score.append({
-                'standing' : i+1,
-                'sid' : score.player.sid,
-                'name' : score.player.name,
-                'acc' : score.acc,
-                'pos' : score.pos,
+                'standing': i+1,
+                'sid': score.player.sid,
+                'name': score.player.name,
+                'acc': score.acc,
+                'pos': score.pos,
             })
         ans['maps'].append({
-            'title' : LB.title,
-            'lid' : LB.lid,
-            'bsr' : LB.bsr,
-            'scores' : append_score,
+            'title': LB.title,
+            'lid': LB.lid,
+            'bsr': LB.bsr,
+            'scores': append_score,
         })
-    return HttpResponse(json.dumps(ans,indent=4,ensure_ascii=False))
+    return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))
+
+
+def bsr_checker(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+
+        class Result:
+
+            def __init__(self, text, link) -> None:
+                self.text = text
+                self.link = link
+
+            def __str__(self) -> str:
+                return str(self.text)
+
+        class Results:
+
+            def __init__(self) -> None:
+                self.results = []
+            
+            def append(self,text,link=None):
+                append_res = Result(text, link)
+                self.results.append(Result(text, link))
+
+            def __str__(self) -> str:
+                return ','.join(map(str,self.results))    
+
+        results = Results()
+        twitchURL = post['twitchURL']
+        twitchID = twitchURL.split('/')[-1]
+        results.append(f'検出された Twitch ID : {twitchID}')
+        if not Player.objects.filter(twitch=twitchID).exists():
+            results.append(f'! JBSL Web にマッチするプレイヤーがいません。')
+            params['results'] = results
+            return render(request, 'bsr_checker.html', params)
+        player = Player.objects.get(twitch=twitchID)
+        results.append(f'マッチするプレイヤー：{player.name}', f'https://jbsl-web.herokuapp.com/userpage/{player.sid}')
+        results.append(f'Score Saber : {player.sid}', f'https://scoresaber.com/u/{player.sid}')
+        params['results'] = results
+        bsr = post['bsr_command'].split(' ')[-1].split('/')[-1]
+        results.append(f'検出された bsr key : {bsr}')
+        url = f'https://api.beatsaver.com/maps/id/{bsr}'
+        res = requests.get(url).json()
+        print(res)
+        if not 'versions' in res:
+            results.append(f'! bsr key から正しい譜面情報を取得できませんでした。')
+            params['results'] = results
+            return render(request, 'bsr_checker.html', params)
+        title = res['name']
+        res = res['versions'][0]
+        hash = res['hash']
+        results.append(f'hash : {hash} ({title})')
+        diffs = res['diffs']
+        for i, diff in enumerate(diffs):
+            chara = diff['characteristic']
+            label = diff['difficulty']
+            notes = diff['notes']
+            chara_scoresaber = char_dict_inv[chara]
+            diff_scoresaber = diff_label_inv[label]
+            print(chara_scoresaber, diff_scoresaber)
+            url = f'https://scoresaber.com/api/leaderboard/by-hash/{hash}/info?difficulty={diff_scoresaber}&gameMode={chara_scoresaber}'
+            res = requests.get(url).json()
+            if not 'id' in res:
+                results.append(f'! ScoreSaber から譜面の情報を取得することができませんでした。')
+                continue
+            lid = res['id']
+            results.append(f'diff {i+1} {chara} {label} リーダーボード ID : {lid}', f'https://scoresaber.com/leaderboard/{lid}?search={player.name}')
+            url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/scores?countries=JP&search={player.name}'
+            res = requests.get(url).json()
+            if not 'scores' in res:
+                results.append(f'...No Score')
+                continue
+            res = res['scores'][0]
+            timeSet = res['timeSet']
+            date = datetime.strptime(timeSet.split('.')[0], '%Y-%m-%dT%H:%M:%S')
+            date += timedelta(hours=9)
+            print(date)
+            time_dif = datetime.now() - date
+            if time_dif.days > 1:
+                when = f'{time_dif.days} 日前'
+            else:
+                when = f'{time_dif.seconds//60:,} 分前'
+            score = res['modifiedScore']
+            acc = score/(115*8*int(notes)-7245)*100
+            results.append(f'...{when} に {acc:,.2f} %のスコアが登録されています。')
+        print(results)
+        params['results'] = results.results
+
+    return render(request, 'bsr_checker.html', params)

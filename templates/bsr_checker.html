@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>!bsr checker</h3>
+    <p>
+        Twitch URL と !bsr コマンドから、プレイヤーのスコアを求めることができます。
+    </p>
+    <p>
+        ※ 当 Web サイトに登録し、Twitch の URL を記載してくれているプレイヤーに限ります。
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <ul>
+            <li>
+                Twitch URL
+                <input type="text" size="60px" name="twitchURL"/>
+                （例：https://www.twitch.tv/hibit0921）
+            </li>
+            <li>
+                !bsr Command
+                <input type="text" size="60px" name="bsr_command"/>
+                （例：!bsr 23d0c、https://beatsaver.com/maps/23d0c）
+            </li>
+        </ul>
+        <button class="btn" type="submit">Check</button>
+    </form>
+    {% if results|length > 0 %}
+        <hr>
+        <h3>解析結果</h3>
+        {% for result in results %}
+            <p>
+                {{ result }}
+                {% if result.link != None %}<a class="btn" href=" {{ result.link }} " target="blank">Link</a>{% endif %}
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endblock content %}

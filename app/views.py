@@ -1195,3 +1195,44 @@ def bsr_checker(request):
         params['results'] = results.results
 
     return render(request, 'bsr_checker.html', params)
+
+
+def coin(request):
+    league = request.GET.get('league')
+    league = League.objects.get(pk=league)
+    params = {'league' : league}
+    participants = Player.objects.all().filter(
+        league=league).order_by('borderPP').reverse()
+    choice = []
+    for p in participants:
+        choice.append((p.sid, p.name))
+
+    from django import forms
+
+    class CoinForm(forms.Form):
+        partA = forms.ChoiceField(
+            label='選手1', widget=forms.Select, choices=choice, required=False)
+        partB = forms.ChoiceField(
+            label='選手2', widget=forms.Select, choices=choice, required=False)
+
+    import random
+
+    form = CoinForm()
+    result = ''
+    if request.method == 'POST':
+        post = request.POST
+        partA = Player.objects.get(sid=post['partA'])
+        partB = Player.objects.get(sid=post['partB'])
+        print(partA)
+        print(partB)
+        form = CoinForm(post)
+        if partA == partB:
+            result = '同じ選手が選択されています。違う選手を選択してください。'
+        else:
+            if random.random() > 0.5:
+                result = f'コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。'
+            else:
+                result = f'コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。'
+    params['form'] = form
+    params['result'] = result
+    return render(request, 'coin.html', params)

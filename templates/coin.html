@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>大会用簡易コイントスシステム</h3>
+    <p>
+        リーグ：{{ league }}
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">コイントス</button>
+    </form>
+    <p style="font-size:50px">
+        {{ result }}
+    </p>
+{% endblock %}

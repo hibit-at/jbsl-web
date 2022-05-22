@@ -4,6 +4,28 @@ import django
 import requests
 from discord_message import discord_message_process
 
+def score_to_acc(score, notes):
+    max_score = 0
+    multiply_count = 1
+    while notes > 0 and multiply_count > 0:
+        max_score += 115
+        notes -= 1
+        multiply_count -= 1
+    multiply_count = 4
+    while notes > 0  and multiply_count > 0:
+        max_score += 115*2
+        notes -= 1
+        multiply_count -= 1
+    multiply_count = 8
+    while notes > 0 and multiply_count > 0:
+        max_score += 115*4
+        notes -= 1
+        multiply_count -= 1
+    while notes > 0:
+        max_score += 115*8
+        notes -= 1
+    return score/max_score*100
+
 
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
@@ -74,7 +96,8 @@ def league_update_process():
                     miss = scoreData['badCuts'] + scoreData['missedNotes']
                     defaults = {
                         'score': score,
-                        'acc': score/(115*8*int(notes)-7245)*100,
+                        # 'acc': score/(115*8*int(notes)-7245)*100,
+                        'acc' : score_to_acc(score, int(notes)),
                         'rawPP': rawPP,
                         'miss': miss,
                     }

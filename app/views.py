@@ -69,6 +69,29 @@ league_colors = [
 ]
 
 
+def score_to_acc(score, notes):
+    max_score = 0
+    multiply_count = 1
+    while notes > 0 and multiply_count > 0:
+        max_score += 115
+        notes -= 1
+        multiply_count -= 1
+    multiply_count = 4
+    while notes > 0 and multiply_count > 0:
+        max_score += 115*2
+        notes -= 1
+        multiply_count -= 1
+    multiply_count = 8
+    while notes > 0 and multiply_count > 0:
+        max_score += 115*4
+        notes -= 1
+        multiply_count -= 1
+    while notes > 0:
+        max_score += 115*8
+        notes -= 1
+    return score/max_score*100
+
+
 def slope(n):
     if n == 1:
         return 0
@@ -247,14 +270,16 @@ def score_to_headline(new_score, song, player, league):
         old_score = Score.objects.get(player=player, song=song, league=league)
         if new_score > old_score.score:
             old_acc = old_score.acc
-            new_acc = new_score/(115*8*int(song.notes)-7245)*100
+            # new_acc = new_score/(115*8*int(song.notes)-7245)*100
+            new_acc = score_to_acc(new_score, song.notes)
             Headline.objects.create(
                 player=player,
                 time=datetime.now(),
                 text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
             )
     else:
-        new_acc = new_score/(115*8*int(song.notes)-7245)*100
+        # new_acc = new_score/(115*8*int(song.notes)-7245)*100
+        new_acc = score_to_acc(new_score, song.notes)
         Headline.objects.create(
             player=player,
             time=datetime.now(),
@@ -303,7 +328,8 @@ def top_score_registration(player):
             player.hmd = hmd
         defaults = {
             'score': score,
-            'acc': score/(115*8*int(notes)-7245)*100,
+            # 'acc': score/(115*8*int(notes)-7245)*100,
+            'acc': score_to_acc(score, notes),
             'rawPP': pp,
             'miss': miss,
         }
@@ -931,7 +957,8 @@ def virtual_league(request, pk):
             miss = scoreData['badCuts'] + scoreData['missedNotes']
             defaults = {
                 'score': score,
-                'acc': score/(115*8*int(notes)-7245)*100,
+                # 'acc': score/(115*8*int(notes)-7245)*100,
+                'acc': score_to_acc(score, notes),
                 'rawPP': rawPP,
                 'miss': miss,
             }
@@ -1125,13 +1152,13 @@ def bsr_checker(request):
 
             def __init__(self) -> None:
                 self.results = []
-            
-            def append(self,text,link=None):
+
+            def append(self, text, link=None):
                 append_res = Result(text, link)
                 self.results.append(Result(text, link))
 
             def __str__(self) -> str:
-                return ','.join(map(str,self.results))    
+                return ','.join(map(str, self.results))
 
         results = Results()
         twitchURL = post['twitchURL']
@@ -1142,8 +1169,10 @@ def bsr_checker(request):
             params['results'] = results
             return render(request, 'bsr_checker.html', params)
         player = Player.objects.get(twitch=twitchID)
-        results.append(f'マッチするプレイヤー：{player.name}', f'https://jbsl-web.herokuapp.com/userpage/{player.sid}')
-        results.append(f'Score Saber : {player.sid}', f'https://scoresaber.com/u/{player.sid}')
+        results.append(
+            f'マッチするプレイヤー：{player.name}', f'https://jbsl-web.herokuapp.com/userpage/{player.sid}')
+        results.append(f'Score Saber : {player.sid}',
+                       f'https://scoresaber.com/u/{player.sid}')
         params['results'] = results
         bsr = post['bsr_command'].split(' ')[-1].split('/')[-1]
         results.append(f'検出された bsr key : {bsr}')
@@ -1172,7 +1201,8 @@ def bsr_checker(request):
                 results.append(f'! ScoreSaber から譜面の情報を取得することができませんでした。')
                 continue
             lid = res['id']
-            results.append(f'diff {i+1} {chara} {label} リーダーボード ID : {lid}', f'https://scoresaber.com/leaderboard/{lid}?search={player.name}')
+            results.append(f'diff {i+1} {chara} {label} リーダーボード ID : {lid}',
+                           f'https://scoresaber.com/leaderboard/{lid}?search={player.name}')
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/scores?countries=JP&search={player.name}'
             res = requests.get(url).json()
             if not 'scores' in res:
@@ -1180,7 +1210,8 @@ def bsr_checker(request):
                 continue
             res = res['scores'][0]
             timeSet = res['timeSet']
-            date = datetime.strptime(timeSet.split('.')[0], '%Y-%m-%dT%H:%M:%S')
+            date = datetime.strptime(
+                timeSet.split('.')[0], '%Y-%m-%dT%H:%M:%S')
             date += timedelta(hours=9)
             print(date)
             time_dif = datetime.now() - date
@@ -1200,7 +1231,7 @@ def bsr_checker(request):
 def coin(request):
     league = request.GET.get('league')
     league = League.objects.get(pk=league)
-    params = {'league' : league}
+    params = {'league': league}
     participants = Player.objects.all().filter(
         league=league).order_by('borderPP').reverse()
     choice = []

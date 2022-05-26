@@ -3,6 +3,7 @@ import os
 import django
 import requests
 from discord_message import discord_message_process
+import urllib.parse
 
 def score_to_acc(score, notes):
     max_score = 0
@@ -79,7 +80,8 @@ def league_update_process():
             print(player)
             for song in league.playlist.songs.all():
                 print(song, song.lid)
-                url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={player.name}'
+                name_encode = urllib.parse.quote(player.name)
+                url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={name_encode}'
                 res = requests.get(url).json()
                 if 'errorMessage' in res:
                     print('no score')

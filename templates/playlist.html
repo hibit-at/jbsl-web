@@ -20,6 +20,18 @@
             {{ playlist.editor }}
         </a>
     </p>
+    {% if leagues|length > 0 %}
+    <p>
+    このプレイリストを採用しているリーグ
+    </p>
+    <ul>
+        {% for league in leagues %}
+        <li>
+            <a href="{% url 'app:leaderboard' pk=league.pk %}">{{league}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% if isEditor and playlist.isEditable %}
         <form method="post">
             {% csrf_token %}

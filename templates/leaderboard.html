@@ -19,8 +19,9 @@
             {{ league.name }}'s Leaderboard
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
-                <span class="dl_link">プレイリスト</span>
+                <span class="dl_link">プレイリストDL</span>
             </a>
+            <a href="{% url 'app:playlist' pk=league.playlist.pk %}">detail</a>
         </h3>
         <p>
             リーグの種別 :

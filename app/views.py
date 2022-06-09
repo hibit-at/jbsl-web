@@ -576,6 +576,11 @@ def playlist(request, pk):
     user = request.user
     playlist = Playlist.objects.get(pk=pk)
 
+    #leagues
+    leagues = League.objects.filter(playlist=playlist)
+    print(leagues)
+    params['leagues'] = leagues
+
     # reorder
     if user.is_authenticated:
         if playlist.editor == user.player:
@@ -684,6 +689,9 @@ def playlist(request, pk):
             songInfo.save()
     playlist = make_sorted_playlist(playlist)
     params['playlist'] = playlist
+
+
+
     return render(request, 'playlist.html', params)
 
 

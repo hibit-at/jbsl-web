@@ -239,7 +239,7 @@ def create_song_by_hash(hash, diff_num, char, lid):
     diffs = latest['diffs']
     diff = diff_label[diff_num]
     color = col_dict[diff_num]
-    imageURL = f"https://scoresaber.com/imports/images/songs/{hash}.png"
+    imageURL = f"https://cdn.scoresaber.com/covers/{str(hash).upper()}.png"
     notes = 0
     for diff_data in diffs:
         if diff_data['difficulty'] == diff and diff_data['characteristic'] == char:
@@ -412,6 +412,8 @@ def song(request, lid=0):
 def search_lid(hash, gameMode, diff_num):
     url = f'https://scoresaber.com/api/leaderboard/get-difficulties/{hash}'
     res = requests.get(url).json()
+    if 'errorMessage' in res:
+        return False
     for r in res:
         if r['difficulty'] != diff_num:
             continue
@@ -434,6 +436,8 @@ def add_playlist(playlist, json_data):
         print(diff)
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
             diff_num = diff_label_inv[diff]
+            if search_lid(hash, gameMode, diff_num) == False:
+                continue
             lid = search_lid(hash, gameMode, diff_num)
             create_song_by_hash(hash, diff_num, char, lid)
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():

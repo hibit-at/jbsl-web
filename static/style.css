@@ -16,7 +16,7 @@ a::after {
     content: '';
     width: 100%;
     height: 2px;
-    background: lightgreen;
+    background: saddlebrown;
     transform: scale(0, 1);
     transform-origin: center top;
     transition: transform .2s;
@@ -27,7 +27,7 @@ a:hover::after {
 }
 
 .table {
-    background-color: lightgreen;
+    background-color: burlywood;
     margin: 10px;
     border-radius: 10px;
     color: black;
@@ -40,7 +40,7 @@ a:hover::after {
 }
 
 .navbar {
-    background-color: mediumseagreen;
+    background-color: #ff8628;
     width: 100%;
     padding: 10px;
     position: fixed;
@@ -56,14 +56,14 @@ a:hover::after {
 .info-submit {
     border-radius: 5px;
     border-style: solid;
-    border-color: mediumseagreen;
+    border-color: #ff8628;
     padding: 20px;
 }
 
 .btn {
     border-radius: 10px;
     color: white;
-    background-color: mediumseagreen;
+    background-color: #ff8628;
 }
 
 .danger {
@@ -75,7 +75,7 @@ a:hover::after {
 }
 
 .dl_link {
-    background: mediumseagreen;
+    background: #ff8628;
     padding: 5px;
     border-radius: 5px;
     color: inherit;
@@ -83,7 +83,7 @@ a:hover::after {
 
 .line {
     height: 5px;
-    background-color: mediumseagreen;
+    background-color: #ff8628;
 }
 
 .icon {

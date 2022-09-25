@@ -222,17 +222,20 @@
                             </span>
                         </td>
                         <td>
-                            {{ player.comment }}
                             {% if user.player == player %}
-                                <br />
                                 <form method="post">
+                                    <br />
                                     {% csrf_token %}
+                                    <button class="btn" type="submit">
+                                        コメント
+                                    </button>
                                     <input type="text"
                                            size="80px"
                                            name="leaguecomment"
                                            value="{{ player.comment }}"/>
-                                    <button class="btn" type="submit">コメント</button>
                                 </form>
+                            {% else %}
+                                {{ player.comment }}
                             {% endif %}
                         </td>
                     </tr>
@@ -337,19 +340,20 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ score.comment }}
                                     {% if user.player == score.player %}
                                         <br />
                                         <form method="post">
                                             {% csrf_token %}
+                                            <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
+                                                コメント
+                                            </button>
                                             <input type="text"
                                                    size="80px"
                                                    name="scorecomment"
                                                    value="{{ score.comment }}"/>
-                                            <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
-                                                コメント
-                                            </button>
                                         </form>
+                                    {% else %}
+                                        {{ score.comment }}
                                     {% endif %}
                                 </td>
                             </tr>

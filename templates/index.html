@@ -48,19 +48,82 @@
         </ul>
     {% endif %}
     <div style="text-align:center">
-    <h3>! 第 4 回 JBSL 開催決定 !</h3>
-    <ul>
-        <p>9月24日（土） マッパー募集開始</p>
-        <p>10月9日（日） マッパー募集締切</p>
-        <p>10月22日（土）～10月30日（日） J3,J2 予選</p>
-        <p>10月29日（土）～11月6日（日） J1 予選</p>
-        <p>11月12日（土） J3 本戦</p>
-        <p>11月13日（日） J2 本戦</p>
-        <p>11月19日（土） J1 本戦・前半</p>
-        <p>11月26日（土） J1 本戦・後半</p>
-    </ul>
-    <h3>現在、<a href="https://docs.google.com/forms/d/1yUseuJwNCr_5enc5VPN-IB4AJql21KSL7VJ4hrRh_Eg/" style="color:#ff8628">マッパー募集中</a>です！</h3>
-</div>
+        <h3>! 第 4 回 JBSL 開催決定 !</h3>
+        <ul>
+            <p>
+                9月24日（土） マッパー募集開始
+            </p>
+            <p>
+                10月9日（日） マッパー募集締切
+            </p>
+            <p>
+                10月22日（土）～10月30日（日） J3,J2 予選
+            </p>
+            <p>
+                10月29日（土）～11月6日（日） J1 予選
+            </p>
+            <p>
+                11月12日（土） J3 本戦
+            </p>
+            <p>
+                11月13日（日） J2 本戦
+            </p>
+            <p>
+                11月19日（土） J1 本戦・前半
+            </p>
+            <p>
+                11月26日（土） J1 本戦・後半
+            </p>
+        </ul>
+        <h3>
+            現在、<a href="https://docs.google.com/forms/d/1yUseuJwNCr_5enc5VPN-IB4AJql21KSL7VJ4hrRh_Eg/"
+   style="color:#ff8628">マッパー募集中</a>です！
+        </h3>
+    </div>
+    <h3>JBSL4前座企画　マッパー杯</h3>
+<p>
+<p><img src="https://cdn.discordapp.com/avatars/435010295899881473/bd2ff5ff1fc7ab364ff29c6a8a54d9f9"></p>
+<p>マッパー杯 Part1 <a href="https://jbsl-web.herokuapp.com/leaderboard/28" style="color:#ff8628">hibit杯</a> 開催中！</p>
+<p>マッパーさんからコメントをいただいております。</p>
+<pre>
+・春を告げる
+
+yamaさんのシンセが死ぬほどかっこいい曲。
+シンセのかっこよさを表現することを意識しました。
+ノリノリで切って欲しい。
+
+・お砂糖ふたつ
+
+個人的にビーセイ用の曲を提供してくれたり、ビー祭用の曲も提供してくれている「よじしょー」君の作品。
+私の作品にはめずらしい、ゆるいテックな感じです。
+今回のラインナップの中ではいちばん簡単。
+
+・さよならアンドロメタ
+
+おしゃれな曲。JBSL に出させていただきましたが、採用されたのは HARD の方なので、こっち（EXPERT）はやったことない人が多いんじゃないかな。
+サビで一気に世界観が変わる感じを表現したくて、サビの配置をほぼすべて斜めノーツにするという暴挙に出ました。
+
+・Blood Sunburst
+
+後世では「令和の特異点」とも呼ばれる稀代の作曲家 hibit 氏の作品を譜面化しました。
+あらびあーんな感じを意識して作りました。
+褐色の少女が砂漠で佇んでる景色を想像してください。
+
+・メリーさん
+
+ギターが超かっこいい曲。全ては後半の DD がやりたくてやった感じがある。
+
+・前衛的ランドスケープ
+
+Lapix さんの超かっこいい曲。JBSL に出させていただきました。
+シンセがかっこいい曲っていいよね。
+
+・「i」
+
+可不ちゃんのフォニィのオマージュ？的な作品。サビを聞いた瞬間に配置が思い浮かんで、超いい感じの譜面になりました。
+Curate もしていただいた自信作です。
+</pre>    
+</p>
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
@@ -86,21 +149,11 @@
             <th>Title</th>
             <th>Description</th>
             <th>Limit</th>
-            <th>
-                Owner
-            </th>
-            <th>
-                End
-            </th>
-            <th>
-                1st
-            </th>
-            <th>
-                2nd
-            </th>
-            <th>
-                3rd
-            </th>
+            <th>Owner</th>
+            <th>End</th>
+            <th>1st</th>
+            <th>2nd</th>
+            <th>3rd</th>
         </thead>
         {% for league in active_leagues %}
             <tr style="background-color:{{ league.color }}">
@@ -109,12 +162,8 @@
                         <img class="thumb" src=" {{ league.playlist.image }}" />
                     </a>
                 </td>
-                <td>
-                    {{ league.name }}
-                </td>
-                <td>
-                    {{ league.description|truncatechars:50 }}
-                </td>
+                <td>{{ league.name }}</td>
+                <td>{{ league.description|truncatechars:50 }}</td>
                 <td>
                     {% if league.isPublic %}
                         {% if league.limit == 2000 %}

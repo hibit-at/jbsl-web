@@ -43,7 +43,7 @@
             <a href="https://discord.gg/CqQ6ZD8KRn" target="blank">
                 <img height="40px"
                      width="40px"
-                     src =
+                     src = 
                      {% static 'Discord.png' %}
                      style="filter:invert()">
             </a>
@@ -60,6 +60,10 @@
                      src =
                      {% static 'twitter.png' %}
                      style="filter:invert()">
+            </a>
+            <a>
+            <a href = {% url 'app:info' %}>
+                <img height="30px" width = "30px" src = {% static 'pict_gear.png' %}>
             </a>
             {% if user.is_authenticated %}
                 <a href="{% url 'app:mypage' %}">

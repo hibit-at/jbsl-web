@@ -1279,3 +1279,12 @@ def coin(request):
     params['form'] = form
     params['result'] = result
     return render(request, 'coin.html', params)
+
+
+def info(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    return render(request, 'info.html', params)

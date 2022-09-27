@@ -26,4 +26,5 @@ urlpatterns = [
     path('leaderboard/api/<int:pk>', views.api_leaderboard, name='api_leaderboard'),
     path('bsr_checker/', views.bsr_checker, name='bsr_checker'),
     path('coin/', views.coin, name='coin'),
+    path('info/', views.info, name='info'),
 ]

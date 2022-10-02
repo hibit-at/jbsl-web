@@ -1,14 +1,12 @@
 import os
 import django
-import sys
 
-def discord_check_process():
+
+def role_add(ID,role_name):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
     from discord.ext import commands
-    from app.models import Player
-    from allauth.socialaccount.models import SocialAccount
     if os.path.exists('local.py'):
         from local import DISCORD_BOT_TOKEN, GUILD_ID
         guild_id = GUILD_ID
@@ -23,19 +21,17 @@ def discord_check_process():
     @bot.event
     async def on_ready():
         guild = bot.get_guild(int(guild_id))
-        members = guild.members
-        joinIDs = [member.id for member in members]
-        for player in Player.objects.filter(inDiscord=False):
-            social = SocialAccount.objects.get(user=player.user)
-            print(social)
-            if int(social.uid) in joinIDs:
-                print('joined')
-                player.inDiscord = True
-                player.save()
+        member = guild.get_member(ID)
+        role = discord.utils.get(guild.roles,name=role_name)
+        print(member)
+        print(role)
+        await member.add_roles(role)
         await bot.close()
 
     bot.run(token)
 
 
 if __name__ == '__main__':
-    discord_check_process()
+    ID = 435010295899881473
+    role_name = 'Supporter'
+    role_add(ID,role_name)

@@ -8,6 +8,7 @@ from .models import League, LeagueComment, Player, Playlist, Song, Score, Headli
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
+import sys
 
 from PIL import Image
 import base64
@@ -580,7 +581,7 @@ def playlist(request, pk):
     user = request.user
     playlist = Playlist.objects.get(pk=pk)
 
-    #leagues
+    # leagues
     leagues = League.objects.filter(playlist=playlist)
     print(leagues)
     params['leagues'] = leagues
@@ -693,8 +694,6 @@ def playlist(request, pk):
             songInfo.save()
     playlist = make_sorted_playlist(playlist)
     params['playlist'] = playlist
-
-
 
     return render(request, 'playlist.html', params)
 
@@ -1288,3 +1287,11 @@ def info(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     return render(request, 'info.html', params)
+
+
+@login_required
+def join_league(request):
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params = {}
+    params['social'] = social

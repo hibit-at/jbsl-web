@@ -4,7 +4,7 @@ import os
 from time import sleep
 import django
 import requests
-from discord_utils import discord_message_process, league_create, role_add, role_create
+from discord_utils import discord_message_process
 import urllib.parse
 
 

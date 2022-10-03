@@ -32,6 +32,7 @@ def league_role_total():
         print(channel_names)
         print(role_names)
         for league in League.objects.filter(isLive=True):
+            print(league.name.lower())
             if not league.name.lower() in channel_names:
                 await category.create_text_channel(league.name)
             if not league.name in role_names:

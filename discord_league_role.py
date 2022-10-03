@@ -51,6 +51,8 @@ def league_role_total():
             for player in league.player.all():
                 print(player.discordID)
                 member = guild.get_member(int(player.discordID))
+                if member is None:
+                    continue
                 await member.add_roles(current_role)
             print(member)
                 

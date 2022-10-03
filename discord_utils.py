@@ -217,4 +217,4 @@ def role_add(ID, role_name):
 if __name__ == '__main__':
     print('utils manual test')
     # league_create('秘密の部屋')
-    league_role_total()
+    # league_role_total()

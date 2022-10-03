@@ -29,6 +29,8 @@ def league_role_total():
             channel_names.append(channel.name)
         for role in guild.roles:
             role_names.append(role.name)
+        print(channel_names)
+        print(role_names)
         for league in League.objects.filter(isLive=True):
             if not league.name in channel_names:
                 await category.create_text_channel(league.name)

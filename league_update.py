@@ -1,9 +1,12 @@
+import asyncio
 from datetime import datetime, timedelta, timezone
 import os
+from time import sleep
 import django
 import requests
-from discord_utils import discord_message_process
+from discord_utils import discord_message_process, league_create, role_add, role_create
 import urllib.parse
+
 
 def score_to_acc(score, notes):
     max_score = 0
@@ -13,7 +16,7 @@ def score_to_acc(score, notes):
         notes -= 1
         multiply_count -= 1
     multiply_count = 4
-    while notes > 0  and multiply_count > 0:
+    while notes > 0 and multiply_count > 0:
         max_score += 115*2
         notes -= 1
         multiply_count -= 1
@@ -37,7 +40,7 @@ def league_update_process():
     for league in League.objects.filter(isLive=True):
         end = league.end
         now = datetime.now(timezone.utc)
-        print(end,now)
+        print(end, now)
         if now > end:
             print('end')
             discord_message = ''
@@ -99,7 +102,7 @@ def league_update_process():
                     defaults = {
                         'score': score,
                         # 'acc': score/(115*8*int(notes)-7245)*100,
-                        'acc' : score_to_acc(score, int(notes)),
+                        'acc': score_to_acc(score, int(notes)),
                         'rawPP': rawPP,
                         'miss': miss,
                     }

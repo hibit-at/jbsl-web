@@ -27,6 +27,64 @@ def discord_message_process(message_text):
     bot.run(token)
 
 
+def league_role_total():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    import discord
+    from discord.ext import commands
+    if os.path.exists('local.py'):
+        from local import DISCORD_BOT_TOKEN, GUILD_ID
+        guild_id = GUILD_ID
+        token = DISCORD_BOT_TOKEN
+    else:
+        guild_id = os.getenv('GUILD_ID')
+        token = os.getenv('DISCORD_BOT_TOKEN')
+    intents = discord.Intents.all()
+    intents.members = True
+    bot = commands.Bot(command_prefix='/', intents=intents)
+
+    from app.models import League
+
+    @bot.event
+    async def on_ready():
+        guild = bot.get_guild(int(guild_id))
+        category = discord.utils.get(guild.categories, name='進行中リーグ')
+        channel_names = []
+        role_names = []
+        for channel in category.channels:
+            channel_names.append(channel.name)
+        for role in guild.roles:
+            role_names.append(role.name)
+        for league in League.objects.filter(isLive=True):
+            if not league.name in channel_names:
+                await category.create_text_channel(league.name)
+            if not league.name in role_names:
+                colour = discord.Colour.default()
+                col_dict = {}
+                col_dict['lightblue'] = discord.Colour.blue()
+                col_dict['lightgreen'] = discord.Colour.green()
+                col_dict['lightsalmon'] = discord.Colour.orange()
+                col_dict['lightpink'] = discord.Colour.red()
+                col_dict['#FFCCFF'] = discord.Colour.purple()
+                col_dict['lightyellow'] = discord.Colour.gold()
+                if league.color in col_dict:
+                    colour = col_dict[league.color]
+                await guild.create_role(name=league.name, colour=colour)
+            
+            current_role = discord.utils.get(guild.roles, name=league.name)
+            print(current_role)
+
+            for player in league.player.all():
+                print(player.discordID)
+                member = guild.get_member(int(player.discordID))
+                await member.add_roles(current_role)
+            print(member)
+                
+        await bot.close()
+
+    bot.run(token)
+
+
 def league_create(league_name):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -46,15 +104,22 @@ def league_create(league_name):
     @bot.event
     async def on_ready():
         guild = bot.get_guild(int(guild_id))
-        category = discord.utils.get(guild.categories, name='test')
-        print(category)
-        await category.create_text_channel(league_name)
+        category = discord.utils.get(guild.categories, name='進行中リーグ')
+        channels = category.channels
+        print(channels)
+        exist = False
+        for channel in channels:
+            print(channel.name)
+            if channel.name == league_name:
+                exist = True
+        if not exist:
+            await category.create_text_channel(league_name)
         await bot.close()
 
     bot.run(token)
 
 
-def league_erase():
+def role_erase():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
@@ -100,13 +165,6 @@ def role_create(role_name, color_string):
     intents = discord.Intents.all()
     intents.members = True
     bot = commands.Bot(command_prefix='/', intents=intents)
-
-    {'value': 'lightblue', 'text': 'Blue'},
-    {'value': 'lightgreen', 'text': 'Green'},
-    {'value': 'lightsalmon', 'text': 'Orange'},
-    {'value': 'lightpink', 'text': 'Red'},
-    {'value': '#FFCCFF', 'text': 'Purple'},
-    {'value': 'lightyellow', 'text': 'Yellow'},
 
     @bot.event
     async def on_ready():
@@ -158,4 +216,5 @@ def role_add(ID, role_name):
 
 if __name__ == '__main__':
     print('utils manual test')
-    # league_erase()
+    # league_create('秘密の部屋')
+    league_role_total()

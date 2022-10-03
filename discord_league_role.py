@@ -1,6 +1,7 @@
 import os
 import django
 
+
 def league_role_total():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -31,11 +32,12 @@ def league_role_total():
             role_names.append(role.name)
         print(channel_names)
         print(role_names)
+
         for league in League.objects.filter(isLive=True):
-            valid_name = league.name.lower().replace(' ','-')
+            valid_name = league.name.lower().replace(' ', '-')
             print(valid_name)
             if not valid_name in channel_names:
-                await category.create_text_channel(league.name)
+                current_channel = await category.create_text_channel(league.name)
             if not league.name in role_names:
                 colour = discord.Colour.default()
                 col_dict = {}
@@ -48,9 +50,15 @@ def league_role_total():
                 if league.color in col_dict:
                     colour = col_dict[league.color]
                 await guild.create_role(name=league.name, colour=colour)
-            
+
+            everyone = discord.utils.get(guild.roles, name='@everyone')
+            current_channel = discord.utils.get(
+                guild.channels, name=valid_name)
             current_role = discord.utils.get(guild.roles, name=league.name)
+            print(current_channel)
             print(current_role)
+            await current_channel.set_permissions(everyone, send_messages=False)
+            await current_channel.set_permissions(current_role, send_messages=True)
 
             for player in league.player.all():
                 print(player.discordID)
@@ -59,10 +67,11 @@ def league_role_total():
                     continue
                 await member.add_roles(current_role)
             print(member)
-                
+
         await bot.close()
 
     bot.run(token)
+
 
 if __name__ == '__main__':
     league_role_total()

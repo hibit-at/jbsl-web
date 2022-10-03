@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 import os
 import django
 import requests
-from discord_message import discord_message_process
+from discord_utils import discord_message_process
 import urllib.parse
 
 def score_to_acc(score, notes):

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>リーグのコメント編集</h2>
+    <p>
+        League : {{ league.name }}
+    </p>
+    <p>
+        Player : {{ player.name }}
+    </p>
+    <p>
+        現在のコメント : {{ player.comment }}
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="league" value="{{ league.pk }}">
+        <input type="hidden" name="player" value="{{ player.pk }}">
+        <input type="text"
+        size="80px"
+        name="comment"
+        value="{{ score.comment }}"/>
+        <button type="submit" class="dl_link">変更</button>
+    </form>
+{% endblock content %}

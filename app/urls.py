@@ -27,4 +27,6 @@ urlpatterns = [
     path('bsr_checker/', views.bsr_checker, name='bsr_checker'),
     path('coin/', views.coin, name='coin'),
     path('info/', views.info, name='info'),
+    path('score_comment/', views.score_comment, name='score_comment'),
+    path('league_comment/', views.league_comment, name='league_comment'),
 ]

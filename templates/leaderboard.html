@@ -229,16 +229,15 @@
                             </td>
                             <td>
                                 {% if user.player == player %}
-                                    <form method="post">
-                                        <br />
+                                    <form method="post" action="{% url 'app:league_comment' %}">
                                         {% csrf_token %}
-                                        <button class="btn" type="submit">
-                                            コメント
-                                        </button>
-                                        <input type="text"
-                                               size="80px"
-                                               name="leaguecomment"
-                                               value="{{ player.comment }}"/>
+                                        <input type="hidden" name="player" value=" {{player.pk}} ">
+                                        <input type="hidden" name="league" value=" {{league.pk}} ">
+                                        <input type="image"
+                                               src="{% static 'pencil.png' %}"
+                                               width="25px"
+                                               height="25px">
+                                        {{ player.comment }}
                                     </form>
                                 {% else %}
                                     {{ player.comment }}
@@ -353,16 +352,14 @@
                                         </td>
                                         <td>
                                             {% if user.player == score.player %}
-                                                <br />
-                                                <form method="post">
+                                                <form method="post" action="{% url 'app:score_comment' %}">
                                                     {% csrf_token %}
-                                                    <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
-                                                        コメント
-                                                    </button>
-                                                    <input type="text"
-                                                           size="80px"
-                                                           name="scorecomment"
-                                                           value="{{ score.comment }}"/>
+                                                    <input type="hidden" name="score" value="{{ score.id }}">
+                                                    <input type="image"
+                                                           src="{% static 'pencil.png' %}"
+                                                           width="25px"
+                                                           height="25px">
+                                                    {{ score.comment }}
                                                 </form>
                                             {% else %}
                                                 {{ score.comment }}

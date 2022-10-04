@@ -2,13 +2,13 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from io import BytesIO
 import json
+from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
-import sys
 
 from PIL import Image
 import base64
@@ -868,20 +868,6 @@ def leaderboard(request, pk):
                 defaults=defaults,
             )
             return redirect('app:leaderboard', pk=pk)
-        if 'scorecomment' in post:
-            comment = post['scorecomment'][:50]
-            lid = post['lid']
-            score = Score.objects.get(
-                song__lid=lid, league=league, player=user.player)
-            score.comment = comment
-            score.save()
-            return redirect('app:leaderboard', pk=pk)
-        if 'virtual_join' in post:
-            # sid = post['virtual_join']
-            # add_player = Player.objects.get(sid=sid)
-            # league.virtual.add(add_player)
-            print('工事中')
-            return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
@@ -1290,8 +1276,56 @@ def info(request):
 
 
 @login_required
-def join_league(request):
+def score_comment(request):
     user = request.user
     social = SocialAccount.objects.get(user=user)
     params = {}
     params['social'] = social
+    print(request.method)
+    if request.method == "POST":
+        post = request.POST
+        print(post)
+        score = Score.objects.get(pk=post['score'])
+        if 'comment' in post:
+            score.comment = post['comment']
+            score.save()
+            redirect_url = reverse('app:leaderboard', args=[score.league.pk])
+            print(redirect_url)
+            return redirect(f'{redirect_url}#{score.song.lid}')
+        print(score)
+        params['score'] = score
+        return render(request, 'score_comment.html', params)
+    return redirect('app:index')
+
+@login_required
+def league_comment(request):
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params = {}
+    params['social'] = social
+    print(request.method)
+    print('league comment')
+    if request.method == "POST":
+        post = request.POST
+        print(post)
+        print('hoge')
+        league = League.objects.get(pk=post['league'])
+        player = Player.objects.get(pk=post['player'])
+        params['league'] = league
+        params['player'] = player
+        print(league)
+        print(player)
+        if 'comment' in post:
+            comment = post['comment'][:50]
+            defaults = {'message': comment}
+            LeagueComment.objects.update_or_create(
+                league=league,
+                player=user.player,
+                defaults=defaults,
+            )
+            return redirect('app:leaderboard', pk=league.pk)
+        if LeagueComment.objects.filter(league=league, player=player).exists():
+            comment = LeagueComment.objects.get(league=league, player=player)
+            setattr(player, 'comment', comment)
+        return render(request, 'league_comment.html', params)
+    return redirect('app:index')

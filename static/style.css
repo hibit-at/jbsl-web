@@ -27,7 +27,7 @@ a:hover::after {
 }
 
 .table {
-    background-color: burlywood;
+    background: linear-gradient(to right, rgba(255, 160, 80, .7), rgba(255, 220, 200, .7));
     margin: 10px;
     border-radius: 10px;
     color: black;

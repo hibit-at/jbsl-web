@@ -81,11 +81,20 @@
         </h3>
     </div>
     <h3>JBSL4前座企画　マッパー杯</h3>
-<p>
-<p><img src="https://cdn.scoresaber.com/avatars/76561198846551445.jpg" width="128px" height="128px"></p>
-<p>マッパー杯 Part2 <a href="https://jbsl-web.herokuapp.com/leaderboard/29" style="color:#ff8628">じおん杯</a> 開催中！（～10月9日）</p>
-<p>マッパーさんからコメントをいただいております。</p>
-<pre>
+    <p>
+        <p>
+            <img src="https://cdn.scoresaber.com/avatars/76561198846551445.jpg"
+                 width="128px"
+                 height="128px">
+        </p>
+        <p>
+            マッパー杯 Part2 <a href="https://jbsl-web.herokuapp.com/leaderboard/29"
+    style="color:#ff8628">じおん杯</a> 開催中！（～10月9日）
+        </p>
+        <p>
+            マッパーさんからコメントをいただいております。
+        </p>
+        <pre>
     ・Near to You (CUTE VERSION)
     壁を沢山避けたり、手首を変な方向にひねったりする譜面です。
 
@@ -106,13 +115,20 @@
 
     ・Hisui
     曲が凄く良いです。
-</pre>    
-</p>
-<p>
-<p><img src="https://cdn.discordapp.com/avatars/660732844565594122/053f9c38edca91d8fea9343aa5bfae99"></p>
-<p>マッパー杯 Part3 <a href="https://jbsl-web.herokuapp.com/leaderboard/30" style="color:#ff8628">ななねこ杯</a> 開催中！（～10月9日）</p>
-<p>マッパーさんからコメントをいただいております。</p>
-<pre>
+</pre>
+    </p>
+    <p>
+        <p>
+            <img src="https://cdn.discordapp.com/avatars/660732844565594122/053f9c38edca91d8fea9343aa5bfae99">
+        </p>
+        <p>
+            マッパー杯 Part3 <a href="https://jbsl-web.herokuapp.com/leaderboard/30"
+    style="color:#ff8628">ななねこ杯</a> 開催中！（～10月9日）
+        </p>
+        <p>
+            マッパーさんからコメントをいただいております。
+        </p>
+        <pre>
     ・Petit Etoile (Ex+)
     JBSL2にて出させていただいたまぐろちゃんとの合作譜面です。
     ノリ重視で難しいと楽しいを意識した譜面となっています。
@@ -143,8 +159,8 @@
     Glorious Crownのt+pazoliteリミックス版。JBSL3のJ1 Extreme枠で採用された譜面です。
     結構速めなボムリセット、襲いかかる色々なパターンのストリーム。容赦なしです。
     このラインナップの中では一番難しいです。
-</pre>    
-</p>
+</pre>
+    </p>
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
@@ -164,7 +180,7 @@
     </p>
     <h3>Live Leagues</h3>
     <table class="table table-striped table-borderless"
-           style="background-color:gray">
+           style="background: rgba(255,255,255,.5)">
         <thead>
             <th>Cover</th>
             <th>Title</th>
@@ -174,17 +190,23 @@
             <th>End</th>
             <th>1st</th>
             <th>2nd</th>
-            <th>3rd</th>
+            <th>
+                3rd
+            </th>
         </thead>
         {% for league in active_leagues %}
-            <tr style="background-color:{{ league.color }}">
+            <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
                 <td>
                     <a href={% url 'app:leaderboard' pk=league.pk %}>
                         <img class="thumb" src=" {{ league.playlist.image }}" />
                     </a>
                 </td>
-                <td>{{ league.name }}</td>
-                <td>{{ league.description|truncatechars:50 }}</td>
+                <td>
+                    {{ league.name }}
+                </td>
+                <td>
+                    {{ league.description|truncatechars:50 }}
+                </td>
                 <td>
                     {% if league.isPublic %}
                         {% if league.limit == 2000 %}

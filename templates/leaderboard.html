@@ -188,226 +188,238 @@
                 {% for player in scored_rank %}
                     <tr>
                         <td width="50px">#{{ player.rank }}</td>
-                        <td width="250px" {% if user.player == player or user.player.rival == player %} style="background-color:white;border-radius:10px;" {% endif %}>
-                            <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
-                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                                {% if player.isSupporter %}
-                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                    <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                                {% else %}
-                                    {{ player }}
+                        <td width="250px">
+                            {% if user.player == player or user.player.rival == player %}
+                                <div style="border-radius:10px;
+                                            border:3px dashed rgba(0,0,0,.5);
+                                            padding:10px;">
                                 {% endif %}
-                            </a>
-                        </td>
-                        <td width="70px">
-                            <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
-                                {{ player.count_pos }}
-                            </span>
-                        </td>
-                        <td width="100px">
-                            {% if player.theoretical == 100 %}
-                                <span class="diff" style="color:white">MAX</span>
-                            {% else %}
-                                ({{ player.theoretical|floatformat:2 }} %)
-                            {% endif %}
-                        </td>
-                        <td width="70px">
-                            <span {% if player.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_valid }}" {% endif %}>
-                                {{ player.valid }}
-                            </span>
-                        </td>
-                        <td width="80px">
-                            <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
-                                {{ player.count_acc|floatformat:2 }} %
-                            </span>
-                        </td>
-                        <td>
-                            {% if user.player == player %}
-                                <form method="post">
-                                    <br />
-                                    {% csrf_token %}
-                                    <button class="btn" type="submit">
-                                        コメント
-                                    </button>
-                                    <input type="text"
-                                           size="80px"
-                                           name="leaguecomment"
-                                           value="{{ player.comment }}"/>
-                                </form>
-                            {% else %}
-                                {{ player.comment }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% if player.rank == 8 %}
-                        <tr>
-                            <td colspan="7">
-                                <hr />
+                                <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
+                                    <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                    {% if player.isSupporter %}
+                                        <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                        <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                                    {% else %}
+                                        {{ player }}
+                                    {% endif %}
+                                </a>
+                                {% if user.player == player or user.player.rival == player %}</div>{% endif %}
+                            </td>
+                            <td width="70px">
+                                <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
+                                    {{ player.count_pos }}
+                                </span>
+                            </td>
+                            <td width="100px">
+                                {% if player.theoretical == 100 %}
+                                    <span class="diff" style="color:white">MAX</span>
+                                {% else %}
+                                    ({{ player.theoretical|floatformat:2 }} %)
+                                {% endif %}
+                            </td>
+                            <td width="70px">
+                                <span {% if player.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_valid }}" {% endif %}>
+                                    {{ player.valid }}
+                                </span>
+                            </td>
+                            <td width="80px">
+                                <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
+                                    {{ player.count_acc|floatformat:2 }} %
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.player == player %}
+                                    <form method="post">
+                                        <br />
+                                        {% csrf_token %}
+                                        <button class="btn" type="submit">
+                                            コメント
+                                        </button>
+                                        <input type="text"
+                                               size="80px"
+                                               name="leaguecomment"
+                                               value="{{ player.comment }}"/>
+                                    </form>
+                                {% else %}
+                                    {{ player.comment }}
+                                {% endif %}
                             </td>
                         </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <a class="border8-trigger" href="#{{ league.id }}">すべて表示</a>
-    </div>
-    <hr />
-    <h2 style="text-align:center">
-        譜面別リーグ内順位
-    </h2>
-    {% for song in LBs %}
-        <p>
-            <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
-                {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
-            </span></span> by {{ song.author }}
-            <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
-               style="filter:invert()">
-                <img src="{% static 'ScoreSaberLogo.png' %}"
-                     width="30px"
-                     height="30px"
-                     alt="scoresaber"/>
-            </a>
-            <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
-        </p>
-        <div id="{{ song.lid }}"
-             class="top5-target"
-             style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
-            <div style="display:flex">
-                <img src="{{ song.imageURL }}" class="thumb" alt="thumb" />
-                <table class="table table-striped table-borderless"
-                       style="background : rgba(255,255,255,.5)">
-                    <thead>
-                        <tr>
-                            <th>
-                                Rank
-                            </th>
-                            <th>
-                                Player
-                            </th>
-                            <th>
-                                順位点
-                            </th>
-                            <th>
-                                有効
-                                <br>
-                                譜面
-                            </th>
-                            <th>
-                                Accuracy
-                            </th>
-                            <th>
-                                Miss
-                            </th>
-                            <th>
-                                Message
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody style="color:black">
-                        {% for score in song.scores %}
+                        {% if player.rank == 8 %}
                             <tr>
-                                <td width="50px">
-                                    #{{ score.rank }}
-                                </td>
-                                <td width="250px" {% if user.player == score.player or user.player.rival == score.player %}style="background-color:white;border-radius:10px;"{% endif %}>
-                                    <a href="{% url 'app:userpage' sid=score.player.sid %}"
-                                       style="color:black">
-                                        <img src="{{ score.player.imageURL }}" class="icon">
-                                        {% with score.player as player %}
-                                            {% if player.isSupporter %}
-                                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                                <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                                            {% else %}
-                                                {{ player }}
-                                            {% endif %}
-                                        {% endwith %}
-                                    </a>
-                                </td>
-                                <td width="70px">
-                                    {{ score.pos }}
-                                </td>
-                                <td width="60px">
-                                    {{ score.valid }}
-                                </td>
-                                <td width="100px">
-                                    {{ score.acc|floatformat:2 }}%
-                                </td>
-                                <td>
-                                    {% if score.miss == 0 %}
-                                        <span class="diff" style="color:white">FC</span>
-                                    {% else %}
-                                        {{ score.miss }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if user.player == score.player %}
-                                        <br />
-                                        <form method="post">
-                                            {% csrf_token %}
-                                            <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
-                                                コメント
-                                            </button>
-                                            <input type="text"
-                                                   size="80px"
-                                                   name="scorecomment"
-                                                   value="{{ score.comment }}"/>
-                                        </form>
-                                    {% else %}
-                                        {{ score.comment }}
-                                    {% endif %}
+                                <td colspan="7">
+                                    <hr />
                                 </td>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% if scored_rank|length > 5 %}
-                <a class="top5-trigger" href="#{{ song.lid }}" style="margin-left:158px">すべて表示</a>
-            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a class="border8-trigger" href="#{{ league.id }}">すべて表示</a>
         </div>
-    {% endfor %}
-    {% if isOwner and league.isLive %}
-        <form method="post">
-            {% csrf_token %}
-            <select multiple size="{{ not_invite_players|length }}" name="invite">
-                {% for player in not_invite_players %}
-                    <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
-                    </option>
-                {% endfor %}
-            </select>
-            <button class="btn" type="submit">
-                招待
-            </button>
-        </form>
-    {% endif %}
-    <div style="text-align:center">
-        {% if isMember %}
-            {% if league.isLive %}
-                {% if isClose %}
-                    <p>
-                        公式リーグでは、終了 48 時間前を過ぎると脱退することはできません
-                    </p>
-                {% else %}
-                    <p>
-                        <form method="post" onSubmit="return check()">
-                            {% csrf_token %}
-                            <button class="danger"
-                                    name="disjoin"
-                                    type="submit"
-                                    value="{{ user.player.sid }}">
-                                脱退
-                            </button>
-                        </form>
-                    </p>
-                {% endif %}
-            {% else %}
-                <p>
-                    終了したリーグから脱退することはできません
-                </p>
+        <hr />
+        <h2 style="text-align:center">
+            譜面別リーグ内順位
+        </h2>
+        {% for song in LBs %}
+            <p>
+                <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+                    {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
+                </span></span> by {{ song.author }}
+                <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
+                   style="filter:invert()">
+                    <img src="{% static 'ScoreSaberLogo.png' %}"
+                         width="30px"
+                         height="30px"
+                         alt="scoresaber"/>
+                </a>
+                <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
+            </p>
+            <div id="{{ song.lid }}"
+                 class="top5-target"
+                 style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
+                <div style="display:flex">
+                    <img src="{{ song.imageURL }}" class="thumb" alt="thumb" />
+                    <table class="table table-striped table-borderless"
+                           style="background : rgba(255,255,255,.5)">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Rank
+                                </th>
+                                <th>
+                                    Player
+                                </th>
+                                <th>
+                                    順位点
+                                </th>
+                                <th>
+                                    有効
+                                    <br>
+                                    譜面
+                                </th>
+                                <th>
+                                    Accuracy
+                                </th>
+                                <th>
+                                    Miss
+                                </th>
+                                <th>
+                                    Message
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody style="color:black">
+                            {% for score in song.scores %}
+                                <tr>
+                                    <td width="50px">
+                                        #{{ score.rank }}
+                                    </td>
+                                    <td width="250px">
+                                        {% if user.player == score.player or user.player.rival == score.player %}
+                                            <div style="border-radius:10px;
+                                                        border:3px dashed rgba(0,0,0,.5);
+                                                        padding:10px;">
+                                            {% endif %}
+                                            <a href="{% url 'app:userpage' sid=score.player.sid %}"
+                                               style="color:black">
+                                                <img src="{{ score.player.imageURL }}" class="icon">
+                                                {% with score.player as player %}
+                                                    {% if player.isSupporter %}
+                                                        <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
+                                                        <img src="{% static 'Check.png' %}" height="15px" width="15px" />
+                                                    {% else %}
+                                                        {{ player }}
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </a>
+                                            {% if user.player == score.player or user.player.rival == score.player %}</div>{% endif %}
+                                        </td>
+                                        <td width="70px">
+                                            {{ score.pos }}
+                                        </td>
+                                        <td width="60px">
+                                            {{ score.valid }}
+                                        </td>
+                                        <td width="100px">
+                                            {{ score.acc|floatformat:2 }}%
+                                        </td>
+                                        <td>
+                                            {% if score.miss == 0 %}
+                                                <span class="diff" style="color:white">FC</span>
+                                            {% else %}
+                                                {{ score.miss }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.player == score.player %}
+                                                <br />
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <button class="btn" value="{{ score.song.lid }}" name="lid" type="submit">
+                                                        コメント
+                                                    </button>
+                                                    <input type="text"
+                                                           size="80px"
+                                                           name="scorecomment"
+                                                           value="{{ score.comment }}"/>
+                                                </form>
+                                            {% else %}
+                                                {{ score.comment }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if scored_rank|length > 5 %}
+                        <a class="top5-trigger" href="#{{ song.lid }}" style="margin-left:158px">すべて表示</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if isOwner and league.isLive %}
+                <form method="post">
+                    {% csrf_token %}
+                    <select multiple size="{{ not_invite_players|length }}" name="invite">
+                        {% for player in not_invite_players %}
+                            <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn" type="submit">
+                        招待
+                    </button>
+                </form>
             {% endif %}
-        {% endif %}
-    </div>
-    <script>
+            <div style="text-align:center">
+                {% if isMember %}
+                    {% if league.isLive %}
+                        {% if isClose %}
+                            <p>
+                                公式リーグでは、終了 48 時間前を過ぎると脱退することはできません
+                            </p>
+                        {% else %}
+                            <p>
+                                <form method="post" onSubmit="return check()">
+                                    {% csrf_token %}
+                                    <button class="danger"
+                                            name="disjoin"
+                                            type="submit"
+                                            value="{{ user.player.sid }}">
+                                        脱退
+                                    </button>
+                                </form>
+                            </p>
+                        {% endif %}
+                    {% else %}
+                        <p>
+                            終了したリーグから脱退することはできません
+                        </p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <script>
         function check(){
             if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
                 return true; // 「OK」時は送信を実行
@@ -418,5 +430,5 @@
             }
         
         }
-    </script>
-{% endblock content %}
+            </script>
+        {% endblock content %}

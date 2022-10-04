@@ -36,6 +36,7 @@ a:hover::after {
 
 .back {
     background: url('bg.png');
+    background-attachment: fixed;
     color: white
 }
 

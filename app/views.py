@@ -884,12 +884,12 @@ def leaderboard(request, pk):
             return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
-        league=league).exclude(invite=league).order_by('-borderPP')
+        league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
     from datetime import timezone
 
-    close_line = league.end - timedelta(days=3)
+    close_line = league.end - timedelta(days=2)
     isClose = datetime.now(timezone.utc) >= close_line and league.isOfficial
     print(isClose)
     params['isClose'] = isClose

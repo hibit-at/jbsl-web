@@ -186,9 +186,9 @@
             </thead>
             <tbody>
                 {% for player in scored_rank %}
-                    <tr {% if user.player == player or user.player.rival == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
+                    <tr>
                         <td width="50px">#{{ player.rank }}</td>
-                        <td width="250px">
+                        <td width="250px" {% if user.player == player or user.player.rival == player %} style="background-color:white;border-radius:10px;" {% endif %}>
                             <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
                                 <img src="{{ player.imageURL }}" class="icon" alt="icon" />
                                 {% if player.isSupporter %}
@@ -305,11 +305,11 @@
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
-                            <tr {% if user.player == score.player or user.player.rival == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
+                            <tr>
                                 <td width="50px">
                                     #{{ score.rank }}
                                 </td>
-                                <td width="250px">
+                                <td width="250px" {% if user.player == score.player or user.player.rival == score.player %}style="background-color:white;border-radius:10px;"{% endif %}>
                                     <a href="{% url 'app:userpage' sid=score.player.sid %}"
                                        style="color:black">
                                         <img src="{{ score.player.imageURL }}" class="icon">

@@ -859,15 +859,6 @@ def leaderboard(request, pk):
             league.limit = post['limit']
             league.save()
             return redirect('app:leaderboard', pk=pk)
-        if 'leaguecomment' in post:
-            comment = post['leaguecomment'][:50]
-            defaults = {'message': comment}
-            LeagueComment.objects.update_or_create(
-                league=league,
-                player=user.player,
-                defaults=defaults,
-            )
-            return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')

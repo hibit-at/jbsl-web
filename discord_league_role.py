@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import django
 
@@ -38,6 +39,14 @@ def league_role_total():
             print(valid_name)
             if not valid_name in channel_names:
                 current_channel = await category.create_text_channel(league.name)
+                gmt_time = league.end + timedelta(hours=9)
+                y = gmt_time.year
+                m = gmt_time.month
+                d = gmt_time.day
+                h = gmt_time.hour
+                M = gmt_time.minute
+                content = f'{league.name} リーグが開催されました！\n 終了日時は {y}/{m}/{d} {h}:{M} です！\n https://jbsl-web.herokuapp.com/leaderboard/{league.id}'
+                await current_channel.send(content)
             if not league.name in role_names:
                 colour = discord.Colour.default()
                 col_dict = {}

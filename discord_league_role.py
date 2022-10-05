@@ -60,7 +60,7 @@ def league_role_total():
                 col_dict['lightyellow'] = discord.Colour.gold()
                 if league.color in col_dict:
                     colour = col_dict[league.color]
-                await guild.create_role(name=league.name, colour=colour)
+                await guild.create_role(name=league.name, colour=colour, hoist=True)
 
             everyone = discord.utils.get(guild.roles, name='@everyone')
             current_channel = discord.utils.get(

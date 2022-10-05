@@ -223,9 +223,12 @@
                                 </span>
                             </td>
                             <td width="80px">
-                                <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
-                                    {{ player.count_acc|floatformat:2 }} %
-                                </span>
+                                
+                                {% if player.count_acc >= 95 %}<span style="font-weight:bold">{% endif %}
+                                    <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
+                                        {{ player.count_acc|floatformat:2 }} %
+                                    </span>
+                                {% if player.count_acc >= 95 %}</span>{% endif %}
                             </td>
                             <td>
                                 {% if user.player == player %}

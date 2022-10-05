@@ -19,12 +19,12 @@
     {% for league in invitations %}
         <div style="text-align:center">
             <h3>
-                ! リーグ <span style="color:{{ league.color }}">{{ league }}</span> から招待が届いています !
+                ! リーグ <a href="{% url 'app:leaderboard' pk=league.pk %}" style="color:{{ league.color }}">{{ league }}</a> から招待が届いています !
                 <form method="post">
                     {% csrf_token %}
                     <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
-                    <button class="danger"
-                            style="transform:scale(0.7);"
+                    <button class="btn"
+                            style="background-color:red"
                             type="submit"
                             name="decline"
                             value="{{ league.pk }}">拒否</button>

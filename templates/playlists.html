@@ -29,13 +29,11 @@
                 <td>
                     <p>
                         {{ playlist.title }}
-                    </p>
-                    <p>
                         <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
-                           download="{{ playlist.title }}.json">
-                            <span class="dl_link">ダウンロード</span>
-                        </a>
-                    </p>
+                        download="{{ playlist.title }}.json">
+                        <img src="{% static 'DL.png' %}" width="35px" height="35px">
+                    </a>
+                </p>
                 </td>
                 <td>{{ playlist.description |truncatechars:50 }}</td>
                 <td>

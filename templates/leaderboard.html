@@ -223,11 +223,15 @@
                                 </span>
                             </td>
                             <td width="80px">
-                                {% if player.count_acc >= 95 %}<span style="font-weight:bold">{% endif %}
+                                {% if player.count_acc >= 95 %}<span style="font-weight:bold;color:darkblue">{% endif %}
+                                {% if player.count_acc >= 96 %}<span style="font-weight:bold;color:darkgreen">{% endif %}
+                                {% if player.count_acc >= 97 %}<span style="font-weight:bold;color:saddlebrown">{% endif %}
+                                {% if player.count_acc >= 98 %}<span style="font-weight:bold;color:darkred">{% endif %}
+                                {% if player.count_acc >= 99 %}<span style="font-weight:bold;color:darkviolet">{% endif %}
                                 <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
                                     {{ player.count_acc|floatformat:2 }} %
                                 </span>
-                                {% if player.count_acc >= 95 %}</span>{% endif %}
+                                {% if player.count_acc >= 95 or player.count_acc < 50 %}</span>{% endif %}
                             </td>
                             <td>
                                 {% if user.player == player %}
@@ -343,7 +347,7 @@
                                             {{ score.valid }}
                                         </td>
                                         <td width="100px">
-                                            {% if score.acc >= 95 %}<span style="font-weight:bold;color:mediumblue">{% endif %}
+                                            {% if score.acc >= 95 %}<span style="font-weight:bold;color:darkblue">{% endif %}
                                             {% if score.acc >= 96 %}<span style="font-weight:bold;color:darkgreen">{% endif %}
                                             {% if score.acc >= 97 %}<span style="font-weight:bold;color:saddlebrown">{% endif %}
                                             {% if score.acc >= 98 %}<span style="font-weight:bold;color:darkred">{% endif %}

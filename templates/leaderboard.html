@@ -231,8 +231,8 @@
                                 {% if user.player == player %}
                                     <form method="post" action="{% url 'app:league_comment' %}">
                                         {% csrf_token %}
-                                        <input type="hidden" name="player" value=" {{player.pk}} ">
-                                        <input type="hidden" name="league" value=" {{league.pk}} ">
+                                        <input type="hidden" name="player" value=" {{ player.pk }} ">
+                                        <input type="hidden" name="league" value=" {{ league.pk }} ">
                                         <input type="image"
                                                src="{% static 'pencil.png' %}"
                                                width="25px"
@@ -341,7 +341,9 @@
                                             {{ score.valid }}
                                         </td>
                                         <td width="100px">
+                                            {% if score.acc < 50 %}<span style="color:dimgray">{% endif %}
                                             {{ score.acc|floatformat:2 }}%
+                                            {% if score.acc < 50 %}</span>{% endif %}
                                         </td>
                                         <td>
                                             {% if score.miss == 0 %}

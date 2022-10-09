@@ -126,6 +126,8 @@ def league_update_process():
                         time=datetime.now(),
                         text=f'{player} さんが {league} リーグで 1 位になりました！'
                     )
+                    if player.theoretical == 100:
+                        discord_message_process(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！')
                 league.first = player
             if i == 1:
                 if league.second != player:

@@ -2,6 +2,31 @@ import os
 import django
 
 
+def discord_message_process_with_channel(message_text, channel_name):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    import discord
+    from discord.ext import commands
+    if os.path.exists('local.py'):
+        from local import DISCORD_BOT_TOKEN, NOTIFY_ID
+        token = DISCORD_BOT_TOKEN
+        channel_id = NOTIFY_ID
+    else:
+        token = os.getenv('DISCORD_BOT_TOKEN')
+        channel_id = os.getenv('NOTIFY_ID')
+    intents = discord.Intents.default()
+    intents.members = True
+    bot = commands.Bot(command_prefix='/', intents=intents)
+
+    @bot.event
+    async def on_ready():
+        channel = await bot.fetch_channel(channel_id)
+        await channel.send(message_text)
+        await bot.close()
+
+    bot.run(token)
+
+
 def discord_message_process(message_text):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -70,7 +95,7 @@ def league_role_total():
                 if league.color in col_dict:
                     colour = col_dict[league.color]
                 await guild.create_role(name=league.name, colour=colour)
-            
+
             current_role = discord.utils.get(guild.roles, name=league.name)
             print(current_role)
 
@@ -79,7 +104,7 @@ def league_role_total():
                 member = guild.get_member(int(player.discordID))
                 await member.add_roles(current_role)
             print(member)
-                
+
         await bot.close()
 
     bot.run(token)

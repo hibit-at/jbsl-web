@@ -4,7 +4,7 @@ import os
 from time import sleep
 import django
 import requests
-from discord_utils import discord_message_process
+from discord_utils import discord_message_process, discord_message_process_with_channel
 import urllib.parse
 
 
@@ -127,7 +127,10 @@ def league_update_process():
                         text=f'{player} さんが {league} リーグで 1 位になりました！'
                     )
                     if player.theoretical == 100:
-                        discord_message_process(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！')
+                        valid_name = league.name.lower().replace(' ', '-')
+                        valid_name = valid_name.replace('[','')
+                        valid_name = valid_name.replace(']','')
+                        discord_message_process_with_channel(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！',   valid_name)
                 league.first = player
             if i == 1:
                 if league.second != player:

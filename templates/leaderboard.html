@@ -33,7 +33,7 @@
         </p>
         {% if league.isPublic %}
             <p>
-                borderPP の上限 :
+                有効 PP の上限 :
                 {% if league.limit == 2000 %}
                     上限なし
                 {% else %}
@@ -120,7 +120,7 @@
                         <span class="indicate-valid">{{ league.method }}</span>
                     </p>
                     <p>
-                        <label>borderPPの上限 :</label>
+                        <label>有効 PPの上限 :</label>
                         <input type="range"
                                min="0"
                                max="2000"

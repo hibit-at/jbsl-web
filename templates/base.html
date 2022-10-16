@@ -40,31 +40,62 @@
             </a>
         </h3>
         <p>
-            <a href="https://discord.gg/CqQ6ZD8KRn" target="blank">
-                <img height="40px"
-                     width="40px"
-                     src = 
-                     {% static 'Discord.png' %}
-                     style="filter:invert()">
-            </a>
-            <a href="https://twitch.tv/jbsl115" target="blank">
-                <img height="40px"
-                     width="40px"
-                     src =
-                     {% static 'twitch.png' %}
-                     style="filter:invert()">
-            </a>
-            <a href="https://twitter.com/115_jbsl" target="blank">
-                <img height="40px"
-                     width="40px"
-                     src =
-                     {% static 'twitter.png' %}
-                     style="filter:invert()">
-            </a>
-            <a>
-            <a href = {% url 'app:info' %}>
-                <img height="30px" width = "30px" src = {% static 'pict_gear.png' %}>
-            </a>
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle"
+                   href="#"
+                   role="button"
+                   id="dropdownMenuLink"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false"
+                   style="border-style:None">
+                    <img src = {% static 'pict_gear.png' %} height="40px" width="40px">
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li>
+                        <p style="text-align:center"><i>
+                            about JBSL-Web
+                        </p></i>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'app:info' %}">JBSL とは？</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'app:info2' %}">JBSL-Web とは？</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'app:info3' %}">登録してみよう</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'app:info4' %}">リーグに参加しよう</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">プレイリストを作ろう</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">リーグを開催しよう</a>
+                    </li>
+                    <li>
+                        <p style="text-align:center"><i>
+                            Social
+                        </p></i>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="https://discord.gg/CqQ6ZD8KRn">
+                            <img src={% static 'Discord.png' %} height="30px" width="30px"> Our Discord
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="https://twitch.tv/jbsl115">
+                            <img src={% static 'twitch.png' %} height="30px" width="30px"> Our Twitch
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="https://twitter.com/115_jbsl">
+                            <img src={% static 'twitter.png' %} height="30px" width="30px"> Our Twitter
+                        </a>
+                    </li>
+                </ul>
+            </div>
             {% if user.is_authenticated %}
                 <a href="{% url 'app:mypage' %}">
                     <img class="icon"

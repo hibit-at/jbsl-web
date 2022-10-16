@@ -9,6 +9,7 @@ from .models import League, LeagueComment, Player, Playlist, Song, Score, Headli
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 
 from PIL import Image
 import base64
@@ -876,14 +877,21 @@ def leaderboard(request, pk):
 
 @login_required
 def create_league(request):
+    get = request.GET
     params = {}
+    if 'pk' in get:
+        print(get['pk'])
+        params['select'] = int(get['pk'])
+        print(type(params['select']))
     user = request.user
     social = SocialAccount.objects.get(user=user)
     params['social'] = social
     default_end = datetime.now() + timedelta(days=14)
     default_end_str = default_end.strftime('%Y-%m-%dT%H:%M')
     params['default_end_str'] = default_end_str
-    playlists = Playlist.objects.all()
+    playlists = Playlist.objects.all().filter(editor=user.player)
+    playlists = playlists.annotate(num_of_songs=Count('songs'))
+    playlists = playlists.filter(num_of_songs__lte=20)
     params['playlists'] = playlists
     params['league_colors'] = league_colors
     if request.method == 'POST':
@@ -1263,7 +1271,8 @@ def info(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request, 'info.html', params)
+    return render(request, f'info.html', params)
+
 
 def info2(request):
     params = {}
@@ -1271,7 +1280,8 @@ def info2(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request, 'info2.html', params)
+    return render(request, f'info2.html', params)
+
 
 def info3(request):
     params = {}
@@ -1279,7 +1289,8 @@ def info3(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request, 'info3.html', params)
+    return render(request, f'info3.html', params)
+
 
 def info4(request):
     params = {}
@@ -1287,7 +1298,25 @@ def info4(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request, 'info4.html', params)
+    return render(request, f'info4.html', params)
+
+
+def info5(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    return render(request, f'info5.html', params)
+
+
+def info6(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    return render(request, f'info6.html', params)
 
 
 @login_required
@@ -1311,6 +1340,7 @@ def score_comment(request):
         params['score'] = score
         return render(request, 'score_comment.html', params)
     return redirect('app:index')
+
 
 @login_required
 def league_comment(request):

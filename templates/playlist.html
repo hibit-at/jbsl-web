@@ -9,6 +9,12 @@
     </h3>
     <p>
         <img class="thumb" src="data:image/png;{{ playlist.image }}" />
+        {% if isEditor %}
+        <form method="GET" action="{% url 'app:create_league' %}">
+            <input type="hidden" name="pk" value="{{ playlist.pk }}"></input>
+            <button class="btn">リーグを開催する</button>
+        </fomr>
+        {% endif %}
     </p>
     <p>
         Title : {{ playlist.title }}
@@ -21,23 +27,23 @@
         </a>
     </p>
     {% if leagues|length > 0 %}
-    <p>
-    このプレイリストを採用しているリーグ
-    </p>
-    <ul>
-        {% for league in leagues %}
-        <li>
-            <a href="{% url 'app:leaderboard' pk=league.pk %}">{{league}}</a>
-        </li>
-        {% endfor %}
-    </ul>
+        <p>
+            このプレイリストを採用しているリーグ
+        </p>
+        <ul>
+            {% for league in leagues %}
+                <li>
+                    <a href="{% url 'app:leaderboard' pk=league.pk %}">{{ league }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
     {% if isEditor and playlist.isEditable %}
         <form method="post">
             {% csrf_token %}
             <p>
                 タイトルの変更
-                <input type="text" size="40px" name="title" value=" {{playlist.title}} "/>
+                <input type="text" size="40px" name="title" value=" {{ playlist.title }} "/>
                 <button class="btn" type="submit">変更</button>
             </p>
         </form>
@@ -53,7 +59,7 @@
         </form>
     {% endif %}
     <p>
-        <form method="post">
+        <form method="post" onSubmit="return check()">
             更新：
             {% if playlist.isEditable %}
                 📝可能
@@ -95,7 +101,8 @@
                 <td>{{ song.title|truncatechars:50 }}</td>
                 <td>{{ song.author }}</td>
                 <td>
-                    <span class="diff" style="color:{{ song.color }}">  {{ song.diff }} </span>  {% if song.char == 'Lawless' %} <b> Lawless</b>  {% endif %}
+                    <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
+                    {% if song.char == 'Lawless' %}<b> Lawless</b>{% endif %}
                 </td>
                 <td>
                     {% if isEditor and playlist.isEditable %}
@@ -135,7 +142,9 @@
                 <th>Author</th>
                 <th>Diff</th>
                 <th>Accept</th>
-                <th>Decline</th>
+                <th>
+                    Decline
+                </th>
             </thead>
             {% for song in playlist.recommend.all %}
                 <tr>
@@ -197,31 +206,47 @@
     {% endif %}
     {% if isEditor %}
         <hr style="height:5px; background-color:mediumseagreen;">
-        <h3>
-            プレイリストの削除
-        </h3>
-        <form method="post">
-            {% csrf_token %}
-            <Label>
-                Title :
-            </Label>
-            <input type="text" size="40px" name="remove_playlist"/>
-            <button class="danger"
-                    type="submit"
-                    name="confirm"
-                    value="{{ playlist.title }}">
-                削除
-            </button>
-            <p>
-                <ul>
-                    <li>
-                        誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
-                    </li>
-                    <li>
-                        確認画面等は一切出ませんので、ご注意ください。
-                    </li>
-                </ul>
-            </p>
-        </form>
+        {% if playlist.isEditable %}
+            <h3>
+                プレイリストの削除
+            </h3>
+            <form method="post">
+                {% csrf_token %}
+                <Label>
+                    Title :
+                </Label>
+                <input type="text" size="40px" name="remove_playlist"/>
+                <button class="danger"
+                        type="submit"
+                        name="confirm"
+                        value="{{ playlist.title }}">
+                    削除
+                </button>
+                <p>
+                    <ul>
+                        <li>
+                            誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
+                        </li>
+                        <li>
+                            確認画面等は一切出ませんので、ご注意ください。
+                        </li>
+                    </ul>
+                </p>
+            </form>
+        {% else %}
+        <p>更新不可能にしたプレイリストを削除することはできません</p>
+        {% endif %}
     {% endif %}
+    <script>
+    function check(){
+        if(window.confirm('プレイリストを固定化しますか？　編集・削除ができなくなります。')){ // 確認ダイアログを表示
+            return true; // 「OK」時は送信を実行
+        }
+        else{ // 「キャンセル」時の処理
+            window.alert('固定化を取り消しました。'); // 警告ダイアログを表示
+            return false; // 送信を中止
+        }
+    
+    }
+    </script>
 {% endblock content %}

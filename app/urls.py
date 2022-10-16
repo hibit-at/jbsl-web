@@ -30,6 +30,8 @@ urlpatterns = [
     path('info2/', views.info2, name='info2'),
     path('info3/', views.info3, name='info3'),
     path('info4/', views.info4, name='info4'),
+    path('info5/', views.info5, name='info5'),
+    path('info6/', views.info6, name='info6'),
     path('score_comment/', views.score_comment, name='score_comment'),
     path('league_comment/', views.league_comment, name='league_comment'),
 ]

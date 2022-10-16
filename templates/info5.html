@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+    <h2>プレイリストの作成</h2>
+    <div style="padding:20px">
+        <p>
+            JBSL-Web ではプレイリストの作成・共有を行うことができます。また、これはリーグを開催する際においても必要となります。
+        </p>
+        <li>プレイリスト一覧のページから右上の「プレイリストの作成」を押します。</li>
+        <img src="{% static 'info_create_playlist.png' %}" height="360px" style="border-style:solid">
+        <li>上のメニューでは、既存のプレイリストの情報をそのまま上げることができます。</li>
+        <li>下のメニューでは、空のプレイリストを作ることができます。</li>
+        <img src="{% static 'info_create_playlist2.png' %}" height="480px" style="border-style:solid">
+        <li>プレイリストの作成者は、画面上でプレイリストの情報を変更することができます。</li>
+        <li>リーグに使う予定のプレイリストは、更新不可能にすることを推奨します。（詳しくは「リーグを開催しよう」にて）</li>
+        <img src="{% static 'info_create_playlist4.png' %}" height="360px" style="border-style:solid">
+        <li>プレイリストを更新可能にしている場合、下のメニューから譜面の追加が行なえます</li>
+        <img src="{% static 'info_create_playlist3.png' %}" height="360px" style="border-style:solid">
+
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+    <h2>リーグの開催</h2>
+    <div style="padding:20px">
+        <p>
+            プレイリストを作成したプレイヤーは、それをもとにリーグを開催することができます。
+        </p>
+        <li>リーグ一覧のページから右上の「リーグを開催する」を押します。</li>
+        <img src="{% static 'info_create_league.png' %}" height="360px" style="border-style:solid">
+        <li>また、プレイリストのページからも開催することができます。</li>
+        <img src="{% static 'info_create_league2.png' %}" height="360px" style="border-style:solid">
+
+    </div>
+{% endblock %}

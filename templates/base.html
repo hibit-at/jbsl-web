@@ -57,22 +57,22 @@
                         </p></i>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' %}">JBSL とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info'%} ">JBSL とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info2' %}">JBSL-Web とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info2'%}">JBSL-Web とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info3' %}">登録してみよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info3'%}">登録してみよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info4' %}">リーグに参加しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info4'%}">リーグに参加しよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">プレイリストを作ろう</a>
+                        <a class="dropdown-item" href="{% url 'app:info5'%}">プレイリストを作ろう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">リーグを開催しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info6' %}">リーグを開催しよう</a>
                     </li>
                     <li>
                         <p style="text-align:center"><i>
@@ -96,6 +96,7 @@
                     </li>
                 </ul>
             </div>
+        </p>
             {% if user.is_authenticated %}
                 <a href="{% url 'app:mypage' %}">
                     <img class="icon"

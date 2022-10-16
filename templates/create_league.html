@@ -10,13 +10,17 @@
                 <p>
                     プレイリストを選んでください。
                 </p>
-                <p>
-                    なお、当面の目安として、譜面数の上限を 20 とさせていただきます。
-                </p>
+                <li>
+                    当面の目安として、譜面数の上限を 20 とさせていただきます。
+                </li>
+                <li>
+                    <span style="color:red"><u>終了したリーグは自動的に編集不可能となる</span></u>ことにご注意ください。
+                </li>
+                <p>あなたが作成したプレイリストの一覧 : </p>
                 <select name="playlist" width="100px" size="10px" required="required">
                     {% for playlist in playlists %}
-                        <option value="{{ playlist.pk }}">
-                            {{ playlist.title }} by {{ playlist.editor }}
+                        <option value="{{ playlist.pk }}" {% if playlist.pk == select %} selected {% endif %}>
+                            {{ playlist.title }} by {{ playlist.editor }} ({{ playlist.num_of_songs }})
                         </option>
                     {% endfor %}
                 </select>

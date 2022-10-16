@@ -882,6 +882,9 @@ def create_league(request):
     if 'pk' in get:
         print(get['pk'])
         params['select'] = int(get['pk'])
+        if Playlist.objects.filter(pk=int(get['pk'])).exists():
+            selected_playlist = Playlist.objects.get(pk = int(get['pk']))
+            params['selected_playlist'] = selected_playlist
         print(type(params['select']))
     user = request.user
     social = SocialAccount.objects.get(user=user)

@@ -42,11 +42,11 @@ char_dict_inv = {
 }
 
 col_dict = {
-    1: 'cyan',
-    3: 'limegreen',
-    5: 'orange',
-    7: 'red',
-    9: 'violet',
+    1: 'rgba(130,211,255,.8)',
+    3: 'rgba(128,255,128,.8)',
+    5: 'rgba(255,128,60,.8)',
+    7: 'rgba(255,128,128,.8)',
+    9: 'rgba(220,130,250,.8)',
 }
 
 hmd_dict = {
@@ -62,12 +62,12 @@ hmd_dict = {
 }
 
 league_colors = [
-    {'value': 'lightblue', 'text': 'Blue'},
-    {'value': 'lightgreen', 'text': 'Green'},
-    {'value': 'lightsalmon', 'text': 'Orange'},
-    {'value': 'lightpink', 'text': 'Red'},
-    {'value': '#FFCCFF', 'text': 'Purple'},
-    {'value': 'lightyellow', 'text': 'Yellow'},
+    {'value': 'rgba(130,211,255,.8)', 'text': 'Blue'},
+    {'value': 'rgba(207,130,255,.8)', 'text': 'Green'},
+    {'value': 'rgba(255,128,60,.8)', 'text': 'Orange'},
+    {'value': 'rgba(255,128,128,.8)', 'text': 'Red'},
+    {'value': 'rgba(220,130,250,.8)', 'text': 'Purple'},
+    {'value': 'rgba(255,255,128,.8)', 'text': 'Yellow'},
 ]
 
 

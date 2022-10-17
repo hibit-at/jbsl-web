@@ -19,7 +19,8 @@
     {% for league in invitations %}
         <div style="text-align:center">
             <h3>
-                ! リーグ <a href="{% url 'app:leaderboard' pk=league.pk %}" style="color:{{ league.color }}">{{ league }}</a> から招待が届いています !
+                ! リーグ <a href="{% url 'app:leaderboard' pk=league.pk %}"
+    style="color:{{ league.color }}">{{ league }}</a> から招待が届いています !
                 <form method="post">
                     {% csrf_token %}
                     <button class="btn" type="submit" name="join" value="{{ league.pk }}">参加</button>
@@ -33,24 +34,21 @@
         </div>
     {% endfor %}
     {% if not user.is_authenticated %}
-        <h3>参加方法</h3>
-        <ul>
-            <li>右上の「Discord 認証」から仮登録を完了してください。</li>
-            <li>登録には Discord のアカウントが必要となります。</li>
-            <li>
-                Discord 認証時、<u>最初の 1 回はエラーが出るようです。</u>（原因不明です。すいません）
-            </li>
-            <li>その場合、ブラウザの「戻る」ボタンを使ってリトライお願いします。</li>
-            <li>仮登録後、ScoreSaber のIDを設定することにより、本登録となります。</li>
-            <li>
-                登録できるのは<u>日本人プレイヤーのみ</u>となります。Sorry, only Japanese players can be registered.
-            </li>
-        </ul>
+        <div style="text-align:center">
+            <h3>Welcome to JBSL-Web!</h3>
+            <h3>
+                <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">
+                JBSL とは？
+                </a>
+            </h3>
+        </div>
     {% endif %}
     <h3>JBSL4前座企画　マッパー杯</h3>
     <p>
         <p>
-            <img src="https://cdn.scoresaber.com/avatars/76561199032148036.jpg" height="128px" width="128px">
+            <img src="https://cdn.scoresaber.com/avatars/76561199032148036.jpg"
+                 height="128px"
+                 width="128px">
         </p>
         <p>
             マッパー杯 Part7 <a href="https://jbsl-web.herokuapp.com/leaderboard/36"
@@ -84,7 +82,9 @@
     </p>
     <p>
         <p>
-            <img src="https://cdn.discordapp.com/avatars/335372379746336769/11fe1d32b5ce691bdeb64d2decf78987" height="128px" width="128px">
+            <img src="https://cdn.discordapp.com/avatars/335372379746336769/11fe1d32b5ce691bdeb64d2decf78987"
+                 height="128px"
+                 width="128px">
         </p>
         <p>
             マッパー杯 Part7 <a href="https://jbsl-web.herokuapp.com/leaderboard/37"
@@ -145,9 +145,7 @@
             <th>End</th>
             <th>1st</th>
             <th>2nd</th>
-            <th>
-                3rd
-            </th>
+            <th>3rd</th>
         </thead>
         {% for league in active_leagues %}
             <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
@@ -156,12 +154,8 @@
                         <img class="thumb" src=" {{ league.playlist.image }}" />
                     </a>
                 </td>
-                <td>
-                    {{ league.name }}
-                </td>
-                <td>
-                    {{ league.description|truncatechars:50 }}
-                </td>
+                <td>{{ league.name }}</td>
+                <td>{{ league.description|truncatechars:50 }}</td>
                 <td>
                     {% if league.isPublic %}
                         {% if league.limit == 2000 %}
@@ -178,9 +172,7 @@
                        {% url 'app:userpage' sid=league.owner.sid %}
                        style="color:black">{{ league.owner.name }}</a>
                 </td>
-                <td>
-                    {{ league.end }}
-                </td>
+                <td>{{ league.end }}</td>
                 <td>
                     {% if league.first != None %}
                         <a href="{% url 'app:userpage' sid=league.first.sid %}"

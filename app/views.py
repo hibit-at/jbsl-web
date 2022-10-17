@@ -1268,59 +1268,15 @@ def coin(request):
     return render(request, 'coin.html', params)
 
 
-def info(request):
+def info_test(request, pk):
+    print(pk)
     params = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    return render(request, f'info.html', params)
-
-
-def info2(request):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info2.html', params)
-
-
-def info3(request):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info3.html', params)
-
-
-def info4(request):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info4.html', params)
-
-
-def info5(request):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info5.html', params)
-
-
-def info6(request):
-    params = {}
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info6.html', params)
-
+    return render(request, f'info{pk}.html', params)
+    
 
 @login_required
 def score_comment(request):

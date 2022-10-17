@@ -1,26 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-{% load static %}
+    {% load static %}
     <h2>リーグへの参加</h2>
     <div style="padding:20px">
         <p>
             JBSL-Web では、課題譜面を定めて、期限を定めてベストスコアを競う自主大会を<a href="{% url 'app:leagues' %}" style="color:ff8628">リーグ</a>と呼んでいます。
         </p>
         <li>リーグでは以下のような形式で「順位点」の合計を競います。</li>
-        <img src="{% static 'info_league.png' %}" height="360px" style="border:solid">
+        <img src="{% static 'info_league.png' %}"
+             height="360px"
+             style="border:solid">
         <li>この順位点は、各課題譜面の順位によって決まります。</li>
-        <img src="{% static 'info_league_song.png' %}" height="360px" style="border:solid">
+        <li>1 位には +3 点、2 位には +2 点のボーナスがつきます。</li>
+        <img src="{% static 'info_league_song.png' %}"
+             height="360px"
+             style="border:solid">
         <li>リーダーボード（リーグ内の順位表）の上にある「参加」ボタンを押すと参加できます。</li>
-        <img src="{% static 'info_join.png' %}" height="240px" style="border:solid">
-    
+        <img src="{% static 'info_join.png' %}"
+             height="240px"
+             style="border:solid">
         <li>参加したプレイヤーは集計対象となり、10 分ごとにスコアセイバーのスコアと連動するようになります。</li>
-        <li>スコアはベストスコア方式となり、<u>予選参加以前のスコア</u>も計上されます。</li>
+        <li>
+            スコアはベストスコア方式となり、<u>予選参加以前のスコア</u>も計上されます。
+        </li>
         <li>リーグには上限となる有効 pp があり、それを超えるプレイヤーは参加できません。（リーグによる難易度を分けるため）</li>
         <li>リーグ自体に参加せずとも、自分がどのぐらいの位置にいるかは「バーチャル参加」を押すことにより確認できます。</li>
         <li>バーチャル参加による得点は仮想的なものであり、リーグ本体の順位や順位点に影響しません。</li>
         <li>リーグ開催中はいつでも参加または脱退をすることができます。</li>
-        <li>リーグが終了した時点で順位は固定されるため、<u>参加も脱退もできなく</u>なります。</li>
-        <li>公式リーグ（JBSL 運営が主催するリーグ）では、急な順位変動を防ぐため、上記のメンバーの固定化を<u>期限の 48 時間前</u>から行います。</li>
-
-    </div>
+        <li>
+            リーグが終了した時点で順位は固定されるため、<u>参加も脱退もできなく</u>なります。
+        </li>
+        <li>
+            公式リーグ（JBSL 運営が主催するリーグ）では、急な順位変動を防ぐため、上記のメンバーの固定化を<u>期限の 48 時間前</u>から行います。
+        </li>
+        <hr>
+        <p>
+            次：<a href="{% url 'app:info' pk=5 %}" style="color:ff8628">プレイリストを作ろう</a>
+        </p>
 {% endblock %}

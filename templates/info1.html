@@ -9,7 +9,9 @@
         <li>ScoreSaberの pp を基にボーダーの基準を調整を行い、J1～J3までディビジョンの区分けを行います。</li>
         <li>調整の方法は大会毎に変わります。</li>
         <li>各ディビジョンで予選を行い上位が本戦出場となります。</li>
-        <li>予選は <a href="{% url 'app:info2' %}" style="color:ff8628">JBSL-Web</a> を用いて行われます。</li>
+        <li>
+            予選は <a href="{% url 'app:info' pk=2 %}" style="color:ff8628">JBSL-Web</a> を用いて行われます。
+        </li>
         <li>本戦はTwitchで全試合配信されます。</li>
         <li>ディビジョン本戦はエリミネーションによる勝ち抜き制で行います。</li>
     </div>
@@ -25,6 +27,12 @@
     </div>
     <div style="padding:20px">
         <h2>過去の大会の様子</h2>
-        <p><a href="https://www.twitch.tv/jbsl115/videos" style="color:#ff8628">こちら</a>からアーカイブを見ることができます。</p>
+        <p>
+            <a href="https://www.twitch.tv/jbsl115/videos" style="color:#ff8628">こちら</a>からアーカイブを見ることができます。
+        </p>
     </div>
+    <hr>
+    <p>
+        次：<a href="{% url 'app:info' pk=2 %}" style="color:ff8628">JBSL-Web とは？</a>
+    </p>
 {% endblock %}

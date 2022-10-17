@@ -57,22 +57,22 @@
                         </p></i>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info'%} ">JBSL とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=1%}">JBSL とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info2'%}">JBSL-Web とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=2%}">JBSL-Web とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info3'%}">登録してみよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=3%}">登録してみよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info4'%}">リーグに参加しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=4%}">リーグに参加しよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info5'%}">プレイリストを作ろう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=5%}">プレイリストを作ろう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info6' %}">リーグを開催しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=6%}">リーグを開催しよう</a>
                     </li>
                     <li>
                         <p style="text-align:center"><i>
@@ -106,7 +106,7 @@
                 /
                 <a href="{% url 'app:logout' %}">ログアウト</a>
             {% else %}
-                <form method="get" action="{% url 'discord_login' %}">
+                <form method="post" action="{% url 'discord_login' %}">
                     {% csrf_token %}
                     <button class = "dl_link">ログイン（Discord認証）</button>
                 </form>

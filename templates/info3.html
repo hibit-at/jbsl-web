@@ -1,20 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-{% load static %}
+    {% load static %}
     <h2>登録方法</h2>
     <div style="padding:20px">
         <p>
             プレイヤーの登録には以下のものが必要になります。
         </p>
         <li>Discord アカウント</li>
-        <li><b><u>日本の</b></u> ScoreSaber アカウント</li>
+        <li>
+            <b><u>日本の</b></u> ScoreSaber アカウント
+        </li>
         <br>
-        <p>登録の手順</p>
+        <p>
+            登録の手順
+        </p>
         <li>右上の「ログイン（Discord）認証」ボタンを押して認証を進めてください。（仮登録）</li>
+        <li>
+            Discord 初回認証時、<span style="color:red"><u>最初の 1 回は「Connection Refused Error」というエラーが出るようです。</u></span>（原因不明です。すいません）
+        </li>
+        <li>その場合、ブラウザの「戻る」ボタンを使って戻った後、もう一度トライすると通ります。</li>
         <li>その後、ScoreSaber の ID を入力して本登録を済ませると、プレイヤーとしての登録が完了します。</li>
-        <img src="{% static 'info_player.png' %}" height="360px" style="border: solid">
+        <img src="{% static 'info_player.png' %}"
+             height="360px"
+             style="border: solid">
         <li>上位 10 譜面のデータをもとに、HMD や有効 pp が登録されます。</li>
-        <li>有効 pp はリーグに参加する時の条件に使います。（詳しくは「<a href="{% url 'app:info4' %}" style="color:ff8628">リーグに参加しよう</a>」まで）</li>
+        <li>
+            有効 pp はリーグに参加する時の条件に使います。（詳しくは次節「<a href="{% url 'app:index' %}" style="color:ff8628">リーグに参加しよう</a>」で）
+        </li>
         <li>これらの値はスコアの更新がある度に連動して変更されます。</li>
     </div>
+    <hr>
+    <p>
+        次：<a href="{% url 'app:info' pk=5 %}" style="color:ff8628">プレイリストを作ろう</a>
+    </p>
 {% endblock %}

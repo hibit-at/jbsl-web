@@ -52,51 +52,59 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <li>
-                        <p style="text-align:center"><i>
-                            about JBSL-Web
-                        </p></i>
+                        <p style="text-align:center">
+                            <i>
+                                about JBSL-Web
+                            </p>
+                        </i>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=1%}">JBSL とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=1 %}">JBSL とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=2%}">JBSL-Web とは？</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=2 %}">JBSL-Web とは？</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=3%}">登録してみよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=3 %}">登録してみよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=4%}">リーグに参加しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=4 %}">リーグに参加しよう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=5%}">プレイリストを作ろう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=5 %}">プレイリストを作ろう</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=6%}">リーグを開催しよう</a>
+                        <a class="dropdown-item" href="{% url 'app:info' pk=6 %}">リーグを開催しよう</a>
                     </li>
                     <li>
-                        <p style="text-align:center"><i>
-                            Social
-                        </p></i>
+                        <p style="text-align:center">
+                            <i>
+                                Social
+                            </p>
+                        </i>
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://discord.gg/CqQ6ZD8KRn">
-                            <img src={% static 'Discord.png' %} height="30px" width="30px"> Our Discord
+                            <img src={% static 'Discord.png' %} height="30px" width="30px">
+                            Our Discord
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://twitch.tv/jbsl115">
-                            <img src={% static 'twitch.png' %} height="30px" width="30px"> Our Twitch
+                            <img src={% static 'twitch.png' %} height="30px" width="30px">
+                            Our Twitch
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://twitter.com/115_jbsl">
-                            <img src={% static 'twitter.png' %} height="30px" width="30px"> Our Twitter
+                            <img src={% static 'twitter.png' %} height="30px" width="30px">
+                            Our Twitter
                         </a>
                     </li>
                 </ul>
             </div>
         </p>
+        <p>
             {% if user.is_authenticated %}
                 <a href="{% url 'app:mypage' %}">
                     <img class="icon"

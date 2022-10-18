@@ -9,6 +9,8 @@ def process():
     for league in League.objects.filter(isLive=False):
         print(league)
         playlist = league.playlist
+        if playlist == None:
+            continue
         playlist.isEditable = False
         playlist.save()
 

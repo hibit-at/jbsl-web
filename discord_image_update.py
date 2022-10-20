@@ -34,6 +34,9 @@ def process():
         print(from_id_to_avatar)
         for player in Player.objects.all():
             print(player)
+            if not int(player.discordID) in from_id_to_avatar:
+                print('not in discord!')
+                continue
             imageURL = player.imageURL
             if imageURL.startswith('https://cdn.discordapp.com'):
                 new_image = from_id_to_avatar[int(player.discordID)]

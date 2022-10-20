@@ -38,8 +38,9 @@ def process():
             if imageURL.startswith('https://cdn.discordapp.com'):
                 new_image = from_id_to_avatar[int(player.discordID)]
                 print(new_image)
-                player.imageURL = f'https://cdn.discordapp.com/avatars/{player.discordID}/{new_image}'
-                player.save()
+                if player.imageURL != new_image:
+                    player.imageURL = new_image
+                    player.save()
         await bot.close()
 
     bot.run(token)

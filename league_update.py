@@ -45,6 +45,9 @@ def league_update_process():
             print('end')
             discord_message = ''
             league.isLive = False
+            playlist = league.playlist
+            playlist.isEditable = False
+            playlist.save()
             league.save()
             Headline.objects.create(
                 player=None,

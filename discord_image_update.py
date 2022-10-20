@@ -37,12 +37,9 @@ def process():
             imageURL = player.imageURL
             if imageURL.startswith('https://cdn.discordapp.com'):
                 new_image = from_id_to_avatar[int(player.discordID)]
-                # for_safe
-                if not new_image.startswith('https'):
-                    continue
                 print(new_image)
-                if player.imageURL != new_image:
-                    player.imageURL = new_image
+                if player.imageURL != new_image.url:
+                    player.imageURL = new_image.url
                     player.save()
         await bot.close()
 

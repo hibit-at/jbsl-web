@@ -34,7 +34,7 @@
                 <td>
                     {{ league.name }}
                     {% if league.isOfficial %}
-                        <img src="{% static 'check.png' %}" height="25px"/>
+                        <img src="{% static 'Check.png' %}" height="25px"/>
                     {% endif %}
                 </td>
                 <td>{{ league.description|truncatechars:50 }}</td>
@@ -124,7 +124,7 @@
                 <td>
                     <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name }}
                         {% if league.isOfficial %}
-                            <img src="{% static 'check.png' %}" height="25px"/>
+                            <img src="{% static 'Check.png' %}" height="25px"/>
                         {% endif %}
                     </a>
                 </td>

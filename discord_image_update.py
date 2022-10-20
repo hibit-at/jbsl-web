@@ -39,8 +39,8 @@ def process():
                 new_image = from_id_to_avatar[int(player.discordID)]
                 new_image = new_image.url.split('?')[0]
                 print(new_image)
-                if player.imageURL != new_image.url:
-                    player.imageURL = new_image.url
+                if player.imageURL != new_image:
+                    player.imageURL = new_image
                     player.save()
         await bot.close()
 

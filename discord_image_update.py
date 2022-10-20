@@ -37,6 +37,7 @@ def process():
             imageURL = player.imageURL
             if imageURL.startswith('https://cdn.discordapp.com'):
                 new_image = from_id_to_avatar[int(player.discordID)]
+                print(new_image)
                 new_image = new_image.url.split('?')[0]
                 print(new_image)
                 if player.imageURL != new_image:

@@ -16,7 +16,7 @@
             <th>Title</th>
             <th>Description</th>
             <th>Editor</th>
-            <th>Update</th>
+            <th>Fixed</th>
             <th>Songs</th>
         </thead>
         {% for playlist in playlists %}
@@ -43,9 +43,9 @@
                 </td>
                 <td>
                     {% if playlist.isEditable %}
-                        O
+                        
                     {% else %}
-                        -
+                        <img src="{% static 'Locked.png' %}" height="25px"/>
                     {% endif %}
                 </td>
                 <td>

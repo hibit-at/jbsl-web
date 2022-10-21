@@ -41,7 +41,7 @@
             </h3>
         </div>
     {% endif %}
-    <h3>JBSL4予選開始直前！ 特設 Q & A！</h3>
+    <h3>特設 Q & A！</h3>
     <h4>Q、予選はいつ始まるの？</h4>
     <p style="margin:20px">
         J2,J3 予選ともに 10/22（土）未明だよ！
@@ -121,217 +121,143 @@
         <br>
         10 分に 1 回は更新が入る仕様だけど、期限 1 時間前には余裕を持ってスコアを送信しておくことをオススメするよ！
     </p>
-    <h4>
-        JBL4前座企画 マッパー杯
-    </h4>
-    <p>
-        <img src="https://cdn.scoresaber.com/avatars/76561199032148036.jpg"
-             height="128px"
-             width="128px">
-    </p>
-    <p>
-        マッパー杯 Part7 <a href="https://jbsl-web.herokuapp.com/leaderboard/36"
-    style="color:#ff8628">Gabriel杯</a> 開催中！（～10月21日）
-    </p>
-    <p>
-        マッパーさんからコメントをいただいております。
-    </p>
-    <pre>
-        https://beatsaver.com/maps/1fb00
-        -パワー系ボムリセット壁除けです。
-
-        https://beatsaver.com/maps/2433e
-        -めっちゃ普通に作ったつもりでしたが某会の長に怒られました。
-
-        https://beatsaver.com/maps/26610
-        -BPMが115
-
-        https://beatsaver.com/maps/26e7d
-        -ﾃｸｲ
-
-        https://beatsaver.com/maps/29e4a
-        -さんかく
-
-        https://beatsaver.com/maps/264f5
-        -█████████
-
-        https://beatsaver.com/maps/23ccd
-        -ずんだ餅おいしいですよね。 
-        </pre>
-</p>
-<p>
-    <p>
-        <img src="https://cdn.discordapp.com/avatars/335372379746336769/11fe1d32b5ce691bdeb64d2decf78987"
-             height="128px"
-             width="128px">
-    </p>
-    <p>
-        マッパー杯 Part7 <a href="https://jbsl-web.herokuapp.com/leaderboard/37"
-    style="color:#ff8628">take_nyan 杯</a> 開催中！（～10月21日）
-    </p>
-    <p>
-        マッパーさんからコメントをいただいております。
-    </p>
-    <pre>
-    ・Crazy Beat(Hard)
-    だいぶ前に作った譜面なので拙い部分もありますがお気に入りです
-    
-    ・Choiced 漢 Soul(Ex+)
-    剛田
-    
-    ・888月～夏にも程がある～(Ex+)
-    8月に作りました
-    
-    ・数字(Ex+)
-    041514201612012512012312051919
-    
-    ・Valsqotch(Expert)
-    合作で作らせていただいたゲスト難易度です　中級者向きです
-    
-    ・Parabola(Ex+)
-    途中から変わります
-    
-    ・Schwarzchild(Ex+)
-    高難易度テックです。頑張って！
-        </pre>
-</p>
-<h3>
-    Headlines
-</h3>
-{% for headline in headlines %}
-    <ul>
-        <li>
-            {% if headline.player != None %}
-                <a href="{% url 'app:userpage' sid=headline.player.sid %}">
-                    <img src="{{ headline.player.imageURL }}" class="icon" />
-                </a> {{ headline.text }} （{{ headline.time }}）
-            {% else %}
-                {{ headline.text }}
-            {% endif %}
-        </li>
-    </ul>
-{% endfor %}
-<p>
-    <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
-</p>
-<h3>
-    Live Leagues
-</h3>
-<table class="table table-striped table-borderless"
-       style="background: rgba(255,255,255,.5)">
-    <thead>
-        <th>
-            Cover
-        </th>
-        <th>
-            Title
-        </th>
-        <th>
-            Description
-        </th>
-        <th>
-            Limit
-        </th>
-        <th>
-            Owner
-        </th>
-        <th>
-            End
-        </th>
-        <th>
-            1st
-        </th>
-        <th>
-            2nd
-        </th>
-        <th>
-            3rd
-        </th>
-    </thead>
-    {% for league in active_leagues %}
-        <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
-            <td>
-                <a href={% url 'app:leaderboard' pk=league.pk %}>
-                    <img class="thumb" src=" {{ league.playlist.image }}" />
-                </a>
-            </td>
-            <td>
-                {{ league.name }}
-                {% if league.isOfficial %}
-                    <img src="{% static 'Check.png' %}" height="25px"/>
-                {% endif %}
-            </td>
-            <td>
-                {{ league.description|truncatechars:50 }}
-            </td>
-            <td>
-                {% if league.isPublic %}
-                    {% if league.limit == 2000 %}
-                        上限なし
-                    {% else %}
-                        {{ league.limit }}
-                    {% endif %}
+    <h3>
+        Headlines
+    </h3>
+    {% for headline in headlines %}
+        <ul>
+            <li>
+                {% if headline.player != None %}
+                    <a href="{% url 'app:userpage' sid=headline.player.sid %}">
+                        <img src="{{ headline.player.imageURL }}" class="icon" />
+                    </a> {{ headline.text }} （{{ headline.time }}）
                 {% else %}
-                    Private
+                    {{ headline.text }}
                 {% endif %}
-            </td>
-            <td>
-                <a href
-                   {% url 'app:userpage' sid=league.owner.sid %}
-                   style="color:black">{{ league.owner.name }}</a>
-            </td>
-            <td>
-                {{ league.end }}
-            </td>
-            <td>
-                {% if league.first != None %}
-                    <a href="{% url 'app:userpage' sid=league.first.sid %}"
-                       style="color:black">
-                        {% with league.first as player %}
-                            <img class="icon" src={{ player.imageURL }}>
-                            <br>
-                            {% if player.isSupporter %}
-                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
-                            {% else %}
-                                {{ player.name }}
-                            {% endif %}
-                        {% endwith %}
-                    </a>
-                {% endif %}
-            </td>
-            <td>
-                {% if league.second != None %}
-                    <a href="{% url 'app:userpage' sid=league.second.sid %}"
-                       style="color:black">
-                        {% with league.second as player %}
-                            <img class="icon" src={{ player.imageURL }}>
-                            <br>
-                            {% if player.isSupporter %}
-                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
-                            {% else %}
-                                {{ player.name }}
-                            {% endif %}
-                        {% endwith %}
-                    </a>
-                {% endif %}
-            </td>
-            <td>
-                {% if league.third != None %}
-                    <a href="{% url 'app:userpage' sid=league.third.sid %}"
-                       style="color:black">
-                        {% with league.third as player %}
-                            <img class="icon" src={{ player.imageURL }}>
-                            <br>
-                            {% if player.isSupporter %}
-                                <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
-                            {% else %}
-                                {{ player.name }}
-                            {% endif %}
-                        {% endwith %}
-                    </a>
-                {% endif %}
-            </td>
-        </tr>
+            </li>
+        </ul>
     {% endfor %}
-</table>
+    <p>
+        <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
+    </p>
+    <h3>
+        Live Leagues
+    </h3>
+    <table class="table table-striped table-borderless"
+           style="background: rgba(255,255,255,.5)">
+        <thead>
+            <th>
+                Cover
+            </th>
+            <th>
+                Title
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Limit
+            </th>
+            <th>
+                Owner
+            </th>
+            <th>
+                End
+            </th>
+            <th>
+                1st
+            </th>
+            <th>
+                2nd
+            </th>
+            <th>
+                3rd
+            </th>
+        </thead>
+        {% for league in active_leagues %}
+            <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
+                <td>
+                    <a href={% url 'app:leaderboard' pk=league.pk %}>
+                        <img class="thumb" src=" {{ league.playlist.image }}" />
+                    </a>
+                </td>
+                <td>
+                    {{ league.name }}
+                    {% if league.isOfficial %}
+                        <img src="{% static 'Check.png' %}" height="25px"/>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ league.description|truncatechars:50 }}
+                </td>
+                <td>
+                    {% if league.isPublic %}
+                        {% if league.limit == 2000 %}
+                            上限なし
+                        {% else %}
+                            {{ league.limit }}
+                        {% endif %}
+                    {% else %}
+                        Private
+                    {% endif %}
+                </td>
+                <td>
+                    <a href
+                       {% url 'app:userpage' sid=league.owner.sid %}
+                       style="color:black">{{ league.owner.name }}</a>
+                </td>
+                <td>
+                    {{ league.end }}
+                </td>
+                <td>
+                    {% if league.first != None %}
+                        <a href="{% url 'app:userpage' sid=league.first.sid %}"
+                           style="color:black">
+                            {% with league.first as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.second != None %}
+                        <a href="{% url 'app:userpage' sid=league.second.sid %}"
+                           style="color:black">
+                            {% with league.second as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if league.third != None %}
+                        <a href="{% url 'app:userpage' sid=league.third.sid %}"
+                           style="color:black">
+                            {% with league.third as player %}
+                                <img class="icon" src={{ player.imageURL }}>
+                                <br>
+                                {% if player.isSupporter %}
+                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+                                {% else %}
+                                    {{ player.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

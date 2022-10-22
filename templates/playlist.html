@@ -13,7 +13,7 @@
         <form method="GET" action="{% url 'app:create_league' %}">
             <input type="hidden" name="pk" value="{{ playlist.pk }}"></input>
             <button class="btn">リーグを開催する</button>
-        </fomr>
+        </form>
         {% endif %}
     </p>
     <p>
@@ -43,7 +43,7 @@
             {% csrf_token %}
             <p>
                 タイトルの変更
-                <input type="text" size="40px" name="title" value=" {{ playlist.title }} "/>
+                <input type="text" size="40px" name="title" value="{{ playlist.title }} "/>
                 <button class="btn" type="submit">変更</button>
             </p>
         </form>

@@ -668,6 +668,7 @@ def playlist(request, pk):
             playlist.save()
         if 'title' in post and post['title'] != '':
             title = post['title']
+            print(title)
             playlist.title = title
             playlist.save()
         if 'up' in post:

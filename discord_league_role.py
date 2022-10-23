@@ -52,12 +52,12 @@ def league_role_total():
             if not league.name in role_names:
                 colour = discord.Colour.default()
                 col_dict = {}
-                col_dict['lightblue'] = discord.Colour.blue()
-                col_dict['lightgreen'] = discord.Colour.green()
-                col_dict['lightsalmon'] = discord.Colour.orange()
-                col_dict['lightpink'] = discord.Colour.red()
-                col_dict['#FFCCFF'] = discord.Colour.purple()
-                col_dict['lightyellow'] = discord.Colour.gold()
+                col_dict['rgba(130,211,255,.8)'] = discord.Colour.blue()
+                col_dict['rgba(207,130,255,.8'] = discord.Colour.green()
+                col_dict['rgba(255,128,60,.8)'] = discord.Colour.orange()
+                col_dict['rgba(255,128,128,.8)'] = discord.Colour.red()
+                col_dict['rgba(220,130,250,.8)'] = discord.Colour.purple()
+                col_dict['rgba(255,255,128,.8)'] = discord.Colour.gold()
                 if league.color in col_dict:
                     colour = col_dict[league.color]
                 await guild.create_role(name=league.name, colour=colour, hoist=True)

@@ -40,7 +40,7 @@ def league_role_total():
             valid_name = valid_name.replace(']','')
             print(valid_name)
             if not valid_name in channel_names:
-                current_channel = await category.create_text_channel(league.name)
+                current_channel = await category.create_text_channel(valid_name)
                 gmt_time = league.end + timedelta(hours=9)
                 y = gmt_time.year
                 m = gmt_time.month

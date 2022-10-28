@@ -131,7 +131,7 @@ def index(request):
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('end').order_by('-isOfficial')
+        isOpen=True, isLive=True).order_by('end','-isOfficial')
     params['active_leagues'] = active_leagues
 
     love_pair = 0

@@ -86,7 +86,7 @@
         <p>
             {% if league.isLive %}
                 <p>
-                    終了時刻 {{ league.end }}
+                    終了時刻　{{ league.end }}
                 </p>
                 <p>
                     終了まで　<span class="countdown"
@@ -477,10 +477,6 @@
                 const now_unix = Math.floor(new Date()/1000);
                 let sec = target_unix-now_unix;
                 let cd_text = '';
-                if(sec>=86400){
-                  cd_text += Math.floor(sec/86400)+'日';
-                  sec = sec%86400;
-                }
                 if(sec>=3600){
                   cd_text += td(Math.floor(sec/3600))+'時間';
                   sec = sec%3600;

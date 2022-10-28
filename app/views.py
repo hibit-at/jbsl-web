@@ -131,7 +131,7 @@ def index(request):
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial','end')
+        isOpen=True, isLive=True).order_by('end','-isOfficial')
     params['active_leagues'] = active_leagues
 
     love_pair = 0
@@ -733,7 +733,7 @@ def leagues(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('end').order_by('-isOfficial')
+        isOpen=True, isLive=True).order_by('end','-isOfficial')
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False).order_by('-end')
     params['active_leagues'] = active_leagues

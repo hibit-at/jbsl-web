@@ -85,9 +85,12 @@
     <div style="text-align:right">
         <p>
             {% if league.isLive %}
-                集計終了時刻 {{ league.end }} 
                 <p>
-                    残り<span class="countdown" data-date="{{league.end.year}}-{{league.end.month}}-{{league.end.day}} {{league.end.hour}}:{{league.end.minute}}"></span>
+                    終了時刻 {{ league.end }}
+                </p>
+                <p>
+                    終了まで　<span class="countdown"
+　      data-date="{{ league.end.year }}-{{ league.end.month }}-{{ league.end.day }} {{ league.end.hour }}:{{ league.end.minute }}"></span>
                 </p>
             {% else %}
                 本リーグは終了しました。

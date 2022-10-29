@@ -873,6 +873,13 @@ def leaderboard(request, pk):
     print(isClose)
     params['isClose'] = isClose
 
+    border_line = 8
+    if 'j1_qualifier' in league.name.lower():
+        border_line = 16
+    
+    params['border_line'] = border_line
+
+
     return render(request, 'leaderboard.html', params)
 
 

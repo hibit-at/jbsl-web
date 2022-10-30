@@ -110,7 +110,12 @@ def index(request):
         params['social'] = social
         player = user.player
         if player.isActivated:
-            invitations = player.invite.all()
+            all_invitations = player.invite.all()
+            invitations = []
+            for league in all_invitations:
+                if player in league.player.all():
+                    continue
+                invitations.append(league)
             params['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by('-borderPP')

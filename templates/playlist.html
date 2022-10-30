@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
     <h3>
         {{ playlist }}
         <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
@@ -12,7 +13,7 @@
         {% if isEditor %}
         <form method="GET" action="{% url 'app:create_league' %}">
             <input type="hidden" name="pk" value="{{ playlist.pk }}"></input>
-            <button class="btn">リーグを開催する</button>
+            <button class="btn"><img src="{% static 'pict_league.png' %}" height="25px">　リーグを開催する　<img src="{% static 'pict_league.png' %}" height="25px"></button>
         </form>
         {% endif %}
     </p>

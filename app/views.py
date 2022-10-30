@@ -761,6 +761,23 @@ def calculate_scoredrank_LBs(league, virtual=None):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)
             setattr(score, 'pos', pos)
+
+            # 精度により点数を強調
+            decorate = 'None'
+            if score.acc < 50:
+                decorate = 'color:dimgray'
+            if 95 <= score.acc and score.acc < 96:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+            if 96 <= score.acc and score.acc < 97:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+            if 97 <= score.acc and score.acc < 98:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+            if 98 <= score.acc and score.acc < 99:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+            if 99 <= score.acc and score.acc <= 100:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+            setattr(score, 'decorate', decorate)
+
             player = score.player
             total_rank[player].append(score)
         setattr(song, 'scores', query)
@@ -779,6 +796,22 @@ def calculate_scoredrank_LBs(league, virtual=None):
         count_pos = sum([s.pos for s in score_list])
         theoretical = count_pos / max_pos * 100
         count_acc = sum([s.acc for s in score_list])/valid_count
+
+        # 精度により点数を強調
+        decorate = 'None'
+        if 95 <= count_acc and count_acc < 96:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+        if 96 <= count_acc and count_acc < 97:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+        if 97 <= count_acc and count_acc < 98:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+        if 98 <= count_acc and count_acc < 99:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+        if 99 <= count_acc and count_acc <= 100:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+        setattr(player, 'decorate', decorate)
+
+
         tooltip_pos = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
         tooltip_valid = '<br>'.join(

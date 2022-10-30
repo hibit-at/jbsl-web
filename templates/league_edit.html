@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <div class="info-submit">
+        <form method="post">
+            {% csrf_token %}
+            <h3>リーグ情報の変更</h3>
+            <p>
+                <label>Title :</label>
+                <input type="text" size="50px" name="title" value="{{ league.name }}" />
+            </p>
+            <p>
+                <p>
+                    <label>Description :</label>
+                    {{ league.description }}
+                </p>
+                <textarea style="width:400px;height:100px" name="description">{{ league.description }}</textarea>
+            </p>
+            <p>
+                <label>終了日時 :</label>
+                <input type="datetime-local" name="end" value="{{ end_str }}" />
+            </p>
+            <p>
+                <label>有効譜面 :</label>
+                <input type="range"
+                       min="0"
+                       max="20"
+                       value="{{ league.method }}"
+                       style="width:200px"
+                       name="valid"/>
+                <span class="indicate-valid">{{ league.method }}</span>
+            </p>
+            <p>
+                <label>有効 PPの上限 :</label>
+                <input type="range"
+                       min="0"
+                       max="2000"
+                       value="{{ league.limit }}"
+                       style="width:300px"
+                       name="limit">
+                <span class="indicate-limit">{{ league.limit }}</span>
+            </p>
+            <p>
+                <button class="btn" type="submit">変更</button>
+            </p>
+        </form>
+    </div>
+    <script>
+        $("input[name='valid']").on("input", function (e) {
+            var range = e.target
+            $(".indicate-valid").text(range.value)
+        })
+    </script>
+    <script>
+        $("input[name='limit']").on("input", function (e) {
+            var range = e.target
+            $(".indicate-limit").text(range.value)
+        })
+    </script>
+    {% if league.isLive %}
+        <form method="post">
+            {% csrf_token %}
+            <select multiple size="{{ not_invite_players|length }}" name="invite">
+                {% for player in not_invite_players %}
+                    <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">招待</button>
+        </form>
+    {% endif %}
+{% endblock content %}

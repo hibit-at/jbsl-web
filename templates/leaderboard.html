@@ -233,7 +233,7 @@
                             </span>
                         </td>
                         <td>
-                            <span style="{{ player.decorate }}"> {{ player.count_acc }} % </span>
+                            <span style="{{ player.decorate }}"> {{ player.count_acc|floatformat:2 }} % </span>
                         </td>
                         <td>
                             {% if user.player == player %}

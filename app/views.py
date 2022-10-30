@@ -553,9 +553,11 @@ def playlists(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    playlists = Playlist.objects.all().order_by('-pk')
+    playlists = Playlist.objects.all().order_by('-pk')[:8]
+    archives = Playlist.objects.all().order_by('-pk')[8:]
     # playlists = make_sorted_playlists(playlists)
     params['playlists'] = playlists
+    params['archives'] = archives
     return render(request, 'playlists.html', params)
 
 

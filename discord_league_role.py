@@ -77,7 +77,6 @@ def league_role_total():
                 if member is None:
                     continue
                 await member.add_roles(current_role)
-            print(member)
 
         await bot.close()
 

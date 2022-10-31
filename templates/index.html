@@ -44,22 +44,20 @@
     <h3>特設 Q & A！</h3>
     <h4>Q、予選はいつ始まるの？</h4>
     <p style="margin:20px">
-        J1,J2,J3 どれも開催中だよ！
+        J1　が開催中だよ！
     </p>
     <h4>Q、予選はいつ終わるの？</h4>
-    <p style="margin:20px">
-        J2,J3 予選ともに 10/30（日）23:59 だよ！
-        <br>
-        J1 予選が終わるの 11/6（日）23:59だよ！
+    <p>
+        J1 が終わるのは 11/6（日）23:59だよ！
     </p>
     <h4>Q、どうやって参加するの？</h4>
     <p style="margin:20px">
         <a href="{% url 'app:info' pk=3 %}" style="color:ff8628">プレイヤー登録</a>をした後で、リーグ開始後に<a href="{% url 'app:info' pk=4 %}" style="color:ff8628">リーグ参加</a>をしてね！
     </p>
-    <h4 style="margin-left:50px">→より詳細は <a href="{% url 'app:info' pk=7 %}" style="color:ff8628">Q & A 詳細バージョン</a> へ</h4>
-    <h3>
-        Headlines
-    </h3>
+    <h4 style="margin-left:50px">
+        →より詳細は <a href="{% url 'app:info' pk=7 %}" style="color:ff8628">Q & A 詳細バージョン</a> へ
+    </h4>
+    <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
             <li>
@@ -76,39 +74,19 @@
     <p>
         <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
     </p>
-    <h3>
-        Live Leagues
-    </h3>
+    <h3>Live Leagues</h3>
     <table class="table table-striped table-borderless"
            style="background: rgba(255,255,255,.5)">
         <thead>
-            <th>
-                Cover
-            </th>
-            <th>
-                Title
-            </th>
-            <th>
-                Description
-            </th>
-            <th>
-                Limit
-            </th>
-            <th>
-                Owner
-            </th>
-            <th>
-                End
-            </th>
-            <th>
-                1st
-            </th>
-            <th>
-                2nd
-            </th>
-            <th>
-                3rd
-            </th>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Limit</th>
+            <th>Owner</th>
+            <th>End</th>
+            <th>1st</th>
+            <th>2nd</th>
+            <th>3rd</th>
         </thead>
         {% for league in active_leagues %}
             <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">

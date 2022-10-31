@@ -856,18 +856,14 @@ def leaderboard(request, pk):
 
     isMember = False
     isOwner = False
-    isVirtual = False
     if user.is_authenticated:
         if user.player in league.player.all():
             isMember = True
         if user.player == league.owner:
             isOwner = True
-        if user.player in league.virtual.all():
-            isVirtual = True
 
     params['isOwner'] = isOwner
     params['isMember'] = isMember
-    params['isVirtual'] = isVirtual
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     params['end_str'] = end_str

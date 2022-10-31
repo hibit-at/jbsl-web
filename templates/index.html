@@ -41,11 +41,8 @@
             </h3>
         </div>
     {% endif %}
+    <h3 style="text-align:center"><a href="{% url 'app:leaderboard' pk=42 %}" style="color:#ff8628">J1予選</a>開催中！</h3>
     <h3>特設 Q & A！</h3>
-    <h4>Q、予選はいつ始まるの？</h4>
-    <p style="margin:20px">
-        J1 が開催中だよ！
-    </p>
     <h4>Q、予選はいつ終わるの？</h4>
     <p style="margin:20px">
         J1 が終わるのは 11/6（日）23:59だよ！
@@ -57,6 +54,51 @@
     <h4 style="margin-left:50px">
         →より詳細は <a href="{% url 'app:info' pk=7 %}" style="color:ff8628">Q & A 詳細バージョン</a> へ
     </h4>
+    <h3>マッパー杯開催中！</h3>
+    <h4><a href="{% url 'app:leaderboard' pk=43 %}" style="color:#ff8628">Ge2toro 杯</a></h4>
+    <p>マッパーさんよりコメントを頂いております。</p>
+    <img src="https://cdn.scoresaber.com/avatars/76561198448239348.jpg" height="128px">
+    <pre class="balloon">
+    Calliope Mori ft. BOOGEY VOXX - Graveyard Shift
+    ダンス譜面です！
+    
+    Camellia - Hiasobi ft Hatsune Miku (Play With Fire)
+    ダンス譜面です！
+    
+    Garakuta Doll Play (Tanger Remix)
+    ダンス譜面です！
+    
+    PURPLE KISS - Nerdy
+    ダンス譜面です！
+    
+    Mitchie M (Project SEKAI) - Tokugawa Cup Noodle Kinshirei
+    カップヌードルです！
+    
+    Kizuna AI x Tomari Mari - identity
+    女児です！
+    
+    NORITZ - Ofuro ga Wakimashita
+    お風呂が沸きました
+    </pre>
+    <h4><a href="{% url 'app:leaderboard' pk=44 %}" style="color:#ff8628">Soba`s 杯</a></h4>
+    <p>マッパーさんよりコメントを頂いております。</p>
+    <img src="https://cdn.beatsaver.com/avatar/292320888072830977.png" height="128px">
+    <pre class="balloon">
+    Nothing But Requiem with.Museo - Pentiment Ex+
+    -
+    かめりあ - t/a/n/a/s/i/n/n Ex+
+    オリジナルそば風のスピード譜面
+    Laur - Sound Chimera Ex+
+    そばマップのくせに切りやすい
+    USAO - Climax Ex+
+    曲がかっこよくてすごく楽しい
+    かめりあ - #1f1e33 Ex+
+    Zeonさんとコラボ譜面
+    しーけー - Nirv lucE H
+    初心者も達成感あり曲も明るい
+    NA - RAK ! E
+    韓国の配信ミーム
+    </pre>
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>

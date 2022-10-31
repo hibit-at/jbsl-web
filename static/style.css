@@ -194,3 +194,11 @@ a:hover::after {
 .dropdown:hover>.dropdown-menu {
     display: block;
 }
+
+.balloon {
+    border-radius: 10px;
+    background: rgba(255, 128, 60, .8);
+    margin: 20px;
+    padding-top: 20px;
+    color: black
+}

@@ -1381,3 +1381,21 @@ def league_comment(request):
             setattr(player, 'comment', comment)
         return render(request, 'league_comment.html', params)
     return redirect('app:index')
+
+@login_required
+def league_edit(request, pk):
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params = {}
+    params['social'] = social
+    print(request.method)
+    print('league edit')
+    league = League.objects.get(pk=pk)
+    player = Player.objects.get(user=user)
+    params['league'] = league
+    print(league)
+    if league.owner != player:
+        return redirect('app:index')
+    end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
+    params['end_str'] = end_str
+    return render(request, 'league_edit.html', params)

@@ -16,12 +16,21 @@
     </div>
     <div style="text-align:center">
         <h3>
-            {{ league.name }}'s Leaderboard
+            <span style="color:{{ league.color }}">{{ league.name }}</span>'s Leaderboard
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
-                <span class="dl_link">プレイリストDL</span>
+                <span class="dl_link">PLAYLIST
+                    <img src="{% static 'DL.png' %}" height="25px">
+                </span>
             </a>
-            <a href="{% url 'app:playlist' pk=league.playlist.pk %}">detail</a>
+            <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
+                <span data-bs-toggle="tooltip"
+                      data-bs-placement="right"
+                      data-bs-html="true"
+                      title="プレイリストの詳細">
+                    <img src="{% static 'pict_playlist.png' %}" height="40px">
+                </span>
+            </a>
         </h3>
         <p>
             リーグの種別 :
@@ -233,7 +242,9 @@
                             </span>
                         </td>
                         <td>
-                            <span style="{{ player.decorate }}"> {{ player.count_acc|floatformat:2 }} % </span>
+                            <span style="{{ player.decorate }}"
+                                  {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }}" {% endif %}> {{ player.count_acc|floatformat:2 }} %
+                            </span>
                         </td>
                         <td>
                             {% if user.player == player %}

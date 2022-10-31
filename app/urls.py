@@ -29,4 +29,5 @@ urlpatterns = [
     path('info/<int:pk>',views.info_test, name='info'),
     path('score_comment/', views.score_comment, name='score_comment'),
     path('league_comment/', views.league_comment, name='league_comment'),
+    path('league_edit/<int:pk>', views.league_edit, name='league_edit'),
 ]

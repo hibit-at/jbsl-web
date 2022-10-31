@@ -63,7 +63,7 @@ hmd_dict = {
 
 league_colors = [
     {'value': 'rgba(130,211,255,.8)', 'text': 'Blue'},
-    {'value': 'rgba(207,130,255,.8)', 'text': 'Green'},
+    {'value': 'rgba(128,255,128,.8)', 'text': 'Green'},
     {'value': 'rgba(255,128,60,.8)', 'text': 'Orange'},
     {'value': 'rgba(255,128,128,.8)', 'text': 'Red'},
     {'value': 'rgba(220,130,250,.8)', 'text': 'Purple'},
@@ -136,7 +136,7 @@ def index(request):
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial','end','pk')
+        isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
     params['active_leagues'] = active_leagues
 
     love_pair = 0
@@ -740,7 +740,7 @@ def leagues(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial','end','pk')
+        isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False).order_by('-end')
     params['active_leagues'] = active_leagues
@@ -816,7 +816,6 @@ def calculate_scoredrank_LBs(league, virtual=None):
             decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
         setattr(player, 'decorate', decorate)
 
-
         tooltip_pos = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
         tooltip_valid = '<br>'.join(
@@ -849,6 +848,7 @@ def leaderboard(request, pk):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     league = League.objects.get(pk=pk)
+    player = Player.objects.get(user=user)
     params['league'] = league
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     params['scored_rank'] = scored_rank
@@ -862,6 +862,28 @@ def leaderboard(request, pk):
         if user.player == league.owner:
             isOwner = True
 
+    join_comment = {}
+    join_comment[0] = {'あなたはこのリーグに参加しています。'}
+    join_comment[1] = {'終了したリーグに参加することはできません。'}
+    join_comment[2] = {'非公開のリーグに参加することはできません。'}
+    join_comment[3] = {'あなたは実力が高すぎるため、このリーグには参加できません……。'}
+    join_comment[4] = {''}
+
+    join_state = -1
+    if isMember:
+        join_state = 0
+    elif not league.isLive:
+        join_state = 1
+    elif not league.isPublic:
+        join_state = 2
+    elif player.borderPP > league.limit:
+        join_state = 3
+    else:
+        join_state = 4
+
+    params['join_state'] = join_state
+    params['join_comment'] = join_comment[join_state]
+    params['edit_state'] = isOwner and league.isLive
     params['isOwner'] = isOwner
     params['isMember'] = isMember
 
@@ -912,9 +934,8 @@ def leaderboard(request, pk):
     border_line = 8
     if 'j1_qualifier' in league.name.lower():
         border_line = 16
-    
-    params['border_line'] = border_line
 
+    params['border_line'] = border_line
 
     return render(request, 'leaderboard.html', params)
 
@@ -927,7 +948,7 @@ def create_league(request):
         print(get['pk'])
         params['select'] = int(get['pk'])
         if Playlist.objects.filter(pk=int(get['pk'])).exists():
-            selected_playlist = Playlist.objects.get(pk = int(get['pk']))
+            selected_playlist = Playlist.objects.get(pk=int(get['pk']))
             params['selected_playlist'] = selected_playlist
         print(type(params['select']))
     user = request.user
@@ -1320,7 +1341,7 @@ def info_test(request, pk):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     return render(request, f'info{pk}.html', params)
-    
+
 
 @login_required
 def score_comment(request):
@@ -1378,6 +1399,7 @@ def league_comment(request):
         return render(request, 'league_comment.html', params)
     return redirect('app:index')
 
+
 @login_required
 def league_edit(request, pk):
     user = request.user
@@ -1392,6 +1414,26 @@ def league_edit(request, pk):
     print(league)
     if league.owner != player:
         return redirect('app:index')
-    end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
+    end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%d %H:%M')
     params['end_str'] = end_str
+    params['league_colors'] = league_colors
+
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'title' in post:
+            league.name = post['title']
+            if post['description'] != '':
+                league.description = post['description']
+            league.end = datetime.strptime(post['end'], '%Y-%m-%dT%H:%M')
+            league.method = post['valid']
+            league.limit = post['limit']
+            league.color = post['color']
+            league.isPublic = 'public' in post
+            league.save()
+            if not 'back' in post:
+                return redirect('app:league_edit', pk=pk)
+            else:
+                return redirect('app:leaderboard', pk=pk)
+
     return render(request, 'league_edit.html', params)

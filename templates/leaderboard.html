@@ -17,6 +17,15 @@
     <div style="text-align:center">
         <h3>
             <span style="color:{{ league.color }}">{{ league.name }}</span>'s Leaderboard
+            {% if edit_state %}
+                <a href="{% url 'app:league_edit' pk=league.pk %}">
+                    <img src="{% static 'pencil.png' %}"
+                         height="40px"
+                         style="filter:invert();margin-left:20px">
+                </a>
+            {% endif %}
+        </h3>
+        <h3>
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">PLAYLIST
@@ -35,15 +44,16 @@
         <p>
             リーグの種別 :
             {% if not league.isPublic %}
-                非公開
+                非公開　
             {% else %}
-                公開リーグ
+                公開
                 {% if league.limit == 2000 %}
-                （上限なし）
+                    （上限なし）
                 {% else %}
-                （有効 PP 上限 : {{ league.limit }} PP）
+                    （有効 PP 上限 : {{ league.limit }} PP）
                 {% endif %}
             {% endif %}
+            有効譜面数 {{ league.method }}
         </p>
         {% if user.player.isActivated %}
             {% if isMember %}
@@ -93,79 +103,13 @@
                     終了時刻　{{ league.end }}
                 </p>
                 <p>
-                    終了まで　<span class="countdown"
-　      data-date="{{ league.end.year }}-{{ league.end.month }}-{{ league.end.day }} {{ league.end.hour }}:{{ league.end.minute }}"></span>
+                    終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
                 </p>
             {% else %}
                 本リーグは終了しました。
             {% endif %}
         </p>
     </div>
-    {% if isOwner %}
-        {% if league.isLive %}
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-            <div class="info-submit">
-                <form method="post">
-                    {% csrf_token %}
-                    <h3>リーグ情報の変更</h3>
-                    <p>
-                        <label>Title :</label>
-                        <input type="text" size="50px" name="title" value="{{ league.name }}" />
-                    </p>
-                    <p>
-                        <p>
-                            <label>Description :</label>
-                            {{ league.description }}
-                        </p>
-                        <textarea style="width:400px;height:100px" name="description">{{ league.description }}</textarea>
-                    </p>
-                    <p>
-                        <label>終了日時 :</label>
-                        <input type="datetime-local" name="end" value="{{ end_str }}" />
-                    </p>
-                    <p>
-                        <label>有効譜面 :</label>
-                        <input type="range"
-                               min="0"
-                               max="20"
-                               value="{{ league.method }}"
-                               style="width:200px"
-                               name="valid"/>
-                        <span class="indicate-valid">{{ league.method }}</span>
-                    </p>
-                    <p>
-                        <label>有効 PPの上限 :</label>
-                        <input type="range"
-                               min="0"
-                               max="2000"
-                               value="{{ league.limit }}"
-                               style="width:300px"
-                               name="limit">
-                        <span class="indicate-limit">{{ league.limit }}</span>
-                    </p>
-                    <p>
-                        <button class="btn" type="submit">変更</button>
-                    </p>
-                </form>
-            </div>
-            <script>
-    $("input[name='valid']").on("input", function (e) {
-        var range = e.target
-        $(".indicate-valid").text(range.value)
-    })
-            </script>
-            <script>
-    $("input[name='limit']").on("input", function (e) {
-        var range = e.target
-        $(".indicate-limit").text(range.value)
-    })
-            </script>
-        {% else %}
-            <p>
-                終了したリーグの情報を変更することはできません
-            </p>
-        {% endif %}
-    {% endif %}
     <div id="{{ league.id }}"
          class="border8-target"
          style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));padding:20px;border-radius:20px">
@@ -271,9 +215,7 @@
         <a class="border8-trigger" href="#{{ league.id }}">すべて表示</a>
     </div>
     <hr />
-    <h2 style="text-align:center">
-        譜面別リーグ内順位
-    </h2>
+    <h2 style="text-align:center">譜面別リーグ内順位</h2>
     {% for song in LBs %}
         <p>
             <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
@@ -297,37 +239,23 @@
                        style="background : rgba(255,255,255,.5)">
                     <thead>
                         <tr>
-                            <th width="70px">
-                                Rank
-                            </th>
-                            <th width="250px">
-                                Player
-                            </th>
-                            <th width="70px">
-                                順位点
-                            </th>
+                            <th width="70px">Rank</th>
+                            <th width="250px">Player</th>
+                            <th width="70px">順位点</th>
                             <th width="70px">
                                 有効
                                 <br>
                                 譜面
                             </th>
-                            <th width="100px">
-                                Accuracy
-                            </th>
-                            <th width="100px">
-                                Miss
-                            </th>
-                            <th width="auto">
-                                Message
-                            </th>
+                            <th width="100px">Accuracy</th>
+                            <th width="100px">Miss</th>
+                            <th width="auto">Message</th>
                         </tr>
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
                             <tr>
-                                <td>
-                                    #{{ score.rank }}
-                                </td>
+                                <td>#{{ score.rank }}</td>
                                 <td>
                                     {% if user.player == score.player or user.player.rival == score.player %}
                                         <div style="border-radius:10px;
@@ -433,55 +361,55 @@
         {% endif %}
     </div>
     <script>
-    function check(){
-        if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
-            return true; // 「OK」時は送信を実行
-        }
-        else{ // 「キャンセル」時の処理
-            window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
-            return false; // 送信を中止
-        }
-    
+function check(){
+    if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
+        return true; // 「OK」時は送信を実行
+    }
+    else{ // 「キャンセル」時の処理
+        window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
+        return false; // 送信を中止
     }
 
-    window.addEventListener('load',()=>{
-        Countdown();
-        })
-        
-        const Countdown = function(){
-        const cd_areas = document.getElementsByClassName('countdown');
-        [...cd_areas].forEach(cd_area=>{
-            const target_unix = new Date(cd_area.dataset.date)/1000;
-            setInterval(()=>{
-            const now_unix = Math.floor(new Date()/1000);
-            let sec = target_unix-now_unix;
-            sec = sec + 9*3600
-            let cd_text = '';
-            if(sec>=3600){
-                cd_text += td(Math.floor(sec/3600))+'時間';
-                sec = sec%3600;
-            }else{
-                cd_text += '00時間';
-            }
-            if(sec>=60){
-                cd_text += td(Math.floor(sec/60))+'分';
-                sec = sec%60;
-            }else{
-                cd_text += '00分';
-            }
-            cd_text += td(sec)+'秒';
-            cd_area.textContent = cd_text;
-            },1000);
-        });
-        
-        function td(x){
-            if(x<10){
-            return '0'+x;
-            }else{
-            return x;
-            }
+}
+
+window.addEventListener('load',()=>{
+    Countdown();
+    })
+    
+    const Countdown = function(){
+    const cd_areas = document.getElementsByClassName('countdown');
+    [...cd_areas].forEach(cd_area=>{
+        const target_unix = new Date(cd_area.dataset.date)/1000;
+        setInterval(()=>{
+        const now_unix = Math.floor(new Date()/1000);
+        let sec = target_unix-now_unix;
+        sec = sec + 9*3600
+        let cd_text = '';
+        if(sec>=3600){
+            cd_text += td(Math.floor(sec/3600))+'時間';
+            sec = sec%3600;
+        }else{
+            cd_text += '00時間';
         }
+        if(sec>=60){
+            cd_text += td(Math.floor(sec/60))+'分';
+            sec = sec%60;
+        }else{
+            cd_text += '00分';
         }
+        cd_text += td(sec)+'秒';
+        cd_area.textContent = cd_text;
+        },1000);
+    });
+    
+    function td(x){
+        if(x<10){
+        return '0'+x;
+        }else{
+        return x;
+        }
+    }
+    }
 
     </script>
 {% endblock content %}

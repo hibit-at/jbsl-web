@@ -81,7 +81,9 @@ a:hover::after {
 .dl_link {
     background: #ff8628;
     padding: 5px;
-    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
     color: inherit;
     border-style: solid;
     border-width: 1px;

@@ -2,6 +2,36 @@
 {% block content %}
     {% load static %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <h3>リーグ情報</h3>
+    <p>
+        Playlist : {{ league.playlist.title }}（変更不可能）
+    </p>
+    <p>
+        Title : <span style="color:{{ league.color }}">{{ league.name }}</span>
+    </p>
+    <p>
+        Description : {{ league.description }}
+    </p>
+    <p>
+        Color : <span style="background : {{ league.color }}; padding-left:50px"></span>
+    </p>
+    <p>
+        終了日時 : {{ end_str }}
+    </p>
+    <p>
+        種別 :
+        {% if league.isPublic %}
+            公開
+        {% else %}
+            非公開
+        {% endif %}
+    </p>
+    <p>
+        最大有効譜面 : {{ league.method }}
+    </p>
+    <p>
+        有効 PP の上限 : {{ league.limit }}
+    </p>
     <div class="info-submit">
         <form method="post">
             {% csrf_token %}
@@ -18,11 +48,29 @@
                 <textarea style="width:400px;height:100px" name="description">{{ league.description }}</textarea>
             </p>
             <p>
+                <label>Color :</label>
+                <select name="color">
+                    {% for league_color in league_colors %}
+                        <option value="{{ league_color.value }}"
+                                {% if league.color  == league_color.value %}selected{% endif %}>
+                            {{ league_color.text }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
                 <label>終了日時 :</label>
                 <input type="datetime-local" name="end" value="{{ end_str }}" />
             </p>
             <p>
-                <label>有効譜面 :</label>
+                <Label>公開リーグ :</Label>
+                <input type="checkbox"
+                       name="public"
+                       style="transform:scale(2.5);margin-left:10px"
+                       {% if league.isPublic %} checked{% endif %}>
+            </p>
+            <p>
+                <label>最大有効譜面 :</label>
                 <input type="range"
                        min="0"
                        max="20"
@@ -38,6 +86,7 @@
                        max="2000"
                        value="{{ league.limit }}"
                        style="width:300px"
+                       step="10"
                        name="limit">
                 <span class="indicate-limit">{{ league.limit }}</span>
             </p>
@@ -59,16 +108,4 @@
             $(".indicate-limit").text(range.value)
         })
     </script>
-    {% if league.isLive %}
-        <form method="post">
-            {% csrf_token %}
-            <select multiple size="{{ not_invite_players|length }}" name="invite">
-                {% for player in not_invite_players %}
-                    <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
-                    </option>
-                {% endfor %}
-            </select>
-            <button class="btn" type="submit">招待</button>
-        </form>
-    {% endif %}
 {% endblock content %}

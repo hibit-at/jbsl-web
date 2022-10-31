@@ -34,22 +34,17 @@
         </h3>
         <p>
             リーグの種別 :
-            {% if league.isPublic %}
-                パブリック
+            {% if not league.isPublic %}
+                非公開
             {% else %}
-                プライベート
+                公開リーグ
+                {% if league.limit == 2000 %}
+                （上限なし）
+                {% else %}
+                （有効 PP 上限 : {{ league.limit }} PP）
+                {% endif %}
             {% endif %}
         </p>
-        {% if league.isPublic %}
-            <p>
-                有効 PP の上限 :
-                {% if league.limit == 2000 %}
-                    上限なし
-                {% else %}
-                    {{ league.limit }}
-                {% endif %}
-            </p>
-        {% endif %}
         {% if user.player.isActivated %}
             {% if isMember %}
                 <p>

@@ -29,14 +29,14 @@
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">PLAYLIST
-                    <img src="{% static 'DL.png' %}" height="25px">
+                    <img src="{% static 'DL_white.png' %}" height="25px">
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip"
                       data-bs-placement="right"
                       data-bs-html="true"
-                      title="プレイリストの詳細">
+                      title="<h4>プレイリストの詳細</h4>">
                     <img src="{% static 'pict_playlist.png' %}" height="40px">
                 </span>
             </a>
@@ -55,7 +55,7 @@
             {% endif %}
             有効譜面数 {{ league.method }}
         </p>
-        {% if user.player.isActivated %}
+        {% comment %} {% if user.player.isActivated %}
             {% if isMember %}
                 <p>
                     あなたはこのリーグに参加しています。
@@ -94,7 +94,24 @@
                     <button class="btn">バーチャル参加</button>
                 </form>
             {% endif %}
-        {% endif %}
+        {% endif %} {% endcomment %}
+        <p>
+            <div style="display:inline-flex">
+                {% if join_state < 4 %}
+                    {{ join_comment }}
+                {% else %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
+                    </form>
+                {% endif %}
+                {% if not isMember and user.is_authenticated %}
+                    <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
+                        <button class="btn" style="margin-left:20px">バーチャル参加</button>
+                    </form>
+                {% endif %}
+            </div>
+        </p>
     </div>
     <div style="text-align:right">
         <p>
@@ -249,13 +266,17 @@
                             </th>
                             <th width="100px">Accuracy</th>
                             <th width="100px">Miss</th>
-                            <th width="auto">Message</th>
+                            <th width="auto">
+                                Message
+                            </th>
                         </tr>
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
                             <tr>
-                                <td>#{{ score.rank }}</td>
+                                <td>
+                                    #{{ score.rank }}
+                                </td>
                                 <td>
                                     {% if user.player == score.player or user.player.rival == score.player %}
                                         <div style="border-radius:10px;

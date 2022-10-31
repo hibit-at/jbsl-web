@@ -844,11 +844,12 @@ def calculate_scoredrank_LBs(league, virtual=None):
 def leaderboard(request, pk):
     params = {}
     user = request.user
+    player = None
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
+        player = Player.objects.get(user=user)
     league = League.objects.get(pk=pk)
-    player = Player.objects.get(user=user)
     params['league'] = league
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     params['scored_rank'] = scored_rank
@@ -863,23 +864,25 @@ def leaderboard(request, pk):
             isOwner = True
 
     join_comment = {}
-    join_comment[0] = {'あなたはこのリーグに参加しています。'}
-    join_comment[1] = {'終了したリーグに参加することはできません。'}
-    join_comment[2] = {'非公開のリーグに参加することはできません。'}
-    join_comment[3] = {'あなたは実力が高すぎるため、このリーグには参加できません……。'}
-    join_comment[4] = {''}
+    join_comment[-1] = ''
+    join_comment[0] = 'あなたはこのリーグに参加しています。'
+    join_comment[1] = '終了したリーグに参加することはできません。'
+    join_comment[2] = '非公開のリーグに参加することはできません。'
+    join_comment[3] = 'あなたは実力が高すぎるため、このリーグには参加できません……。'
+    join_comment[4] = ''
 
     join_state = -1
-    if isMember:
-        join_state = 0
-    elif not league.isLive:
-        join_state = 1
-    elif not league.isPublic:
-        join_state = 2
-    elif player.borderPP > league.limit:
-        join_state = 3
-    else:
-        join_state = 4
+    if user.is_authenticated:
+        if isMember:
+            join_state = 0
+        elif not league.isLive:
+            join_state = 1
+        elif not league.isPublic:
+            join_state = 2
+        elif player.borderPP > league.limit:
+            join_state = 3
+        else:
+            join_state = 4
 
     params['join_state'] = join_state
     params['join_comment'] = join_comment[join_state]
@@ -910,15 +913,6 @@ def leaderboard(request, pk):
             for invite in invites:
                 invite_player = Player.objects.get(sid=invite)
                 league.invite.add(invite_player)
-        if 'title' in post:
-            league.name = post['title']
-            if post['description'] != '':
-                league.description = post['description']
-            league.end = datetime.strptime(post['end'], '%Y-%m-%dT%H:%M')
-            league.method = post['valid']
-            league.limit = post['limit']
-            league.save()
-            return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')

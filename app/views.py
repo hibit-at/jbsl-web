@@ -864,7 +864,7 @@ def leaderboard(request, pk):
             isOwner = True
 
     join_comment = {}
-    join_comment[-1] = 'リーグに参加するには、プレイヤーとして登録する必要があります。'
+    join_comment[-1] = ''
     join_comment[0] = 'あなたはこのリーグに参加しています。'
     join_comment[1] = '終了したリーグに参加することはできません。'
     join_comment[2] = '非公開のリーグに参加することはできません。'

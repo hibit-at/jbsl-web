@@ -1192,6 +1192,15 @@ def bsr_checker(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
+
+    user_state = 0
+    if user.is_authenticated:
+        player = Player.objects.get(user=user)
+        if player.twitch == '':
+            user_state = 1
+
+    params['user_state'] = user_state
+
     if request.method == 'POST':
         post = request.POST
         print(post)

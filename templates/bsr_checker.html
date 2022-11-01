@@ -2,27 +2,33 @@
 {% block content %}
     <h3>!bsr checker</h3>
     <p>
-        Twitch URL と !bsr コマンドから、プレイヤーのスコアを求めることができます。
+        Twitch URL と !bsr コマンドから、プレイヤーのその譜面をプレイしたか、プレイ済ならば何日前にいくつの精度をとったかを調べることができます。
     </p>
     <p>
-        ※ 当 Web サイトに登録し、Twitch の URL を記載してくれているプレイヤーに限ります。
+        ※ 検索できる対象は、当 Web サイトに登録し、Twitch の URL を記載してくれているプレイヤーに限ります。
     </p>
-    <form method="post">
-        {% csrf_token %}
-        <ul>
-            <li>
-                Twitch URL
-                <input type="text" size="60px" name="twitchURL" value="{{ twitch }}"/>
-                （例：https://www.twitch.tv/hibit0921）
-            </li>
-            <li>
-                !bsr Command
-                <input type="text" size="60px" name="bsr_command"/>
-                （例：!bsr 23d0c、https://beatsaver.com/maps/23d0c）
-            </li>
-        </ul>
-        <button class="btn" type="submit">Check</button>
-    </form>
+    {% if not user_state %}
+        <p>
+            ※ 検索機能を使えるのは、当 Web サイトに登録し、Twitch の URL を記載してくれているプレイヤーに限ります。
+        </p>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <ul>
+                <li>
+                    Twitch URL
+                    <input type="text" size="60px" name="twitchURL" value="{{ twitch }}"/>
+                    （例：https://www.twitch.tv/hibit0921）
+                </li>
+                <li>
+                    !bsr Command
+                    <input type="text" size="60px" name="bsr_command"/>
+                    （例：!bsr 23d0c、https://beatsaver.com/maps/23d0c）
+                </li>
+            </ul>
+            <button class="btn" type="submit">Check</button>
+        </form>
+    {% endif %}
     {% if results|length > 0 %}
         <hr>
         <h3>解析結果</h3>

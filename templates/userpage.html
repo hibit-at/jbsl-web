@@ -24,7 +24,9 @@
         </p>
     {% endif %}
     <p>
+        <img src="{% static 'ScoreSaberLogo.png' %}" style="filter:invert()" height="30px">
         <a href="https://scoresaber.com/u/{{ player.sid }}" target="blank">ScoreSaber Link</a>
+        <img src="{% static 'ScoreSaberLogo.png' %}" style="filter:invert()" height="30px">
     </p>
     <p>
         {% if player.twitch != '' %}
@@ -64,7 +66,7 @@
     </p>
     {% if user.player == player %}
         <div class="info-submit">
-            <h4>Information</h4>
+            <h4>ユーザー情報</h4>
             <p>
                 ScoreSaber : https://scoresaber.com/u/{{ player.sid }}
             </p>
@@ -86,7 +88,7 @@
                     Booth : https://booth.pm/ja/items/{{ player.booth }}
                 </p>
             {% endif %}
-            <h4>Change Form</h4>
+            <h4>情報の変更</h4>
             <form method="post">
                 {% csrf_token %}
                 {% if user.player.isSupporter %}

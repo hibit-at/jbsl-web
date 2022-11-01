@@ -115,6 +115,8 @@ def index(request):
             for league in all_invitations:
                 if player in league.player.all():
                     continue
+                if not league.isLive:
+                    continue
                 invitations.append(league)
             params['invitations'] = invitations
     active_players = Player.objects.filter(

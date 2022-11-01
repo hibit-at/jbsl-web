@@ -145,7 +145,7 @@
             <th>Cover</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Limit</th>
+            <th>Border</th>
             <th>Owner</th>
             <th>End</th>
             <th>
@@ -182,7 +182,7 @@
                             {{ league.limit }}
                         {% endif %}
                     {% else %}
-                        Private
+                        <img src="{% static 'Locked.png' %}" height="25px">
                     {% endif %}
                 </td>
                 <td>

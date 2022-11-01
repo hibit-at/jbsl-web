@@ -17,7 +17,7 @@
             <th>Cover</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Limit</th>
+            <th>Border</th>
             <th>Owner</th>
             <th>End</th>
             <th>1st</th>
@@ -46,7 +46,7 @@
                             {{ league.limit }}
                         {% endif %}
                     {% else %}
-                        Private
+                        <img src="{% static 'Locked.png' %}" height="25px">
                     {% endif %}
                 </td>
                 <td>
@@ -112,7 +112,7 @@
         <thead>
             <th>Title</th>
             <th>Description</th>
-            <th>Limit</th>
+            <th>Border</th>
             <th>Owner</th>
             <th>End</th>
             <th>1st</th>
@@ -132,12 +132,16 @@
                     {{ league.description|truncatechars:50 }}
                 </td>
                 <td>
-                    {% if league.limit == 2000 %}
-                        上限なし
+                    {% if league.isPublic %}
+                        {% if league.limit == 2000 %}
+                            上限なし
+                        {% else %}
+                            {{ league.limit }}
+                        {% endif %}
                     {% else %}
-                        {{ league.limit }}
-                    </td>
-                {% endif %}
+                        <img src="{% static 'Locked.png' %}" height="25px">
+                    {% endif %}
+                </td>
                 <td>
                     <a href
                        {% url 'app:userpage' sid=league.owner.sid %}

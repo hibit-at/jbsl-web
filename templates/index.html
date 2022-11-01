@@ -41,7 +41,9 @@
             </h3>
         </div>
     {% endif %}
-    <h3 style="text-align:center"><a href="{% url 'app:leaderboard' pk=42 %}" style="color:#ff8628">J1予選</a>開催中！</h3>
+    <h3 style="text-align:center">
+        <a href="{% url 'app:leaderboard' pk=42 %}" style="color:#ff8628">J1予選</a>開催中！
+    </h3>
     <h3>特設 Q & A！</h3>
     <h4>Q、予選はいつ終わるの？</h4>
     <p style="margin:20px">
@@ -55,10 +57,16 @@
         →より詳細は <a href="{% url 'app:info' pk=7 %}" style="color:ff8628">Q & A 詳細バージョン</a> へ
     </h4>
     <h3>マッパー杯開催中！</h3>
-    <h4><a href="{% url 'app:leaderboard' pk=43 %}" style="color:#ff8628">Ge2toro 杯</a></h4>
-    <p>マッパーさんよりコメントを頂いております。</p>
-    <img src="https://cdn.scoresaber.com/avatars/76561198448239348.jpg" height="128px">
-    <pre class="balloon">
+    <h4>
+        <a href="{% url 'app:leaderboard' pk=43 %}" style="color:#ff8628">Ge2toro 杯</a>
+    </h4>
+    <details>
+        <summary>
+            マッパーさんよりコメントを頂いております。
+        </summary>
+        <img src="https://cdn.scoresaber.com/avatars/76561198448239348.jpg"
+             height="128px">
+        <pre class="balloon">
     Calliope Mori ft. BOOGEY VOXX - Graveyard Shift
     ダンス譜面です！
     
@@ -80,10 +88,17 @@
     NORITZ - Ofuro ga Wakimashita
     お風呂が沸きました
     </pre>
-    <h4><a href="{% url 'app:leaderboard' pk=44 %}" style="color:#ff8628">Soba`s 杯</a></h4>
-    <p>マッパーさんよりコメントを頂いております。</p>
-    <img src="https://cdn.beatsaver.com/avatar/292320888072830977.png" height="128px">
-    <pre class="balloon">
+    </details>
+    <h4>
+        <a href="{% url 'app:leaderboard' pk=44 %}" style="color:#ff8628">Soba`s 杯</a>
+    </h4>
+    <details>
+        <summary>
+            マッパーさんよりコメントを頂いております。
+        </summary>
+        <img src="https://cdn.beatsaver.com/avatar/292320888072830977.png"
+             height="128px">
+        <pre class="balloon">
     Nothing But Requiem with.Museo - Pentiment Ex+
     新しく誕生したバランス譜面
 
@@ -105,6 +120,7 @@
     NA - RAK ! E
     韓国の配信ミーム
     </pre>
+    </details>
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
@@ -132,9 +148,15 @@
             <th>Limit</th>
             <th>Owner</th>
             <th>End</th>
-            <th>1st</th>
-            <th>2nd</th>
-            <th>3rd</th>
+            <th>
+                1st
+            </th>
+            <th>
+                2nd
+            </th>
+            <th>
+                3rd
+            </th>
         </thead>
         {% for league in active_leagues %}
             <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">

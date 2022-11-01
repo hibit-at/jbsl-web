@@ -133,6 +133,7 @@ def index(request):
             decline = post['decline']
             league = League.objects.get(pk=decline)
             league.invite.remove(player)
+            return redirect('app:index')
     headlines = Headline.objects.all().order_by('-time')[:10]
     params['headlines'] = headlines
     active_leagues = League.objects.filter(
@@ -908,11 +909,6 @@ def leaderboard(request, pk):
             remove_player = Player.objects.get(sid=sid)
             league.player.remove(remove_player)
             return redirect('app:leaderboard', pk=pk)
-        if 'invite' in post:
-            invites = post.getlist('invite')
-            for invite in invites:
-                invite_player = Player.objects.get(sid=invite)
-                league.invite.add(invite_player)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
@@ -1412,6 +1408,12 @@ def league_edit(request, pk):
     params['end_str'] = end_str
     params['league_colors'] = league_colors
 
+    not_invite_players = Player.objects.exclude(
+        league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
+    invite_players = Player.objects.filter(invite=league).order_by('-borderPP')
+    params['not_invite_players'] = not_invite_players
+    params['invite_players'] = invite_players
+
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -1429,5 +1431,15 @@ def league_edit(request, pk):
                 return redirect('app:league_edit', pk=pk)
             else:
                 return redirect('app:leaderboard', pk=pk)
+        if 'invite' in post:
+            invites = post.getlist('invite')
+            for invite in invites:
+                invite_player = Player.objects.get(sid=invite)
+                league.invite.add(invite_player)
+        if 'withdraw' in post:
+            withdraw = Player.objects.get(sid=post['withdraw'])
+            print(withdraw)
+            league.invite.remove(withdraw)
+            redirect('app:league_edit', pk=pk)
 
     return render(request, 'league_edit.html', params)

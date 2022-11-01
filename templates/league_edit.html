@@ -96,6 +96,37 @@
             </p>
         </form>
     </div>
+    <br>
+    <h3>プレイヤーの招待</h3>
+    <div style="display:inline-block">
+        <p>
+            招待中のプレイヤー :
+            {% for player in invite_players %}
+                <form method="post">
+                    {% csrf_token %}
+                    <img src="{{ player.imageURL }}" class="icon">
+                    {{ player }}
+                    <button class="btn"
+                            style="background:red"
+                            name="withdraw"
+                            value="{{ player.sid }}">招待取消</button>
+                </form>
+            {% endfor %}
+        </p>
+    </div>
+    <p>
+        Shift で範囲選択、Ctrl で複数選択ができます。
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <select multiple size="{{ not_invite_players|length }}" name="invite">
+            {% for player in not_invite_players %}
+                <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
+                </option>
+            {% endfor %}
+        </select>
+        <button class="btn" type="submit">招待</button>
+    </form>
     <script>
         $("input[name='valid']").on("input", function (e) {
             var range = e.target

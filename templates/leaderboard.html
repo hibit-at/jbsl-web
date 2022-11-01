@@ -33,10 +33,9 @@
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
-                <span data-bs-toggle="tooltip"
-                      data-bs-placement="right"
-                      data-bs-html="true"
-                      title="<h4>プレイリストの詳細</h4>">
+                <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                    <h4>プレイリストの詳細</h4>
+                    ">
                     <img src="{% static 'pict_playlist.png' %}" height="40px">
                 </span>
             </a>
@@ -265,7 +264,9 @@
                                 譜面
                             </th>
                             <th width="100px">Accuracy</th>
-                            <th width="100px">Miss</th>
+                            <th width="100px">
+                                Miss
+                            </th>
                             <th width="auto">
                                 Message
                             </th>
@@ -301,7 +302,9 @@
                                     {{ score.pos }}
                                 </td>
                                 <td>
-                                    {{ score.valid }}
+                                    {% if score.valid %}
+                                        <img src={% static 'simple_check.png' %} height="20px">
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <span style="{{ score.decorate }}">

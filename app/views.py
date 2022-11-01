@@ -1187,6 +1187,7 @@ def api_leaderboard(request, pk):
 
 def bsr_checker(request):
     params = {}
+    params['twitch'] = ''
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
@@ -1279,6 +1280,7 @@ def bsr_checker(request):
             acc = score/(115*8*int(notes)-7245)*100
             results.append(f'...{when} に {acc:,.2f} %のスコアが登録されています。')
         print(results)
+        params['twitch'] = twitchURL
         params['results'] = results.results
 
     return render(request, 'bsr_checker.html', params)

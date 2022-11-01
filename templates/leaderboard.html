@@ -343,20 +343,6 @@
             {% endif %}
         </div>
     {% endfor %}
-    {% if isOwner and league.isLive %}
-        <form method="post">
-            {% csrf_token %}
-            <select multiple size="{{ not_invite_players|length }}" name="invite">
-                {% for player in not_invite_players %}
-                    <option value={{ player.sid }}>{{ player }} :  {{ player.pp }} pp ({{ player.borderPP|floatformat:2 }} pp)
-                    </option>
-                {% endfor %}
-            </select>
-            <button class="btn" type="submit">
-                招待
-            </button>
-        </form>
-    {% endif %}
     <div style="text-align:center">
         {% if isMember %}
             {% if league.isLive %}

@@ -97,23 +97,25 @@
         </form>
     </div>
     <br>
-    <h3>プレイヤーの招待</h3>
-    <div style="display:inline-block">
-        <p>
-            招待中のプレイヤー :
-            {% for player in invite_players %}
-                <form method="post">
-                    {% csrf_token %}
-                    <img src="{{ player.imageURL }}" class="icon">
-                    {{ player }}
-                    <button class="btn"
-                            style="background:red"
-                            name="withdraw"
-                            value="{{ player.sid }}">招待取消</button>
-                </form>
-            {% endfor %}
-        </p>
-    </div>
+    {% if league.isLive %}
+        <h3>プレイヤーの招待</h3>
+        <div style="display:inline-block">
+            <p>
+                招待中のプレイヤー :
+                {% for player in invite_players %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <img src="{{ player.imageURL }}" class="icon">
+                        {{ player }}
+                        <button class="btn"
+                                style="background:red;border-style:None"
+                                name="withdraw"
+                                value="{{ player.sid }}">招待取消</button>
+                    </form>
+                {% endfor %}
+            </p>
+        </div>
+    {% endif %}
     <p>
         Shift で範囲選択、Ctrl で複数選択ができます。
     </p>

@@ -1196,7 +1196,7 @@ def bsr_checker(request):
     user_state = 0
     if user.is_authenticated:
         player = Player.objects.get(user=user)
-        if player.twitch == '':
+        if player.twitch != '':
             user_state = 1
 
     params['user_state'] = user_state

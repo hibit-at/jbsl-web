@@ -191,7 +191,10 @@ def userpage(request, sid=0):
             user.player.rival = rival
             user.player.save()
         if 'icon_scoresaber' in post:
-            player.imageURL = f'https://cdn.scoresaber.com/avatars/{player.sid}.jpg'
+            url = f'https://scoresaber.com/api/player/{player.sid}/basic'
+            res = requests.get(url).json()
+            imageURL = res['profilePicture']
+            player.imageURL = imageURL
         if 'icon_discord' in post:
             if social.extra_data['avatar'] != None:
                 player.imageURL = f'https://cdn.discordapp.com/avatars/{social.uid}/{social.extra_data["avatar"]}'

@@ -19,9 +19,13 @@
             <span style="color:{{ league.color }}">{{ league.name }}</span>'s Leaderboard
             {% if edit_state %}
                 <a href="{% url 'app:league_edit' pk=league.pk %}">
+                    <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                        <h4>リーグ情報の編集<br>プレイヤーの招待</h4>
+                        ">
                     <img src="{% static 'pencil.png' %}"
                          height="40px"
                          style="filter:invert();margin-left:20px">
+                    <span>
                 </a>
             {% endif %}
         </h3>
@@ -54,46 +58,6 @@
             {% endif %}
             有効譜面数 {{ league.method }}
         </p>
-        {% comment %} {% if user.player.isActivated %}
-            {% if isMember %}
-                <p>
-                    あなたはこのリーグに参加しています。
-                </p>
-            {% else %}
-                {% if not league.isLive %}
-                    <p>
-                        終了したリーグに参加することはできません。
-                    </p>
-                {% else %}
-                    {% if league.isPublic %}
-                        {% if isClose %}
-                            公式リーグでは、終了 48 時間前を過ぎると参加することはできません
-                        {% else %}
-                            {% if user.player.borderPP <= league.limit %}
-                                <p>
-                                    このリーグに参加できます。
-                                </p>
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
-                                </form>
-                            {% else %}
-                                <p>
-                                    あなたは実力が高すぎるためこのリーグには参加できません……
-                                </p>
-                            {% endif %}
-                        {% endif %}
-                    {% else %}
-                        <p>
-                            非公開リーグには参加できません。
-                        </p>
-                    {% endif %}
-                {% endif %}
-                <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
-                    <button class="btn">バーチャル参加</button>
-                </form>
-            {% endif %}
-        {% endif %} {% endcomment %}
         <p>
             <div style="display:inline-flex">
                 {% if join_state < 4 %}
@@ -264,12 +228,8 @@
                                 譜面
                             </th>
                             <th width="100px">Accuracy</th>
-                            <th width="100px">
-                                Miss
-                            </th>
-                            <th width="auto">
-                                Message
-                            </th>
+                            <th width="100px">Miss</th>
+                            <th width="auto">Message</th>
                         </tr>
                     </thead>
                     <tbody style="color:black">

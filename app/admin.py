@@ -1,16 +1,13 @@
 from django.contrib import admin
 from app.models import Player, Playlist, Song, League, Score, LeagueComment, Headline, SongInfo
-
-class ScoreQuestion(admin.ModelAdmin):
-    search_fields = ['player__name','song__title']
-
 # Register your models here.
 
-admin.site.register(Player)
-admin.site.register(Song)
-admin.site.register(League)
-admin.site.register(Score, ScoreQuestion)
-admin.site.register(Playlist)
+
+admin.site.register(Player, search_fields=['name'])
+admin.site.register(Song, search_fields=['title', 'author'])
+admin.site.register(League, search_fields=['name'])
+admin.site.register(Score, search_fields=['player__name', 'song__title'])
+admin.site.register(Playlist, search_fields=['title', 'editor'])
 admin.site.register(LeagueComment)
-admin.site.register(Headline)
+admin.site.register(Headline, search_fields=['player__name'])
 admin.site.register(SongInfo)

@@ -1037,6 +1037,12 @@ def virtual_league(request, pk):
     params['scored_rank'] = scored_rank
     params['LBs'] = LBs
 
+    border_line = 8
+    if 'j1_qualifier' in league.name.lower():
+        border_line = 16
+
+    params['border_line'] = border_line
+
     return render(request, 'virtual_league.html', params)
 
 

@@ -16,19 +16,36 @@
     </div>
     <div style="text-align:center">
         <h3>
-            {{ league.name }}'s Virtual Leaderboard
+            <span style="color:{{ league.color }}">{{ league.name }}</span>'s VIRTUAL Leaderboard
+        </h3>
+        <h3>
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
-                <span class="dl_link">プレイリスト</span>
+                <span class="dl_link">PLAYLIST
+                    <img src="{% static 'DL_white.png' %}" height="25px">
+                </span>
+            </a>
+            <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
+                <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                    <h4>プレイリストの詳細</h4>
+                    ">
+                    <img src="{% static 'pict_playlist.png' %}" height="40px">
+                </span>
             </a>
         </h3>
         <p>
-            あなたはこのリーグにバーチャル参加しています。
-        </p>
-    </div>
-    <div style="text-align:right">
-        <p>
-            集計終了日時は {{ league.end }} です。
+            リーグの種別 :
+            {% if not league.isPublic %}
+                非公開　
+            {% else %}
+                公開
+                {% if league.limit == 2000 %}
+                    （上限なし）
+                {% else %}
+                    （有効 PP 上限 : {{ league.limit }} PP）
+                {% endif %}
+            {% endif %}
+            有効譜面数 {{ league.method }}
         </p>
     </div>
     <div id="{{ league.id }}"
@@ -38,69 +55,70 @@
                style="background : rgba(255,255,255,.5)">
             <thead>
                 <tr>
-                    <th>
+                    <th width="70px">
                         Virtual
                         <br />
                         Rank
                     </th>
-                    <th>Player</th>
-                    <th>
+                    <th width="250px">Player</th>
+                    <th width="100px">
                         有効
                         <br />
                         順位点
                     </th>
-                    <th>
+                    <th width="100px">
                         順位点
                         <br />
                         比率
                     </th>
-                    <th>
+                    <th width="70px">
                         有効
                         <br />
                         譜面
                     </th>
-                    <th>
+                    <th width="100px">
                         有効
                         <br />
                         精度
                     </th>
-                    <th>Message</th>
+                    <th width="auto">Message</th>
                 </tr>
             </thead>
             <tbody>
                 {% for player in scored_rank %}
-                    <tr {% if user.player == player %} style="border:solid 2px;font-weight:bold"{% endif %}>
-                        <td width="50px">V{{ player.rank }}</td>
-                        <td width="250px">
+                    <tr {% if user.player == player %} style="border:solid 2px;font-weight:bold;background:linear-gradient(to right, rgba(255,255,255,.5), rgba(0,0,0,.8));"{% endif %}>
+                        <td>V{{ player.rank }}</td>
+                        <td>
                             <img src="{{ player.imageURL }}" class="icon" alt="icon" />
                             {{ player.name }}
                         </td>
-                        <td width="70px">
+                        <td>
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
                                 {{ player.count_pos }}
                             </span>
                         </td>
-                        <td width="100px">
+                        <td>
                             {% if player.theoretical == 100 %}
                                 <span class="diff" style="color:white">MAX</span>
                             {% else %}
                                 ({{ player.theoretical|floatformat:2 }} %)
                             {% endif %}
                         </td>
-                        <td width="70px">
+                        <td>
                             <span {% if player.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_valid }}" {% endif %}>
                                 {{ player.valid }}
                             </span>
                         </td>
-                        <td width="80px">
-                            <span {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }} " {% endif %}>
-                                {{ player.count_acc|floatformat:2 }} %
+                        <td>
+                            <span style="{{ player.decorate }}"
+                                  {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }}" {% endif %}> {{ player.count_acc|floatformat:2 }} %
                             </span>
                         </td>
                         <td>
+                            <dummy message />
                         </td>
                     </tr>
-                    {% if player.rank == 8 %}
+                    {% if player.rank == border_line %}
                         <tr>
                             <td colspan="7">
                                 <hr />
@@ -135,34 +153,36 @@
                        style="background : rgba(255,255,255,.5)">
                     <thead>
                         <tr>
-                            <th>
+                            <th width="70px">
                                 Virtual
                                 <br />
                                 Rank
                             </th>
-                            <th>Player</th>
-                            <th>順位点</th>
-                            <th>
+                            <th width="250px">Player</th>
+                            <th width="70px">順位点</th>
+                            <th width="70px">
                                 有効
                                 <br>
                                 譜面
                             </th>
-                            <th>Accuracy</th>
-                            <th>Miss</th>
-                            <th>Message</th>
+                            <th width="100px">Accuracy</th>
+                            <th width="100px">Miss</th>
+                            <th width="auto">Message</th>
                         </tr>
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
                             <tr {% if user.player == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
-                                <td width="50px">V{{ score.rank }}</td>
-                                <td width="250px">
+                                <td>V{{ score.rank }}</td>
+                                <td>
                                     <img src="{{ score.player.imageURL }}" class="icon">
                                     {{ score.player.name }}
                                 </td>
-                                <td width="70px">{{ score.pos }}</td>
-                                <td width="60px">{{ score.valid }}</td>
-                                <td width="100px">{{ score.acc|floatformat:2 }}%</td>
+                                <td>{{ score.pos }}</td>
+                                <td>{{ score.valid }}</td>
+                                <td>
+                                    <span style="{{ score.decorate }}">{{ score.acc|floatformat:2 }} %</span>
+                                </td>
                                 <td>
                                     {% if score.miss == 0 %}
                                         <span class="diff" style="color:white">FC</span>

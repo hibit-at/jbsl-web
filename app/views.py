@@ -638,6 +638,7 @@ def playlist(request, pk):
                     defaults={'order': playlist.songs.all().count()},
                 )
                 playlist.recommend.remove(song)
+            return redirect('app:playlist', pk = pk)
         if 'recommend_song' in post and post['recommend_song'] != '':
             lid = post['recommend_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
@@ -653,6 +654,7 @@ def playlist(request, pk):
             lid = post['remove_song']
             song = Song.objects.get(lid=lid)
             playlist.songs.remove(song)
+            return redirect('app:playlist', pk = pk)
         if 'remove_recommend' in post and post['remove_recommend'] != '':
             lid = post['remove_recommend']
             song = Song.objects.get(lid=lid)

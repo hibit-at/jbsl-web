@@ -87,11 +87,17 @@
             <tbody>
                 {% for player in scored_rank %}
                     <tr {% if user.player == player %} style="font-weight:bold;
-                                                              background:linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,.8));"{% endif %}>
+                                                              background:linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,.4));"{% endif %}>
                         <td>V{{ player.rank }}</td>
                         <td>
-                            <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                            {{ player.name }}
+                            {% if user.player == player or user.player.rival == player %}
+                                <div style="border-radius:10px;
+                                            border:3px dashed rgba(0,0,0,.5);
+                                            padding:10px;">
+                                {% endif %}
+                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                {{ player.name }}
+                            </div>
                         </td>
                         <td>
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
@@ -173,11 +179,18 @@
                     </thead>
                     <tbody style="color:black">
                         {% for score in song.scores %}
-                            <tr {% if user.player == score.player %} style="border:solid 2px;font-weight:bold"{% endif %}>
+                            <tr {% if user.player == score.player %} style="font-weight:bold;
+                                                                            background:linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,.4));"{% endif %}>
                                 <td>V{{ score.rank }}</td>
                                 <td>
-                                    <img src="{{ score.player.imageURL }}" class="icon">
-                                    {{ score.player.name }}
+                                    {% if user.player == score.player or user.player.rival == score.player %}
+                                        <div style="border-radius:10px;
+                                                    border:3px dashed rgba(0,0,0,.5);
+                                                    padding:10px;">
+                                        {% endif %}
+                                        <img src="{{ score.player.imageURL }}" class="icon">
+                                        {{ score.player.name }}
+                                    </div>
                                 </td>
                                 <td>{{ score.pos }}</td>
                                 <td>

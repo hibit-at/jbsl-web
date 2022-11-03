@@ -86,7 +86,8 @@
             </thead>
             <tbody>
                 {% for player in scored_rank %}
-                    <tr {% if user.player == player %} style="border:solid 2px;font-weight:bold;background:linear-gradient(to right, rgba(255,255,255,.5), rgba(0,0,0,.8));"{% endif %}>
+                    <tr {% if user.player == player %} style="font-weight:bold;
+                                                              background:linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,.8));"{% endif %}>
                         <td>V{{ player.rank }}</td>
                         <td>
                             <img src="{{ player.imageURL }}" class="icon" alt="icon" />
@@ -179,7 +180,11 @@
                                     {{ score.player.name }}
                                 </td>
                                 <td>{{ score.pos }}</td>
-                                <td>{{ score.valid }}</td>
+                                <td>
+                                    {% if score.valid %}
+                                        <img src={% static 'simple_check.png' %} height="15px">
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <span style="{{ score.decorate }}">{{ score.acc|floatformat:2 }} %</span>
                                 </td>
@@ -190,9 +195,7 @@
                                         {{ score.miss }}
                                     {% endif %}
                                 </td>
-                                <td>
-                                    {{ score.comment }}
-                                </td>
+                                <td>{{ score.comment }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -5,6 +5,9 @@
         <p>
             <a class="trans" href="#top">▲</a>
         </p>
+        <p>
+            <a class="trans" href="#top-ranking"> {{ league.name }} </a>
+        </p>
         {% for song in LBs %}
             <p>
                 <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
@@ -132,7 +135,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a class="border8-trigger" href="#top">すべて表示</a>
+        <a class="border8-trigger" href="#{{ league.id }}">すべて表示</a>
     </div>
     <hr />
     <h2 style="text-align:center">譜面別リーグ内順位</h2>

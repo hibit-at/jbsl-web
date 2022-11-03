@@ -5,9 +5,6 @@
         <p>
             <a class="trans" href="#top">▲</a>
         </p>
-        <p>
-            <a class="trans" href="#{{ league.id }}">{{ league.name }}</a>
-        </p>
         {% for song in LBs %}
             <p>
                 <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
@@ -151,8 +148,7 @@
             </a>
             <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
         </p>
-        <div id="{{ song.lid }}"
-             class="top5-target"
+        <div class="top5-target"
              style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
             <div style="display:flex">
                 <img src="{{ song.imageURL }}" class="thumb" alt="thumb" />

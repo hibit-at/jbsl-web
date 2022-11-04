@@ -88,12 +88,10 @@
                 </p>
                 <p>
                     終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
+                    {% if league.isOfficial and not isClose %}
+                        （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
+                    {% endif %}
                 </p>
-                {% if league.isOfficial and not isClose%}
-                    <p>
-                        参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>
-                    </p>
-                {% endif %}
             {% else %}
                 本リーグは終了しました。
             {% endif %}
@@ -343,54 +341,54 @@
     </div>
     <script>
 function check(){
-    if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
-        return true; // 「OK」時は送信を実行
-    }
-    else{ // 「キャンセル」時の処理
-        window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
-        return false; // 送信を中止
-    }
+if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
+    return true; // 「OK」時は送信を実行
+}
+else{ // 「キャンセル」時の処理
+    window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
+    return false; // 送信を中止
+}
 
 }
 
 window.addEventListener('load',()=>{
-    Countdown();
-    })
-    
-    const Countdown = function(){
-    const cd_areas = document.getElementsByClassName('countdown');
-    [...cd_areas].forEach(cd_area=>{
-        const target_unix = new Date(cd_area.dataset.date)/1000;
-        setInterval(()=>{
-        const now_unix = Math.floor(new Date()/1000);
-        let sec = target_unix-now_unix;
-        sec = sec;
-        let cd_text = '';
-        if(sec>=3600){
-            cd_text += td(Math.floor(sec/3600))+'時間';
-            sec = sec%3600;
-        }else{
-            cd_text += '00時間';
-        }
-        if(sec>=60){
-            cd_text += td(Math.floor(sec/60))+'分';
-            sec = sec%60;
-        }else{
-            cd_text += '00分';
-        }
-        cd_text += td(sec)+'秒';
-        cd_area.textContent = cd_text;
-        },1000);
-    });
-    
-    function td(x){
-        if(x<10){
-        return '0'+x;
-        }else{
-        return x;
-        }
+Countdown();
+})
+
+const Countdown = function(){
+const cd_areas = document.getElementsByClassName('countdown');
+[...cd_areas].forEach(cd_area=>{
+    const target_unix = new Date(cd_area.dataset.date)/1000;
+    setInterval(()=>{
+    const now_unix = Math.floor(new Date()/1000);
+    let sec = target_unix-now_unix;
+    sec = sec;
+    let cd_text = '';
+    if(sec>=3600){
+        cd_text += td(Math.floor(sec/3600))+'時間';
+        sec = sec%3600;
+    }else{
+        cd_text += '00時間';
     }
+    if(sec>=60){
+        cd_text += td(Math.floor(sec/60))+'分';
+        sec = sec%60;
+    }else{
+        cd_text += '00分';
     }
+    cd_text += td(sec)+'秒';
+    cd_area.textContent = cd_text;
+    },1000);
+});
+
+function td(x){
+    if(x<10){
+    return '0'+x;
+    }else{
+    return x;
+    }
+}
+}
 
     </script>
 {% endblock content %}

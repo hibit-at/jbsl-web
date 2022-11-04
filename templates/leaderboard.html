@@ -64,7 +64,7 @@
         </p>
         <p>
             <div style="display:inline-flex">
-                {% if join_state < 4 %}
+                {% if join_state < 5 %}
                     {{ join_comment }}
                 {% else %}
                     <form method="post">
@@ -89,6 +89,11 @@
                 <p>
                     終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
                 </p>
+                {% if league.isOfficial and not isClose%}
+                    <p>
+                        参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>
+                    </p>
+                {% endif %}
             {% else %}
                 本リーグは終了しました。
             {% endif %}
@@ -233,7 +238,9 @@
                             </th>
                             <th width="100px">Accuracy</th>
                             <th width="100px">Miss</th>
-                            <th width="auto">Message</th>
+                            <th width="auto">
+                                Message
+                            </th>
                         </tr>
                     </thead>
                     <tbody style="color:black">

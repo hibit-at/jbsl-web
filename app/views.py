@@ -871,13 +871,21 @@ def leaderboard(request, pk):
         if user.player == league.owner:
             isOwner = True
 
+
+    from datetime import timezone
+
+    close_line = league.end - timedelta(days=2)
+    isClose = datetime.now(timezone.utc) >= close_line and league.isOfficial
+    params['isClose'] = isClose
+
     join_comment = {}
     join_comment[-1] = ''
     join_comment[0] = 'あなたはこのリーグに参加しています。'
     join_comment[1] = '終了したリーグに参加することはできません。'
     join_comment[2] = '非公開のリーグに参加することはできません。'
     join_comment[3] = 'あなたは実力が高すぎるため、このリーグには参加できません……。'
-    join_comment[4] = ''
+    join_comment[4] = '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。'
+    join_comment[5] = ''
 
     join_state = -1
     if user.is_authenticated:
@@ -889,8 +897,10 @@ def leaderboard(request, pk):
             join_state = 2
         elif player.borderPP > league.limit:
             join_state = 3
-        else:
+        elif isClose:
             join_state = 4
+        else:
+            join_state = 5
 
     params['join_state'] = join_state
     params['join_comment'] = join_comment[join_state]
@@ -899,7 +909,9 @@ def leaderboard(request, pk):
     params['isMember'] = isMember
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
+    close_str = (league.end + timedelta(hours=9-48)).strftime('%Y-%m-%dT%H:%M')
     params['end_str'] = end_str
+    params['close_str'] = close_str
 
     # POST
 
@@ -921,12 +933,7 @@ def leaderboard(request, pk):
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
-    from datetime import timezone
 
-    close_line = league.end - timedelta(days=2)
-    isClose = datetime.now(timezone.utc) >= close_line and league.isOfficial
-    print(isClose)
-    params['isClose'] = isClose
 
     border_line = 8
     if 'j1_qualifier' in league.name.lower():

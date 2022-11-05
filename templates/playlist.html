@@ -99,7 +99,11 @@
                         <img class="mid-thumb" src="{{ song.imageURL }}"/>
                     </a>
                 </td>
-                <td>{{ song.title|truncatechars:50 }}</td>
+                <td>
+                    <a href="https://scoresaber.com/leaderboard/{{ song.lid }}" style="color:black">
+                    {{ song.title|truncatechars:50 }}
+                    </a>
+                </td>
                 <td>{{ song.author }}</td>
                 <td>
                     <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>

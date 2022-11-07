@@ -1123,7 +1123,7 @@ def headlines(request, page=1):
     headlines = Headline.objects.all().order_by('-time')[start:end]
     params['headlines'] = headlines
     params['page'] = page
-    params['limit'] = (page + 99)//100
+    params['limit'] = (Headline.objects.all().count() + 99)//100
     return render(request, 'headlines.html', params)
 
 

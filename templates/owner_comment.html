@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>オーナーコメントの編集</h2>
+    <p>
+        League : {{ league.name }}
+    </p>
+    <p>
+        現在のオーナーコメント :
+        <br>
+        <pre>{{ league.ownerComment }}</pre>
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="league" value="{{ league.pk }}">
+        <textarea name="owner_comment" style="height:500px;width:100%">{{ league.ownerComment }}</textarea>
+        <div style="margin:20px">
+            <button class="btn" type="submit">変更のみ</button>
+            <button class="btn" type="submit" name="back" value="back">変更してリーダーボードへ</button>
+        </div>
+    </form>
+{% endblock content %}

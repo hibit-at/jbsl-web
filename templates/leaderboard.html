@@ -74,8 +74,7 @@
             {% endif %}
             有効譜面数 {{ league.method }}
         </p>
-        <p>
-            <div style="display:inline-flex">
+            <div style="display:inline-flex;">
                 {% if join_state < 5 %}
                     {{ join_comment }}
                 {% else %}
@@ -90,7 +89,31 @@
                     </form>
                 {% endif %}
             </div>
-        </p>
+        <details style="margin-bottom:20px" {{ comment_open }} >
+            <summary>
+                Owner's Comment
+            </summary>
+            <div style="display:flex;background:red; padding:20px;background:{{ league.color }};border-radius:20px;color:black">
+                <div>
+                    <img src="{{ league.owner.imageURL }}" class="icon">
+                    <br>
+                    {% include "player_element.html" with player=league.owner %}
+                    {% if user.player == league.owner %}
+                        <br>
+                        <form method="post" action="{% url 'app:owner_comment' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="league" value=" {{ league.pk }} ">
+                            <input type="image"
+                                   src="{% static 'pencil.png' %}"
+                                   width="25px"
+                                   height="25px">
+                            {{ player.comment }}
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="owner-comment" style="text-align:left"><pre>{{ league.ownerComment }}</pre></div>
+            </div>
+        </details>
     </div>
     <div id="ranking"
          class="border8-target"

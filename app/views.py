@@ -939,13 +939,14 @@ def leaderboard(request, pk):
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
-
-
     border_line = 8
     if 'j1_qualifier' in league.name.lower():
         border_line = 16
 
     params['border_line'] = border_line
+
+    if 'comment' in request.GET:
+        params['comment_open'] = 'open'
 
     return render(request, 'leaderboard.html', params)
 
@@ -1494,3 +1495,31 @@ def playlist_archives(request):
         cnt += 1
     params['archives'] = archives
     return render(request, 'playlist_archives.html',params)
+
+def owner_comment(request):
+    user = request.user
+    social = SocialAccount.objects.get(user=user)
+    params = {}
+    params['social'] = social
+    print(request.method)
+    print('owner comment')
+    if request.method == "POST":
+        post = request.POST
+        print(post)
+        league = League.objects.get(pk=post['league'])
+        if user.player != league.owner:
+            return redirect('app:index')
+        params['league'] = league
+        print(league)
+        if 'owner_comment' in post:
+            owner_comment = post['owner_comment'][:1000]
+            print(owner_comment)
+            league.ownerComment = owner_comment
+            league.save()
+        if 'back' in post:
+            url = reverse('app:leaderboard', args=[league.pk])
+            print(url)
+            url += '?comment=open'
+            return redirect(url)
+        return render(request, 'owner_comment.html', params)
+    return redirect('app:index')

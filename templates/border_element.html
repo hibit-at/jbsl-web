@@ -1,0 +1,10 @@
+{% load static %}
+{% if league.isPublic %}
+    {% if league.limit == 2000 %}
+        －
+    {% else %}
+        {{ league.limit }}
+    {% endif %}
+{% else %}
+    <img src="{% static 'Locked.png' %}" height="25px">
+{% endif %}

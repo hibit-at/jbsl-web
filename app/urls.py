@@ -31,4 +31,5 @@ urlpatterns = [
     path('league_comment/', views.league_comment, name='league_comment'),
     path('league_edit/<int:pk>', views.league_edit, name='league_edit'),
     path('playlist_archives', views.playlist_archives, name='playlist_archive'),
+    path('owner_comment/', views.owner_comment, name='owner_comment'),
 ]

@@ -41,9 +41,6 @@
             </h3>
         {% endif %}
     </div>
-
-    {% include "live_leagues.html" with leagues=active_leagues %}
-
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
@@ -63,4 +60,5 @@
             <button class="btn">All Headlines</button>
         </form>
     </p>
+    {% include "live_leagues.html" with leagues=active_leagues %}
 {% endblock %}

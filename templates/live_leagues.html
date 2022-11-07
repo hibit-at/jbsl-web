@@ -39,34 +39,6 @@
             <td>{% include "top_ranker.html" with ranker=league.second %}</td>
             <td>{% include "top_ranker.html" with ranker=league.third %}</td>
         </tr>
-        <tr>
-            <td colspan="9" style="background:{{ league.color }}">
-                <details>
-                    <summary>
-                        Owner's comment
-                    </summary>
-                    <div style="display:flex">
-                        <div style>
-                            <img src="{{ league.owner.imageURL }}" class="icon">
-                            <br>
-                            {% include "player_element.html" with player=league.owner %}
-                            {% if user.player == league.owner %}
-                                <br>
-                                <form method="post" action="{% url 'app:owner_comment' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="league" value=" {{ league.pk }} ">
-                                    <input type="image"
-                                           src="{% static 'pencil.png' %}"
-                                           width="25px"
-                                           height="25px">
-                                    {{ player.comment }}
-                                </form>
-                            {% endif %}
-                        </div>
-                        <div class="owner-comment"><pre>{{ league.ownerComment }}</pre></div>
-                    </div>
-                </details>
-            </td>
-        </tr>
+        {% include "owner_comment_element.html" %}
     {% endfor %}
 </table>

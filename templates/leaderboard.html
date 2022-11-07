@@ -92,23 +92,6 @@
             </div>
         </p>
     </div>
-    <div style="text-align:right">
-        <p>
-            {% if league.isLive %}
-                <p>
-                    終了時刻　{{ league.end }}
-                </p>
-                <p>
-                    終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
-                    {% if league.isOfficial and not isClose %}
-                        （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
-                    {% endif %}
-                </p>
-            {% else %}
-                本リーグは終了しました。
-            {% endif %}
-        </p>
-    </div>
     <div id="ranking"
          class="border8-target"
          style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));padding:20px;border-radius:20px">

@@ -558,17 +558,23 @@ def make_sorted_playlists(playlists):
     return playlists
 
 
-def playlists(request):
+def playlists(request, page=1):
     params = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    playlists = Playlist.objects.all().order_by('-pk')[:8]
-    archives = Playlist.objects.all().order_by('-pk')[8:]
+    start = 8*(page-1)
+    end = 8*page
+    limit = (Playlist.objects.all().count() + 7)  // 8
+    print(limit)
+    playlists = Playlist.objects.all().order_by('-pk')[start:end]
+    archives = Playlist.objects.all().order_by('-pk')[start:end]
     # playlists = make_sorted_playlists(playlists)
     params['playlists'] = playlists
     params['archives'] = archives
+    params['page'] = page
+    params['limit'] = limit
     return render(request, 'playlists.html', params)
 
 
@@ -1472,5 +1478,20 @@ def league_edit(request, pk):
             print(withdraw)
             league.invite.remove(withdraw)
             redirect('app:league_edit', pk=pk)
-
     return render(request, 'league_edit.html', params)
+
+
+def playlist_archives(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    archives = Playlist.objects.all().order_by('-pk')
+    cnt = 0
+    for archive in archives:
+        print(archive)
+        setattr(archive,'page',cnt//8 + 1)
+        cnt += 1
+    params['archives'] = archives
+    return render(request, 'playlist_archives.html',params)

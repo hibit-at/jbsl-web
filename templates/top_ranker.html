@@ -1,0 +1,9 @@
+{% if ranker != None %}
+    <a href="{% url 'app:userpage' sid=ranker.sid %}" style="color:black">
+        {% with ranker as player %}
+            <img class="icon" src={{ player.imageURL }}>
+            <br>
+            {% include "player_element.html" %}
+        {% endwith %}
+    </a>
+{% endif %}

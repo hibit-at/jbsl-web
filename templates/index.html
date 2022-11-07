@@ -56,7 +56,9 @@
         </ul>
     {% endfor %}
     <p>
-        <a href="{% url 'app:headlines' page=1 %}">...More Headlines</a>
+        <form action="{% url 'app:headlines' page=1 %}">
+            <button class="btn">All Headlines</button>
+        </form>
     </p>
     <h3>Live Leagues</h3>
     <table class="table table-striped table-borderless"

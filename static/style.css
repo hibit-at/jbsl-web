@@ -125,6 +125,23 @@ a:hover::after {
     color: black;
 }
 
+.countdown-timer {
+    font-weight: bold;
+    position: fixed;
+    width: auto;
+    height: auto;
+    right: 30px;
+    top: 100px;
+    background-color: white;
+    border-color: gray;
+    border-style: solid;
+    border-radius: 10px;
+    text-align: center;
+    padding: 5px;
+    border-width: 2px;
+    color: gray;
+}
+
 .thumb {
     height: 128px;
     width: 128px;

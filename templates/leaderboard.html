@@ -14,6 +14,18 @@
             </p>
         {% endfor %}
     </div>
+    <div class="countdown-timer">
+        {% if league.isLive %}
+            終了時刻　{{ league.end }}
+            <br>
+            終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
+            {% if league.isOfficial and not isClose %}
+                （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
+            {% endif %}
+        {% else %}
+            本リーグは終了しました。
+        {% endif %}
+    </div>
     <div style="text-align:center">
         <h3>
             <span style="color:{{ league.color }}">{{ league.name }}</span>'s Leaderboard
@@ -234,8 +246,12 @@
                                 <br>
                                 譜面
                             </th>
-                            <th width="100px">Accuracy</th>
-                            <th width="100px">Miss</th>
+                            <th width="100px">
+                                Accuracy
+                            </th>
+                            <th width="100px">
+                                Miss
+                            </th>
                             <th width="auto">
                                 Message
                             </th>

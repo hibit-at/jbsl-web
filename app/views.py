@@ -136,7 +136,7 @@ def index(request):
             league = League.objects.get(pk=decline)
             league.invite.remove(player)
             return redirect('app:index')
-    headlines = Headline.objects.all().order_by('-time')[:10]
+    headlines = Headline.objects.all().order_by('-time')[:8]
     params['headlines'] = headlines
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')

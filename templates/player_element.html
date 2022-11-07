@@ -1,0 +1,5 @@
+{% if player.isSupporter %}
+    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>
+{% else %}
+    {{ player.name }}
+{% endif %}

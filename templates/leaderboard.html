@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="song-index">
-    <p>
-        <a class="trans" href="#top">▲</a>
-    </p>
-    <p>
-        <a class="trans" href="#ranking">{{ league.name }}</a>
-    </p>
-    {% for song in LBs %}
-    <p>
-        <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
-    </p>
-    {% endfor %}
-</div>
-<div class="countdown-timer">
-    {% if league.isLive %}
-    終了時刻　{{ league.end }}
-    <br>
-    終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
-    {% if league.isOfficial and not isClose %}
-    （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
+    <div class="song-index">
+        <p>
+            <a class="trans" href="#top">▲</a>
+        </p>
+        <p>
+            <a class="trans" href="#ranking">{{ league.name }}</a>
+        </p>
+        {% for song in LBs %}
+            <p>
+                <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
+            </p>
+        {% endfor %}
+    </div>
+    <div class="countdown-timer">
+        {% if league.isLive %}
+            終了時刻　{{ league.end }}
+            <br>
+            終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
+            {% if league.isOfficial and not isClose %}
+                （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
             {% endif %}
-            {% else %}
+        {% else %}
             本リーグは終了しました。
         {% endif %}
     </div>
@@ -30,73 +30,73 @@
         <h3>
             <span style="color:{{ league.color }}">{{ league.name }}</span>'s Leaderboard
             {% if edit_state %}
-            <a href="{% url 'app:league_edit' pk=league.pk %}">
-                <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
-                <h4>
-                    リーグ情報の編集
-                    <br>
-                    プレイヤーの招待
+                <a href="{% url 'app:league_edit' pk=league.pk %}">
+                    <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                        <h4>
+                            リーグ情報の編集
+                            <br>
+                            プレイヤーの招待
                         </h4>
                         ">
                         <img src="{% static 'pencil.png' %}"
-                        height="40px"
-                        style="filter:invert();margin-left:20px">
+                             height="40px"
+                             style="filter:invert();margin-left:20px">
                     </span>
                 </a>
-                {% endif %}
-            </h3>
-            <h3>
-                <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
+            {% endif %}
+        </h3>
+        <h3>
+            <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
-               <span class="dl_link">PLAYLIST
-                   <img src="{% static 'DL_white.png' %}" height="25px">
+                <span class="dl_link">PLAYLIST
+                    <img src="{% static 'DL_white.png' %}" height="25px">
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
-                <h4>プレイリストの詳細</h4>
-                ">
-                <img src="{% static 'pict_playlist.png' %}" height="40px">
-            </span>
-        </a>
-    </h3>
-    <p>
+                    <h4>プレイリストの詳細</h4>
+                    ">
+                    <img src="{% static 'pict_playlist.png' %}" height="40px">
+                </span>
+            </a>
+        </h3>
+        <p>
             リーグの種別 :
             {% if not league.isPublic %}
                 非公開　
-                {% else %}
+            {% else %}
                 公開
                 {% if league.limit == 2000 %}
-                （上限なし）
+                    （上限なし）
                 {% else %}
-                （有効 PP 上限 : {{ league.limit }} PP）
+                    （有効 PP 上限 : {{ league.limit }} PP）
                 {% endif %}
-                {% endif %}
-                有効譜面数 {{ league.method }}
+            {% endif %}
+            有効譜面数 {{ league.method }}
         </p>
         <p>
             <div style="display:inline-flex">
                 {% if join_state < 5 %}
-                {{ join_comment }}
+                    {{ join_comment }}
                 {% else %}
-                <form method="post">
-                    {% csrf_token %}
+                    <form method="post">
+                        {% csrf_token %}
                         <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
                     </form>
-                    {% endif %}
-                    {% if not isMember and user.is_authenticated %}
+                {% endif %}
+                {% if not isMember and user.is_authenticated %}
                     <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
                         <button class="btn" style="margin-left:20px">バーチャル参加</button>
                     </form>
-                    {% endif %}
-                </div>
-            </p>
-        </div>
-        <div id="ranking"
-        class="border8-target"
+                {% endif %}
+            </div>
+        </p>
+    </div>
+    <div id="ranking"
+         class="border8-target"
          style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));padding:20px;border-radius:20px">
-         <table class="table table-striped table-borderless"
-         style="background : rgba(255,255,255,.5)">
+        <table class="table table-striped table-borderless"
+               style="background : rgba(255,255,255,.5)">
             <thead>
                 <tr>
                     <th width="70px">Rank</th>
@@ -126,24 +126,14 @@
             </thead>
             <tbody>
                 {% for player in scored_rank %}
-                <tr>
-                    <td>#{{ player.rank }}</td>
-                    <td>
-                        {% if user.player == player or user.player.rival == player %}
-                        <div style="border-radius:10px;
-                                            border:3px dashed rgba(0,0,0,.5);
-                                            padding:10px;">
-                                            {% endif %}
-                                            <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
-                                    <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                                    {% if player.isSupporter %}
-                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                        <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                                        {% else %}
-                                        {{ player }}
-                                        {% endif %}
-                                    </a>
-                            </div>
+                    <tr>
+                        <td>#{{ player.rank }}</td>
+                        <td>
+                            {% if user.player == player or user.player.rival == player %}<div class="enclosure">{% endif %}
+                            <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
+                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                {% include 'player_element.html' %}
+                            </a>
                         </td>
                         <td>
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
@@ -152,9 +142,9 @@
                         </td>
                         <td>
                             {% if player.theoretical == 100 %}
-                            <span class="diff" style="color:white">MAX</span>
+                                <span class="diff" style="color:white">MAX</span>
                             {% else %}
-                            ({{ player.theoretical|floatformat:2 }} %)
+                                ({{ player.theoretical|floatformat:2 }} %)
                             {% endif %}
                         </td>
                         <td>
@@ -229,15 +219,9 @@
                                 <br>
                                 譜面
                             </th>
-                            <th width="100px">
-                                Accuracy
-                            </th>
-                            <th width="100px">
-                                Miss
-                            </th>
-                            <th width="auto">
-                                Message
-                            </th>
+                            <th width="100px">Accuracy</th>
+                            <th width="100px">Miss</th>
+                            <th width="auto">Message</th>
                         </tr>
                     </thead>
                     <tbody style="color:black">
@@ -255,14 +239,7 @@
                                         <a href="{% url 'app:userpage' sid=score.player.sid %}"
                                            style="color:black">
                                             <img src="{{ score.player.imageURL }}" class="icon">
-                                            {% with score.player as player %}
-                                                {% if player.isSupporter %}
-                                                    <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
-                                                    <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                                                {% else %}
-                                                    {{ player }}
-                                                {% endif %}
-                                            {% endwith %}
+                                            {% include "player_element.html" with player=score.player %}
                                         </a>
                                     </div>
                                 </td>

@@ -42,5 +42,6 @@
             <td>{% include "top_ranker.html" with ranker=league.second %}</td>
             <td>{% include "top_ranker.html" with ranker=league.third %}</td>
         </tr>
+        {% include "owner_comment_element.html" %}
     {% endfor %}
 </table>

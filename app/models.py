@@ -135,3 +135,12 @@ class Headline(models.Model):
 
     def __str__(self):
         return f'{str(self.player)} -> {str(self.text)}'
+
+
+class Badge(models.Model):
+    name = models.CharField(max_length=50)
+    image_name = models.CharField(max_length=50)
+    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)

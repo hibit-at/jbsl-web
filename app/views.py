@@ -5,7 +5,7 @@ import json
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo
+from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo, Badge
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -215,6 +215,10 @@ def userpage(request, sid=0):
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
     params['top10'] = top10
+
+    badges = Badge.objects.filter(player=player)
+    print(badges)
+    params['badges'] = badges
 
     return render(request, 'userpage.html', params)
 

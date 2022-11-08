@@ -2,14 +2,19 @@
 {% block content %}
     {% load static %}
     {% load humanize %}
-    {% if player.isSupporter %}
-        <h3>
-            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player.name }}</span>'s Page
-            <span class="diff" style="font-size:20px">Supporter</span>
-        </h3>
-    {% else %}
-        <h3>{{ player.name }}'s Page</h3>
-    {% endif %}
+    <h3>
+        {% include "player_element.html" %}
+        's Page
+        {% for badge in badges %}
+            <span data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  data-bs-html="true"
+                  title="{{ badge.name }}">
+                <img src=" {% static "badge/" %}{{ badge.image_name }}.png" height="60px">
+            </span>
+        {% endfor %}
+        {% if player.isSupporter %}<span class="diff" style="font-size:20px">Supporter</span>{% endif %}
+    </h3>
     <p>
         <img class="thumb" src={{ player.imageURL }} />
     </p>
@@ -24,9 +29,13 @@
         </p>
     {% endif %}
     <p>
-        <img src="{% static 'ScoreSaberLogo.png' %}" style="filter:invert()" height="30px">
+        <img src="{% static 'ScoreSaberLogo.png' %}"
+             style="filter:invert()"
+             height="30px">
         <a href="https://scoresaber.com/u/{{ player.sid }}" target="blank">ScoreSaber Link</a>
-        <img src="{% static 'ScoreSaberLogo.png' %}" style="filter:invert()" height="30px">
+        <img src="{% static 'ScoreSaberLogo.png' %}"
+             style="filter:invert()"
+             height="30px">
     </p>
     <p>
         {% if player.twitch != '' %}
@@ -160,9 +169,7 @@
             <th>Accuracy</th>
             <th>PP</th>
             <th>Miss</th>
-            <th>
-                有効PP
-            </th>
+            <th>有効PP</th>
         </thead>
         {% for t in top10 %}
             <tr>

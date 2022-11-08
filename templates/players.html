@@ -19,11 +19,9 @@
                 <td>
                     <a href={% url 'app:userpage' sid=player.sid %} style="color:black">
                         <img class="icon" src={{ player.imageURL }} />
+                        {% include "player_element.html" %}
                         {% if player.isSupporter %}
-                            <span style="color:{{ player.userColor }}; font-weight:bold; {% if player.isShadow %}filter: drop-shadow(0 0 3px {{ player.bgColor }});{% endif %} ">{{ player }}</span>
                             <img src="{% static 'Check.png' %}" height="15px" width="15px" />
-                        {% else %}
-                            {{ player }}
                         {% endif %}
                     </a>
                 </td>

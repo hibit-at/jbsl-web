@@ -24,33 +24,40 @@
                             <img src="{% static 'Check.png' %}" height="15px" width="15px" />
                         {% endif %}
                     </a>
-                </td>
-                <td>
-                    {% if player.twitch != '' %}
-                        <a href="https://twitch.tv/{{ player.twitch }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'twitch.png' %} />
-                        </a>
-                    {% endif %}
-                    {% if player.twitter != '' %}
-                        <a href="https://twitter.com/{{ player.twitter }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'twitter.png' %} />
-                        </a>
-                    {% endif %}
-                    {% if player.booth != '' %}
-                        <a href="https://booth.pm/ja/items/{{ player.booth }}" target="blank">
-                            <img width="30px" height="30px" src={% static 'booth.png' %} />
-                        </a>
-                    {% endif %}
-                </td>
-                <td>
-                    <img width="30px" height="30px" src="{% static player.hmd %}.png" />
-                </td>
-                <td>{{ player.borderPP | floatformat:2 | intcomma }}</td>
-                <td>{{ player.message }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <p>
-        Welcome, {{ active_players|length }} players!
-    </p>
-{% endblock %}
+                    {% for badge in player.badges.all %}
+                        <span data-bs-toggle="tooltip"
+                              data-bs-placement="top"
+                              data-bs-html="true"
+                              title="{{ badge.name }}">
+                            <img src=" {% static "badge/" %}{{ badge.image_name }}.png" height="50px">
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if player.twitch != '' %}
+                            <a href="https://twitch.tv/{{ player.twitch }}" target="blank">
+                                <img width="30px" height="30px" src={% static 'twitch.png' %} />
+                            </a>
+                        {% endif %}
+                        {% if player.twitter != '' %}
+                            <a href="https://twitter.com/{{ player.twitter }}" target="blank">
+                                <img width="30px" height="30px" src={% static 'twitter.png' %} />
+                            </a>
+                        {% endif %}
+                        {% if player.booth != '' %}
+                            <a href="https://booth.pm/ja/items/{{ player.booth }}" target="blank">
+                                <img width="30px" height="30px" src={% static 'booth.png' %} />
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <img width="30px" height="30px" src="{% static player.hmd %}.png" />
+                    </td>
+                    <td>{{ player.borderPP | floatformat:2 | intcomma }}</td>
+                    <td>{{ player.message }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p>
+            Welcome, {{ active_players|length }} players!
+        </p>
+    {% endblock %}

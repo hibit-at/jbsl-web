@@ -141,7 +141,7 @@ class Headline(models.Model):
 class Badge(models.Model):
     name = models.CharField(max_length=50)
     image_name = models.CharField(max_length=50)
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
+    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='badges')
 
     def __str__(self):
         return str(self.name)

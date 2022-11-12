@@ -26,7 +26,7 @@
                     </a>
                     {% for badge in player.badges.all %}
                         <span data-bs-toggle="tooltip"
-                              data-bs-placement="top"
+                              data-bs-placement="bottom"
                               data-bs-html="true"
                               title="{{ badge.name }}">
                             <img src=" {% static "badge/" %}{{ badge.image_name }}.png" height="50px">

@@ -96,7 +96,7 @@ class League(models.Model):
     third = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='third')
     isOfficial = models.BooleanField(default=False)
-    ownerComment = models.CharField(default='', max_length=1000)
+    ownerComment = models.CharField(default='', max_length=1000, blank=True)
     border_line = models.IntegerField(default=8)
 
     def __str__(self):

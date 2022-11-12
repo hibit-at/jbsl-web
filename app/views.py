@@ -943,12 +943,6 @@ def leaderboard(request, pk):
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
     params['not_invite_players'] = not_invite_players
 
-    border_line = 8
-    if 'j1_qualifier' in league.name.lower():
-        border_line = 16
-
-    params['border_line'] = border_line
-
     if 'comment' in request.GET:
         params['comment_open'] = 'open'
 

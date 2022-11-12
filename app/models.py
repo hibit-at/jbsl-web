@@ -97,6 +97,7 @@ class League(models.Model):
         Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='third')
     isOfficial = models.BooleanField(default=False)
     ownerComment = models.CharField(default='', max_length=1000)
+    border_line = models.IntegerField(default=8)
 
     def __str__(self):
         return str(self.name)

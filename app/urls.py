@@ -32,4 +32,6 @@ urlpatterns = [
     path('league_edit/<int:pk>', views.league_edit, name='league_edit'),
     path('playlist_archives', views.playlist_archives, name='playlist_archive'),
     path('owner_comment/', views.owner_comment, name='owner_comment'),
+    path('badge_adding/<int:sid>/<slug:badge_name>',
+         views.badge_adding, name='badge_adding'),
 ]

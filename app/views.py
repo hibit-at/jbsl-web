@@ -1522,3 +1522,15 @@ def owner_comment(request):
             return redirect(url)
         return render(request, 'owner_comment.html', params)
     return redirect('app:index')
+
+@login_required
+def badge_adding(request, sid, badge_name):
+    if not request.user.is_staff:
+        return redirect('app:index')
+    badge_name = badge_name.replace('_',' ')
+    badge = Badge.objects.get(name=badge_name)
+    player = Player.objects.get(sid=sid)
+    badge.player = player
+    badge.save()
+    print(badge,player)
+    return redirect('app:index')

@@ -1336,7 +1336,7 @@ def coin(request):
     import random
 
     form = CoinForm()
-    result = ''
+    results = []
     if request.method == 'POST':
         post = request.POST
         partA = Player.objects.get(sid=post['partA'])
@@ -1345,16 +1345,16 @@ def coin(request):
         print(partB)
         form = CoinForm(post)
         if partA == partB:
-            result = '同じ選手が選択されています。違う選手を選択してください。'
+            results = ['同じ選手が選択されています。違う選手を選択してください。']
         else:
             if random.random() > 0.5:
-                result = f'（通常）コイントスの結果、{partA} さんがファーストピックの権利を得ました。\n \
-                    （BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。'
+                results = [f'（通常）コイントスの結果、{partA} さんがファーストピックの権利を得ました。',
+                    f'（BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。']
             else:
-                result = f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。\n \
-                    （BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。'
+                results = [f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。',
+                    f'（BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。']
     params['form'] = form
-    params['result'] = result
+    params['results'] = results
     return render(request, 'coin.html', params)
 
 

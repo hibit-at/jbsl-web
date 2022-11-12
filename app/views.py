@@ -1327,11 +1327,10 @@ def coin(request):
     league = request.GET.get('league')
     league = League.objects.get(pk=league)
     params = {'league': league}
-    participants = Player.objects.all().filter(
-        league=league).order_by('borderPP').reverse()
+    scored_rank, LBs = calculate_scoredrank_LBs(league)
     choice = []
-    for p in participants:
-        choice.append((p.sid, p.name))
+    for s in scored_rank[:8]:
+        choice.append((s.sid,s.name ))
 
     from django import forms
 

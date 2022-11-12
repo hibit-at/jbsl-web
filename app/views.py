@@ -570,7 +570,7 @@ def playlists(request, page=1):
         params['social'] = social
     start = 8*(page-1)
     end = 8*page
-    limit = (Playlist.objects.all().count() + 7)  // 8
+    limit = (Playlist.objects.all().count() + 7) // 8
     print(limit)
     playlists = Playlist.objects.all().order_by('-pk')[start:end]
     archives = Playlist.objects.all().order_by('-pk')[start:end]
@@ -648,7 +648,7 @@ def playlist(request, pk):
                     defaults={'order': playlist.songs.all().count()},
                 )
                 playlist.recommend.remove(song)
-            return redirect('app:playlist', pk = pk)
+            return redirect('app:playlist', pk=pk)
         if 'recommend_song' in post and post['recommend_song'] != '':
             lid = post['recommend_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
@@ -664,7 +664,7 @@ def playlist(request, pk):
             lid = post['remove_song']
             song = Song.objects.get(lid=lid)
             playlist.songs.remove(song)
-            return redirect('app:playlist', pk = pk)
+            return redirect('app:playlist', pk=pk)
         if 'remove_recommend' in post and post['remove_recommend'] != '':
             lid = post['remove_recommend']
             song = Song.objects.get(lid=lid)
@@ -880,7 +880,6 @@ def leaderboard(request, pk):
             isMember = True
         if user.player == league.owner:
             isOwner = True
-
 
     from datetime import timezone
 
@@ -1324,7 +1323,7 @@ def coin(request):
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     choice = []
     for s in scored_rank[:8]:
-        choice.append((s.sid,s.name ))
+        choice.append((s.sid, s.name))
 
     from django import forms
 
@@ -1349,9 +1348,11 @@ def coin(request):
             result = '同じ選手が選択されています。違う選手を選択してください。'
         else:
             if random.random() > 0.5:
-                result = f'コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。'
+                result = f'（通常）コイントスの結果、{partA} さんがファーストピックの権利を得ました。\n \
+                    （BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。'
             else:
-                result = f'コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。'
+                result = f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。\n \
+                    （BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。'
     params['form'] = form
     params['result'] = result
     return render(request, 'coin.html', params)
@@ -1488,10 +1489,11 @@ def playlist_archives(request):
     cnt = 0
     for archive in archives:
         print(archive)
-        setattr(archive,'page',cnt//8 + 1)
+        setattr(archive, 'page', cnt//8 + 1)
         cnt += 1
     params['archives'] = archives
-    return render(request, 'playlist_archives.html',params)
+    return render(request, 'playlist_archives.html', params)
+
 
 def owner_comment(request):
     user = request.user

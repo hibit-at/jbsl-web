@@ -5,14 +5,7 @@
     <h3>
         {% include "player_element.html" %}
         's Page
-        {% for badge in badges %}
-            <span data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  data-bs-html="true"
-                  title="{{ badge.name }}">
-                <img src=" {% static "badge/" %}{{ badge.image_name }}.png" height="60px">
-            </span>
-        {% endfor %}
+        {% include "badge_element.html" with badge_width=50 %}
         {% if player.isSupporter %}<span class="diff" style="font-size:20px">Supporter</span>{% endif %}
     </h3>
     <p>

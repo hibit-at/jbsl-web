@@ -24,14 +24,7 @@
                             <img src="{% static 'Check.png' %}" height="15px" width="15px" />
                         {% endif %}
                     </a>
-                    {% for badge in player.badges.all %}
-                        <span data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              data-bs-html="true"
-                              title="{{ badge.name }}">
-                            <img src=" {% static "badge/" %}{{ badge.image_name }}.png" width="35px">
-                        </span>
-                    {% endfor %}
+                    {% include "badge_element.html" with badges=player.badges.all badge_width=35 %}
                 </td>
                 <td>
                     {% if player.twitch != '' %}

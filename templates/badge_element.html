@@ -1,0 +1,10 @@
+{% load static %}
+
+{% for badge in badges %}
+    <span data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          data-bs-html="true"
+          title="{{ badge.name }}">
+        <img src=" {% static "badge/" %}{{ badge.image_name }}.png" width="{{ badge_width }}px">
+    </span>
+{% endfor %}

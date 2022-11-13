@@ -35,7 +35,10 @@
                 </p>
                 <p>
                     <label>Description :</label>
-                    <input type="textarea" style="width:400px;height:100px" name="description" value="{{ selected_playlist.description }}">
+                    <input type="textarea"
+                           style="width:400px;height:100px"
+                           name="description"
+                           value="{{ selected_playlist.description }}">
                 </p>
                 <p>
                     <label>
@@ -109,15 +112,15 @@
         </p>
     {% endif %}
     <script>
-    $("input[name='valid']").on("input", function (e) {
-        var range = e.target
-        $(".indicate-valid").text(range.value)
-    })
+$("input[name='valid']").on("input", function (e) {
+var range = e.target
+$(".indicate-valid").text(range.value)
+})
     </script>
     <script>
-    $("input[name='limit']").on("input", function (e) {
-        var range = e.target
-        $(".indicate-limit").text(range.value)
-    })
+$("input[name='limit']").on("input", function (e) {
+var range = e.target
+$(".indicate-limit").text(range.value)
+})
     </script>
 {% endblock content %}

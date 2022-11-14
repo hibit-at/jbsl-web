@@ -945,6 +945,10 @@ def leaderboard(request, pk):
     if 'comment' in request.GET:
         params['comment_open'] = 'open'
 
+    load_index = league.player.all().count() * league.playlist.songs.all().count()
+    print(load_index)
+    params['load_index'] = load_index
+
     return render(request, 'leaderboard.html', params)
 
 
@@ -1349,10 +1353,10 @@ def coin(request):
         else:
             if random.random() > 0.5:
                 results = [f'（通常）コイントスの結果、{partA} さんがファーストピックの権利を得ました。',
-                    f'（BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。']
+                           f'（BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。']
             else:
                 results = [f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。',
-                    f'（BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。']
+                           f'（BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。']
     params['form'] = form
     params['results'] = results
     return render(request, 'coin.html', params)
@@ -1523,14 +1527,15 @@ def owner_comment(request):
         return render(request, 'owner_comment.html', params)
     return redirect('app:index')
 
+
 @login_required
 def badge_adding(request, sid, badge_name):
     if not request.user.is_staff:
         return redirect('app:index')
-    badge_name = badge_name.replace('_',' ')
+    badge_name = badge_name.replace('_', ' ')
     badge = Badge.objects.get(name=badge_name)
     player = Player.objects.get(sid=sid)
     badge.player = player
     badge.save()
-    print(badge,player)
+    print(badge, player)
     return redirect('app:index')

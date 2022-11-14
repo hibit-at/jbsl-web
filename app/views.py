@@ -869,7 +869,13 @@ def leaderboard(request, pk):
         player = Player.objects.get(user=user)
     league = League.objects.get(pk=pk)
     params['league'] = league
+
+    from time import time
+
+    duration_start = time()
     scored_rank, LBs = calculate_scoredrank_LBs(league)
+    durtaion = time() - duration_start
+
     params['scored_rank'] = scored_rank
     params['LBs'] = LBs
 
@@ -948,6 +954,7 @@ def leaderboard(request, pk):
     load_index = league.player.all().count() * league.playlist.songs.all().count()
     print(load_index)
     params['load_index'] = load_index
+    params['duration'] = durtaion * 1000
 
     return render(request, 'leaderboard.html', params)
 

@@ -338,7 +338,8 @@
             {% endif %}
         {% endif %}
     </div>
-    <p>現在の負荷係数：{{load_index}}</p>
+    <p>現在の負荷係数：{{load_index }}</p>
+    <p>順位の計算に必要な時間：{{duration | floatformat:0 }} ms</p>
     <script>
 function check(){
 if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示

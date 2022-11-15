@@ -577,7 +577,7 @@ def playlists(request, page=1):
 
     if user.is_authenticated:
         playlists = Playlist.objects.all().order_by('-pk').filter(
-            Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player))[start:end]
+            Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player)).distinct()[start:end]
     else:
         playlists = Playlist.objects.all().order_by(
             '-pk').filter(isHidden=False)[start:end]

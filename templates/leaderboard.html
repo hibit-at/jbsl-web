@@ -338,7 +338,7 @@
             {% endif %}
         {% endif %}
     </div>
-    <p>現在の負荷係数：{{load_index }} ( = {{ league.player.all | length }} x {{ league.playlist.songs.all | length }} )</p>
+    <p>現在の負荷係数：{{load_index }} ( = {{ league.playlist.songs.all | length }} x {{ league.player.all | length }} )</p>
     <p>順位の計算に要した時間：{{duration | floatformat:0 }} ms</p>
     <script>
 function check(){

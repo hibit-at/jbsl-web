@@ -52,7 +52,7 @@ class Playlist(models.Model):
     title = models.CharField(default='', max_length=100)
     editor = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True)
     image = models.CharField(default='', max_length=400000)
-    songs = models.ManyToManyField(Song)
+    songs = models.ManyToManyField(Song, blank=True)
     recommend = models.ManyToManyField(
         Song, related_name='recommend', blank=True)
     description = models.CharField(default='', max_length=200, blank=True)

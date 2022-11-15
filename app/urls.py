@@ -34,4 +34,5 @@ urlpatterns = [
     path('owner_comment/', views.owner_comment, name='owner_comment'),
     path('badge_adding/<int:sid>/<slug:badge_name>',
          views.badge_adding, name='badge_adding'),
+    path('pos_acc_update/<int:pk>', views.pos_acc_update, name='pos_acc_update'),
 ]

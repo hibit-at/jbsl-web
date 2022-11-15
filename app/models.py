@@ -115,9 +115,9 @@ class Score(models.Model):
     rawPP = models.FloatField(default=0)
     miss = models.IntegerField(default=0)
     comment = models.CharField(default='', max_length=50, blank=True)
-    # rank = models.Integerfield(deafult=0)
-    # pos = models.IntegerField(default=0)
-    # weight_acc = models.FloatField(default=0)
+    rank = models.IntegerField(default=0)
+    pos = models.IntegerField(default=0)
+    weight_acc = models.FloatField(default=0)
 
 
     def __str__(self):

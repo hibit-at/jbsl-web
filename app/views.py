@@ -1568,3 +1568,31 @@ def badge_adding(request, sid, badge_name):
     badge.save()
     print(badge, player)
     return redirect('app:index')
+
+
+@login_required
+def pos_acc_update(request, pk=0):
+    if not request.user.is_staff:
+        return redirect('app:index')
+    league = League.objects.get(pk=pk)
+    # リーグ内プレイヤーの人数
+    base = league.player.count() + 3
+    # リーグ内マップ
+    playlist = league.playlist
+    songs = playlist.songs.all()
+    # マップごとのプレイヤーランキング
+    for song in songs:
+        print(song)
+        query = Score.objects.filter(
+            song=song, league=league, player__league=league).order_by('-score')
+        max_score = -1
+        if len(query) > 0:
+            max_score = query[0].score
+        for rank, score in enumerate(query):
+            pos = base + slope(rank + 1)
+            score.rank = rank+1
+            score.pos = pos
+            score.weight_acc = score.score/max_score*100
+            print(score.weight_acc)
+            score.save()
+    return redirect('app:index')

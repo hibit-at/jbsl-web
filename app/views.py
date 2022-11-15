@@ -572,8 +572,17 @@ def playlists(request, page=1):
     end = 8*page
     limit = (Playlist.objects.all().count() + 7) // 8
     print(limit)
-    playlists = Playlist.objects.all().order_by('-pk')[start:end]
-    archives = Playlist.objects.all().order_by('-pk')[start:end]
+
+    from django.db.models import Q
+
+    if user.is_authenticated:
+        playlists = Playlist.objects.all().order_by('-pk').filter(
+            Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player))[start:end]
+    else:
+        playlists = Playlist.objects.all().order_by(
+            '-pk').filter(isHidden=False)[start:end]
+    archives = Playlist.objects.all().order_by(
+        '-pk').filter(isHidden=False)[start:end]
     # playlists = make_sorted_playlists(playlists)
     params['playlists'] = playlists
     params['archives'] = archives
@@ -605,6 +614,15 @@ def playlist(request, pk):
     user = request.user
     playlist = Playlist.objects.get(pk=pk)
 
+    # hidden kick
+    if playlist.isHidden:
+        if not user.is_authenticated:
+            return redirect('app:index')
+        else:
+            print(playlist.CoEditor.all())
+            if not (playlist.editor == user.player or user.player in playlist.CoEditor.all()):
+                return redirect('app:index')
+
     # leagues
     leagues = League.objects.filter(playlist=playlist)
     print(leagues)
@@ -623,7 +641,7 @@ def playlist(request, pk):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-        isEditor = (user.player == playlist.editor)
+        isEditor = user.player == playlist.editor or user.player in playlist.CoEditor.all()
         params['isEditor'] = isEditor
     if request.method == 'POST':
         post = request.POST
@@ -1500,7 +1518,7 @@ def playlist_archives(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    archives = Playlist.objects.all().order_by('-pk')
+    archives = Playlist.objects.all().order_by('-pk').exclude(isHidden=True)
     cnt = 0
     for archive in archives:
         print(archive)

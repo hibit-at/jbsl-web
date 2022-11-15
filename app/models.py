@@ -55,8 +55,10 @@ class Playlist(models.Model):
     songs = models.ManyToManyField(Song)
     recommend = models.ManyToManyField(
         Song, related_name='recommend', blank=True)
-    description = models.CharField(default='', max_length=200)
+    description = models.CharField(default='', max_length=200, blank=True)
     isEditable = models.BooleanField(default=False)
+    CoEditor = models.ManyToManyField(Player, related_name='CoEditor',blank=True)
+    isHidden = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

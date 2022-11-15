@@ -20,7 +20,7 @@
             <th>Songs</th>
         </thead>
         {% for playlist in playlists %}
-            <tr>
+            <tr {% if playlist.isHidden %}style="background-color:gray"{% endif %}>
                 <td>
                     <a href={% url 'app:playlist' pk=playlist.pk %}>
                         <img class="thumb" src=" {{ playlist.image }}" />
@@ -37,8 +37,12 @@
                 </td>
                 <td>{{ playlist.description |truncatechars:50 }}</td>
                 <td>
-                    <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
+                    <a href
+                       {% url 'app:userpage' sid=playlist.editor.sid %}
+                       style="color:black">
                         <img class="icon" src="{{ playlist.editor.imageURL }}" />
+                        <br>
+                        {{ playlist.editor }}
                     </a>
                 </td>
                 <td>

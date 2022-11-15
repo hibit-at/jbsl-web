@@ -766,7 +766,7 @@ def leagues(request):
     return render(request, 'leagues.html', params)
 
 
-def calculate_scoredrank_LBs(league, virtual=None):
+def calculate_scoredrank_LBs(league, virtual=None, record=False):
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
     # リーグ内マップ
@@ -780,6 +780,10 @@ def calculate_scoredrank_LBs(league, virtual=None):
     for song in songs:
         query = Score.objects.filter(
             song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score').distinct()
+        max_score = -1
+        if len(query) > 0:
+            max_score = query[0].score
+        print(max_score)
         for rank, score in enumerate(query):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)

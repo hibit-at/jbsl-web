@@ -1604,6 +1604,10 @@ def manual_league_update(request, pk=0):
 
 def test_leaderboard(request,pk=0):
 
+
+    from time import time
+
+    duration_start = time()
     params = {}
     user = request.user
     player = None
@@ -1678,5 +1682,7 @@ def test_leaderboard(request,pk=0):
         setattr(player, 'rank', rank+1)
 
     params['players'] = players
+    durtaion = time() - duration_start
+    params['duration'] = durtaion
 
     return render(request, 'test_leaderboard.html', params)

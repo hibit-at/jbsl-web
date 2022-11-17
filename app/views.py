@@ -827,6 +827,7 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
             total_rank[player].append(score)
         setattr(song, 'scores', query)
     # 順位点→精度でソート
+
     for t in total_rank:
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
@@ -1570,11 +1571,9 @@ def badge_adding(request, sid, badge_name):
     return redirect('app:index')
 
 
-@login_required
-def pos_acc_update(request, pk=0):
-    if not request.user.is_staff:
-        return redirect('app:index')
+def pos_acc_update(pk):
     league = League.objects.get(pk=pk)
+    print(league)
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
     # リーグ内マップ
@@ -1595,4 +1594,87 @@ def pos_acc_update(request, pk=0):
             score.weight_acc = score.score/max_score*100
             print(score.weight_acc)
             score.save()
+
+
+def manual_league_update(request, pk=0):
+    if not request.user.is_staff:
+        return redirect('app:index')
+    pos_acc_update(pk)
     return redirect('app:index')
+
+def test_leaderboard(request,pk=0):
+
+    params = {}
+    user = request.user
+    player = None
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+        player = Player.objects.get(user=user)
+    league = League.objects.get(pk=pk)
+    params['league'] = league
+    songs = league.playlist.songs.all()
+    params['songs'] = songs
+
+
+    # リーグ内プレイヤーの人数
+    base = league.player.count() + 3
+
+    for song in songs:
+        query = Score.objects.filter(song=song, league=league,player__league=league).order_by('-score')
+        setattr(song,'scores',query)
+
+    players = Player.objects.filter(league=league)
+    count_range = league.method
+    for player in players:
+        query = Score.objects.filter(song=song, player=player).order_by('-pos')
+        print(player)
+        print(query)
+        score_list = query[:count_range]
+        for score in score_list:
+            setattr(score, 'valid', 1)
+        valid_count = len(score_list)
+        max_pos = league.method * (base + slope(1))
+        count_pos = sum([s.pos for s in score_list])
+        theoretical = count_pos / max_pos * 100
+        count_acc = sum([s.acc for s in score_list])/valid_count
+
+        # 精度により点数を強調
+        decorate = 'None'
+        if 95 <= count_acc and count_acc < 96:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+        if 96 <= count_acc and count_acc < 97:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+        if 97 <= count_acc and count_acc < 98:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+        if 98 <= count_acc and count_acc < 99:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+        if 99 <= count_acc and count_acc <= 100:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+        setattr(player, 'decorate', decorate)
+
+        tooltip_pos = '<br>'.join(
+            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
+        tooltip_valid = '<br>'.join(
+            [f'{score.song.title[:25]}...' for score in score_list])
+        tooltip_acc = '<br>'.join(
+            [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
+        setattr(player, 'count_pos', count_pos)
+        setattr(player, 'theoretical', theoretical)
+        setattr(player, 'count_acc', count_acc)
+        setattr(player, 'valid', valid_count)
+        setattr(player, 'tooltip_pos', tooltip_pos)
+        setattr(player, 'tooltip_valid', tooltip_valid)
+        setattr(player, 'tooltip_acc', tooltip_acc)
+        if LeagueComment.objects.filter(league=league, player=player).exists():
+            comment = LeagueComment.objects.get(league=league, player=player)
+            setattr(player, 'comment', comment)
+    # 順位点→精度でソート
+    players = sorted(
+        players, key=lambda x: (-x.count_pos, -x.count_acc))
+    for rank, player in enumerate(players):
+        setattr(player, 'rank', rank+1)
+
+    params['players'] = players
+
+    return render(request, 'test_leaderboard.html', params)

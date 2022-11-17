@@ -34,5 +34,6 @@ urlpatterns = [
     path('owner_comment/', views.owner_comment, name='owner_comment'),
     path('badge_adding/<int:sid>/<slug:badge_name>',
          views.badge_adding, name='badge_adding'),
-    path('pos_acc_update/<int:pk>', views.pos_acc_update, name='pos_acc_update'),
+    path('manual_league_update/<int:pk>', views.manual_league_update, name='manual_league_update'),
+    path('test_leaderboard/<int:pk>', views.test_leaderboard, name='test_leaderboard'),
 ]

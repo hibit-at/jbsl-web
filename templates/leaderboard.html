@@ -40,6 +40,7 @@
                         ">
                         <img src="{% static 'pencil.png' %}"
                              height="40px"
+                             width="40px"
                              style="filter:invert();margin-left:20px">
                     </span>
                 </a>
@@ -49,14 +50,14 @@
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">PLAYLIST
-                    <img src="{% static 'DL_white.png' %}" height="25px">
+                    <img src="{% static 'DL_white.png' %}" height="25px" width="25px">
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
                     <h4>プレイリストの詳細</h4>
                     ">
-                    <img src="{% static 'pict_playlist.png' %}" height="40px">
+                    <img src="{% static 'pict_playlist.png' %}" height="40px" width="40px">
                 </span>
             </a>
         </h3>
@@ -271,7 +272,7 @@
                                 </td>
                                 <td>
                                     {% if score.valid %}
-                                        <img src={% static 'simple_check.png' %} height="15px">
+                                        <img src={% static 'simple_check.png' %} height="15px" width="15px">
                                     {% endif %}
                                 </td>
                                 <td>

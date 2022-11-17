@@ -1683,6 +1683,7 @@ def test_leaderboard(request,pk=0):
 
     params['players'] = players
     durtaion = time() - duration_start
-    params['duration'] = durtaion
+    print(durtaion)
+    params['duration'] = durtaion * 1000
 
     return render(request, 'test_leaderboard.html', params)

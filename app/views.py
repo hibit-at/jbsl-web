@@ -1637,7 +1637,9 @@ def test_leaderboard(request,pk=0):
         max_pos = league.method * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
         theoretical = count_pos / max_pos * 100
-        count_acc = sum([s.acc for s in score_list])/valid_count
+        count_acc = 0
+        if valid_count > 0:
+            count_acc = sum([s.acc for s in score_list])/valid_count
 
         # 精度により点数を強調
         decorate = 'None'

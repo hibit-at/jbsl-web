@@ -50,14 +50,14 @@
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">PLAYLIST
-                    <img src="{% static 'DL_white.png' %}" height="25px" width="25px">
+                    <img src="{% static 'DL_white.png' %}" height="25px" width="25px" loading="lazy">
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
                     <h4>プレイリストの詳細</h4>
                     ">
-                    <img src="{% static 'pict_playlist.png' %}" height="40px" width="40px">
+                    <img src="{% static 'pict_playlist.png' %}" height="40px" width="40px" loading="lazy">
                 </span>
             </a>
         </h3>
@@ -96,7 +96,7 @@
             </summary>
             <div style="display:flex;background:red; padding:20px;background:{{ league.color }};border-radius:20px;color:black">
                 <div>
-                    <img src="{{ league.owner.imageURL }}" class="icon">
+                    <img src="{{ league.owner.imageURL }}" class="icon" loading="lazy">
                     <br>
                     {% include "player_element.html" with player=league.owner %}
                     {% if user.player == league.owner %}
@@ -155,7 +155,7 @@
                         <td>
                             {% if user.player == player or user.player.rival == player %}<div class="enclosure">{% endif %}
                             <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
-                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                <img src="{{ player.imageURL }}" class="icon" alt="icon" loading="lazy"/>
                                 {% include 'player_element.html' %}
                             </a>
                         </td>
@@ -222,7 +222,8 @@
                 <img src="{% static 'ScoreSaberLogo.png' %}"
                      width="30px"
                      height="30px"
-                     alt="scoresaber"/>
+                     alt="scoresaber"
+                     loading="lazy"/>
             </a>
             <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
         </p>
@@ -230,7 +231,7 @@
              class="top5-target"
              style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
             <div style="display:flex">
-                <img src="{{ song.imageURL }}" class="thumb" alt="thumb" />
+                <img src="{{ song.imageURL }}" class="thumb" alt="thumb" loading="lazy"/>
                 <table class="table table-striped table-borderless"
                        style="background : rgba(255,255,255,.5)">
                     <thead>
@@ -262,7 +263,7 @@
                                         {% endif %}
                                         <a href="{% url 'app:userpage' sid=score.player.sid %}"
                                            style="color:black">
-                                            <img src="{{ score.player.imageURL }}" class="icon">
+                                            <img src="{{ score.player.imageURL }}" class="icon" loading="lazy">
                                             {% include "player_element.html" with player=score.player %}
                                         </a>
                                     </div>
@@ -272,7 +273,7 @@
                                 </td>
                                 <td>
                                     {% if score.valid %}
-                                        <img src={% static 'simple_check.png' %} height="15px" width="15px">
+                                        <img src={% static 'simple_check.png' %} height="15px" width="15px" loading="lazy">
                                     {% endif %}
                                 </td>
                                 <td>

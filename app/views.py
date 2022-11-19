@@ -832,13 +832,13 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
     players = []
-    count_range = league.method
+    count_range = league.max_valid
     for player, score_list in total_rank.items():
         score_list = score_list[:count_range]
         for score in score_list:
             setattr(score, 'valid', 1)
         valid_count = len(score_list)
-        max_pos = league.method * (base + slope(1))
+        max_pos = league.max_valid * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
         theoretical = count_pos / max_pos * 100
         count_acc = sum([s.acc for s in score_list])/valid_count
@@ -1026,7 +1026,7 @@ def create_league(request):
             color=color,
             end=end,
             playlist=playlist,
-            method=valid,  # 名称の不一致。余裕があれば後で直す。
+            max_valid=valid,
             isPublic=isPublic,
             isOpen=True,
             limit=limit,
@@ -1491,7 +1491,7 @@ def league_edit(request, pk):
             if post['description'] != '':
                 league.description = post['description']
             league.end = datetime.strptime(post['end'], '%Y-%m-%dT%H:%M')
-            league.method = post['valid']
+            league.max_valid = post['valid']
             league.limit = post['limit']
             league.color = post['color']
             league.isPublic = 'public' in post
@@ -1618,9 +1618,8 @@ def manual_league_update(request, pk=0):
     pos_acc_update(pk)
     return redirect('app:index')
 
-def test_leaderboard(request,pk=0):
 
-
+def test_leaderboard(request, pk=0):
     from time import time
 
     duration_start = time()
@@ -1636,16 +1635,16 @@ def test_leaderboard(request,pk=0):
     songs = league.playlist.songs.all()
     params['songs'] = songs
 
-
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
 
     for song in songs:
-        query = Score.objects.filter(song=song, league=league,player__league=league).order_by('-score')
-        setattr(song,'scores',query)
+        query = Score.objects.filter(
+            song=song, league=league, player__league=league).order_by('-score')
+        setattr(song, 'scores', query)
 
     players = Player.objects.filter(league=league)
-    count_range = league.method
+    count_range = league.max_valid
 
     for player in players:
         query = Score.objects.filter(song=song, player=player).order_by('-pos')
@@ -1655,7 +1654,7 @@ def test_leaderboard(request,pk=0):
         for score in score_list:
             setattr(score, 'valid', 1)
         valid_count = len(score_list)
-        max_pos = league.method * (base + slope(1))
+        max_pos = league.max_valid * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
         theoretical = count_pos / max_pos * 100
         count_acc = 0
@@ -1695,6 +1694,7 @@ def test_leaderboard(request,pk=0):
     # 順位点→精度でソート
     players = sorted(
         players, key=lambda x: (-x.count_pos, -x.count_acc))
+
     for rank, player in enumerate(players):
         setattr(player, 'rank', rank+1)
 

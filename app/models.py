@@ -79,7 +79,7 @@ class League(models.Model):
     description = models.CharField(default='', max_length=100, blank=True)
     color = models.CharField(default='', max_length=20)
     player = models.ManyToManyField(Player, blank=True, related_name='league')
-    method = models.IntegerField(default=0)
+    max_valid = models.IntegerField(default=0)
     limit = models.FloatField(default=2000)
     end = models.DateTimeField(default=None, blank=True)
     isPermanent = models.BooleanField(default=False)
@@ -119,6 +119,7 @@ class Score(models.Model):
     pos = models.IntegerField(default=0)
     weight_acc = models.FloatField(default=0)
     decorate = models.CharField(max_length=100, blank=True)
+    valid = models.BooleanField(default=False)
 
 
     def __str__(self):

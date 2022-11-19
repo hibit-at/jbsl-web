@@ -144,6 +144,7 @@
                             <th width="70px">Rank</th>
                             <th width="250px">Player</th>
                             <th width="70px">順位点</th>
+                            <th width="70px">加重<br>精度</th>
                             <th width="70px">
                                 有効
                                 <br>
@@ -172,6 +173,7 @@
                                     </div>
                                 </td>
                                 <td>{{ score.pos }}</td>
+                                <td>{{ score.weight_acc|floatformat:2 }}</td>
                                 <td>
                                     {% if score.valid %}
                                         <img src={% static 'simple_check.png' %} height="15px">

@@ -1356,7 +1356,7 @@ def coin(request):
     params = {'league': league}
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     choice = []
-    for s in scored_rank[:8]:
+    for s in scored_rank[:league.border_line]:
         choice.append((s.sid, s.name))
 
     from django import forms

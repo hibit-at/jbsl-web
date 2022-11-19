@@ -5,7 +5,7 @@ import json
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, LeagueComment, Player, Playlist, Song, Score, Headline, SongInfo, Badge
+from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -870,8 +870,8 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         setattr(player, 'tooltip_pos', tooltip_pos)
         setattr(player, 'tooltip_valid', tooltip_valid)
         setattr(player, 'tooltip_acc', tooltip_acc)
-        if LeagueComment.objects.filter(league=league, player=player).exists():
-            comment = LeagueComment.objects.get(league=league, player=player)
+        if Participant.objects.filter(league=league, player=player).exists():
+            comment = Participant.objects.get(league=league, player=player)
             setattr(player, 'comment', comment)
         players.append(player)
     # 順位点→精度でソート
@@ -1446,14 +1446,14 @@ def league_comment(request):
         if 'comment' in post:
             comment = post['comment'][:50]
             defaults = {'message': comment}
-            LeagueComment.objects.update_or_create(
+            Participant.objects.update_or_create(
                 league=league,
                 player=user.player,
                 defaults=defaults,
             )
             return redirect('app:leaderboard', pk=league.pk)
-        if LeagueComment.objects.filter(league=league, player=player).exists():
-            comment = LeagueComment.objects.get(league=league, player=player)
+        if Participant.objects.filter(league=league, player=player).exists():
+            comment = Participant.objects.get(league=league, player=player)
             setattr(player, 'comment', comment)
         return render(request, 'league_comment.html', params)
     return redirect('app:index')
@@ -1689,8 +1689,8 @@ def test_leaderboard(request,pk=0):
         setattr(player, 'tooltip_pos', tooltip_pos)
         setattr(player, 'tooltip_valid', tooltip_valid)
         setattr(player, 'tooltip_acc', tooltip_acc)
-        if LeagueComment.objects.filter(league=league, player=player).exists():
-            comment = LeagueComment.objects.get(league=league, player=player)
+        if Participant.objects.filter(league=league, player=player).exists():
+            comment = Participant.objects.get(league=league, player=player)
             setattr(player, 'comment', comment)
     # 順位点→精度でソート
     players = sorted(

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Player, Playlist, Song, League, Score, LeagueComment, Headline, SongInfo, Badge
+from app.models import Player, Playlist, Song, League, Score, Participant, Headline, SongInfo, Badge
 # Register your models here.
 
 
@@ -8,7 +8,7 @@ admin.site.register(Song, search_fields=['title', 'author'])
 admin.site.register(League, search_fields=['name'])
 admin.site.register(Score, search_fields=['player__name', 'song__title'])
 admin.site.register(Playlist, search_fields=['title', 'editor'])
-admin.site.register(LeagueComment)
+admin.site.register(Participant)
 admin.site.register(Headline, search_fields=['player__name'])
 admin.site.register(SongInfo)
 admin.site.register(Badge)

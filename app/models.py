@@ -127,7 +127,7 @@ class Score(models.Model):
         return name + ' > ' + title
 
 
-class LeagueComment(models.Model):
+class Participant(models.Model):
     message = models.CharField(default='', max_length=50, blank=True)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     league = models.ForeignKey(League, on_delete=models.CASCADE)

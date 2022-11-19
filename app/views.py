@@ -1592,7 +1592,23 @@ def pos_acc_update(pk):
             score.rank = rank+1
             score.pos = pos
             score.weight_acc = score.score/max_score*100
-            print(score.weight_acc)
+            print(score.weight_acc)            # 精度により点数を強調
+
+            decorate = 'None'
+            if score.acc < 50:
+                decorate = 'color:dimgray'
+            if 95 <= score.acc and score.acc < 96:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+            if 96 <= score.acc and score.acc < 97:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+            if 97 <= score.acc and score.acc < 98:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+            if 98 <= score.acc and score.acc < 99:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+            if 99 <= score.acc and score.acc <= 100:
+                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+            score.decorate = decorate
+
             score.save()
 
 
@@ -1630,6 +1646,7 @@ def test_leaderboard(request,pk=0):
 
     players = Player.objects.filter(league=league)
     count_range = league.method
+
     for player in players:
         query = Score.objects.filter(song=song, player=player).order_by('-pos')
         print(player)

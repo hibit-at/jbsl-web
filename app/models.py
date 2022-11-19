@@ -118,6 +118,7 @@ class Score(models.Model):
     rank = models.IntegerField(default=0)
     pos = models.IntegerField(default=0)
     weight_acc = models.FloatField(default=0)
+    decorate = models.CharField(max_length=100, blank=True)
 
 
     def __str__(self):

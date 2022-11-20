@@ -1739,7 +1739,7 @@ def short_leaderboard(request, pk=0):
             if Score.objects.filter(song=song, league=league, player=user.player).exists():
                 additional_score = Score.objects.get(song=song, league=league, player=user.player)
                 print(additional_score)
-                params['additional_score'] = additional_score
+                setattr(song,'additional_score',additional_score)
 
     players = Player.objects.filter(league=league)
     count_range = league.max_valid

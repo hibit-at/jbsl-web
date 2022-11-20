@@ -156,26 +156,28 @@
                             </div>
                         </div>
                     </div>
-                    {% if additional_score %}
+                    {% if song.additional_score %}
                     <div>
                         <table class="table table-striped table-borderless" style="width:90%;background:rgba(255,255,255,.5)">
                             <thead>
                                 <tr>
-                                <th>Rank</th>
-                                <th>You</th>
-                                <th>Acc</th>
+                                <th>Your</th>
+                                <th>Position</th>
+                                <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>
-                                        {{additional_score.rank}}
+                                        {{ song.additional_score.rank }}
                                     </td>
                                     <td>
-                                        <img src="{{ additional_score.player.imageURL }}" class="icon">
+                                        <img src="{{ song.additional_score.player.imageURL }}" class="icon">
                                     </td>
                                     <td>
-                                        {{additional_score.acc|floatformat:2}}
+                                        <span style="{{ song.additional_score.decorate }}">
+                                        {{ song.additional_score.acc|floatformat:2 }}
+                                        </span>
                                     </td>
                                 </tr>
                             </tbody>

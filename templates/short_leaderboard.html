@@ -78,7 +78,7 @@
                             </span>
                         </td>
                         <td>
-                            {{ player.count_weight_acc|intcomma|floatformat:2 }}
+                            {{ player.count_weight_acc|floatformat:2|intcomma }}
                         </td>
                         <td>
                             {% if player.theoretical == 100 %}

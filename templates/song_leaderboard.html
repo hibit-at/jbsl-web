@@ -2,10 +2,8 @@
 {% block content %}
     {% load static %}
     <h3>
-        <a href="{% url 'app:leaderboard' pk=league.pk  %}" style="color:{{ league.color }}">{{ league }}</a>'s Leaderboard
-    </h3>
-    <p>
-        <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+        Leaderboard of <br>
+        {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
             {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
         </span></span> by {{ song.author }}
         <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
@@ -17,7 +15,8 @@
                  loading="lazy"/>
         </a>
         <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
-    </p>
+    </h3>
+    <p> in <a href="{% url 'app:leaderboard' pk=league.pk  %}" style="color:{{ league.color }}">{{ league }}</a> </p>
     <div id="{{ song.lid }}"
          class="top5-target"
          style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">

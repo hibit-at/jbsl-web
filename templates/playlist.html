@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% load static %}
+    {% load static %}
     <h3>
         {{ playlist }}
         <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
@@ -11,236 +11,241 @@
     <p>
         <img class="thumb" src="data:image/png;{{ playlist.image }}" />
         {% if isEditor %}
-        <form method="GET" action="{% url 'app:create_league' %}">
-            <input type="hidden" name="pk" value="{{ playlist.pk }}"></input>
-            <button class="btn"><img src="{% static 'pict_league.png' %}" height="25px">　リーグを開催する　<img src="{% static 'pict_league.png' %}" height="25px"></button>
+            <form method="GET" action="{% url 'app:create_league' %}">
+                <input type="hidden" name="pk" value="{{ playlist.pk }}">
+            </input>
+            <button class="btn">
+                <img src="{% static 'pict_league.png' %}" height="25px">
+                　リーグを開催する　
+                <img src="{% static 'pict_league.png' %}" height="25px">
+            </button>
         </form>
-        {% endif %}
-    </p>
+    {% endif %}
+</p>
+<p>
+    Title : {{ playlist.title }}
+</p>
+<p>
+    Editor :
+    <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
+        <img class="icon" src="{{ playlist.editor.imageURL }}" />
+        {{ playlist.editor }}
+    </a>
+</p>
+{% if leagues|length > 0 %}
     <p>
-        Title : {{ playlist.title }}
+        このプレイリストを採用しているリーグ
     </p>
-    <p>
-        Editor :
-        <a href={% url 'app:userpage' sid=playlist.editor.sid %}>
-            <img class="icon" src="{{ playlist.editor.imageURL }}" />
-            {{ playlist.editor }}
-        </a>
-    </p>
-    {% if leagues|length > 0 %}
+    <ul>
+        {% for league in leagues %}
+            <li>
+                <a href="{% url 'app:leaderboard' pk=league.pk %}">{{ league }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% if isEditor and playlist.isEditable %}
+    <form method="post">
+        {% csrf_token %}
         <p>
-            このプレイリストを採用しているリーグ
+            タイトルの変更
+            <input type="text" size="40px" name="title" value="{{ playlist.title }} "/>
+            <button class="btn" type="submit">変更</button>
         </p>
-        <ul>
-            {% for league in leagues %}
-                <li>
-                    <a href="{% url 'app:leaderboard' pk=league.pk %}">{{ league }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if isEditor and playlist.isEditable %}
-        <form method="post">
-            {% csrf_token %}
-            <p>
-                タイトルの変更
-                <input type="text" size="40px" name="title" value="{{ playlist.title }} "/>
-                <button class="btn" type="submit">変更</button>
-            </p>
-        </form>
-    {% endif %}
-    {% if isEditor and playlist.isEditable %}
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <p>
-                カバー画像の変更
-                <input type="file" name="image" accept=".jpg,.png"/>
-                <button class="btn" type="submit">変更</button>
-            </p>
-        </form>
-    {% endif %}
-    <p>
-        <form method="post" onSubmit="return check()">
-            更新：
-            {% if playlist.isEditable %}
-                📝可能
-                {% if isEditor %}
-                    {% csrf_token %}
-                    <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
-                {% endif %}
-            {% else %}
-                🔐不可能
+    </form>
+{% endif %}
+{% if isEditor and playlist.isEditable %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            カバー画像の変更
+            <input type="file" name="image" accept=".jpg,.png"/>
+            <button class="btn" type="submit">変更</button>
+        </p>
+    </form>
+{% endif %}
+<p>
+    <form method="post" onSubmit="return check()">
+        更新：
+        {% if playlist.isEditable %}
+            📝可能
+            {% if isEditor %}
+                {% csrf_token %}
+                <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
             {% endif %}
-        </form>
-    </p>
-    <p>
-        Description : {{ playlist.description }}
-    </p>
-    {% if isEditor and playlist.isEditable %}
-        <form method='post'>
-            {% csrf_token %}
-            <textarea name="description" style="width:400px;height:100px">{{playlist.description}}</textarea>
-            <button class="btn">変更</button>
-        </form>
-    {% endif %}
-    <h3>Songs</h3>
+        {% else %}
+            🔐不可能
+        {% endif %}
+    </form>
+</p>
+<p>
+    Description : {{ playlist.description }}
+</p>
+{% if isEditor and playlist.isEditable %}
+    <form method='post'>
+        {% csrf_token %}
+        <textarea name="description" style="width:400px;height:100px">{{playlist.description}}</textarea>
+        <button class="btn">変更</button>
+    </form>
+{% endif %}
+<h3>Songs</h3>
+<table class="table table-striped table-borderless">
+    <thead>
+        <th>Cover</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Diff</th>
+        <th>Edit</th>
+    </thead>
+    {% for song in playlist.sorted_songs %}
+        <tr>
+            <td>
+                <a href="https://scoresaber.com/leaderboard/{{ song.lid }}">
+                    <img class="mid-thumb" src="{{ song.imageURL }}"/>
+                </a>
+            </td>
+            <td>{{ song.title|truncatechars:50 }}</td>
+            <td>{{ song.author }}</td>
+            <td>
+                <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
+                {% if song.char == 'Lawless' %}<b> Lawless</b>{% endif %}
+            </td>
+            <td>
+                {% if isEditor and playlist.isEditable %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <button class="danger"
+                                type="submit"
+                                name="remove_song"
+                                value="{{ song.lid }}">削除</button>
+                        <button class="btn" name="up" value="{{ song.lid }}">▲</button>
+                        <button class="btn" name="down" value="{{ song.lid }}">▼</button>
+                        {{ song.order }}
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if isEditor and playlist.isEditable %}
+    <h3>エディター用：譜面追加</h3>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
+        </p>
+        <input type="text" size="100px" name="add_song"/>
+        <button class="btn" type="submit">追加</button>
+    </form>
+{% endif %}
+{% if playlist.recommend.all|length > 0 and playlist.isEditable %}
+    <hr style="height:5px; background-color:mediumseagreen;">
+    <h3>Recommend</h3>
     <table class="table table-striped table-borderless">
         <thead>
             <th>Cover</th>
             <th>Title</th>
             <th>Author</th>
             <th>Diff</th>
-            <th>Edit</th>
+            <th>Accept</th>
+            <th>
+                Decline
+            </th>
         </thead>
-        {% for song in playlist.sorted_songs %}
+        {% for song in playlist.recommend.all %}
             <tr>
                 <td>
+                    <a href="https://beatsaver.com/maps/{{ song.bsr }}">
                         <img class="mid-thumb" src="{{ song.imageURL }}"/>
-                </td>
-                <td>
-                    <a href="https://scoresaber.com/leaderboard/{{ song.lid }}" style="color:black">
-                    {{ song.title|truncatechars:50 }}
                     </a>
                 </td>
-                <td>{{ song.author }}</td>
                 <td>
-                    <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                    {% if song.char == 'Lawless' %}<b> Lawless</b>{% endif %}
+                    {{ song.title|truncatechars:50 }}
                 </td>
                 <td>
-                    {% if isEditor and playlist.isEditable %}
+                    {{ song.author }}
+                </td>
+                <td>
+                    <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
+                </td>
+                <td>
+                    {% if isEditor %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <button class="btn" type="submit" name="add_song" value="{{ song.lid }}">
+                                承認
+                            </button>
+                        </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if isEditor %}
                         <form method="post">
                             {% csrf_token %}
                             <button class="danger"
                                     type="submit"
-                                    name="remove_song"
-                                    value="{{ song.lid }}">削除</button>
-                            <button class="btn" name="up" value="{{ song.lid }}">▲</button>
-                            <button class="btn" name="down" value="{{ song.lid }}">▼</button>
-                            {{ song.order }}
+                                    name="remove_recommend"
+                                    value="{{ song.lid }}">
+                                却下
+                            </button>
                         </form>
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
     </table>
-    {% if isEditor and playlist.isEditable %}
-        <h3>エディター用：譜面追加</h3>
-        <form method="post">
-            {% csrf_token %}
-            <p>
-                譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
-            </p>
-            <input type="text" size="100px" name="add_song"/>
-            <button class="btn" type="submit">追加</button>
-        </form>
-    {% endif %}
-    {% if playlist.recommend.all|length > 0 and playlist.isEditable %}
-        <hr style="height:5px; background-color:mediumseagreen;">
-        <h3>Recommend</h3>
-        <table class="table table-striped table-borderless">
-            <thead>
-                <th>Cover</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Diff</th>
-                <th>Accept</th>
-                <th>
-                    Decline
-                </th>
-            </thead>
-            {% for song in playlist.recommend.all %}
-                <tr>
-                    <td>
-                        <a href="https://beatsaver.com/maps/{{ song.bsr }}">
-                            <img class="mid-thumb" src="{{ song.imageURL }}"/>
-                        </a>
-                    </td>
-                    <td>
-                        {{ song.title|truncatechars:50 }}
-                    </td>
-                    <td>
-                        {{ song.author }}
-                    </td>
-                    <td>
-                        <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                    </td>
-                    <td>
-                        {% if isEditor %}
-                            <form method="post">
-                                {% csrf_token %}
-                                <button class="btn" type="submit" name="add_song" value="{{ song.lid }}">
-                                    承認
-                                </button>
-                            </form>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if isEditor %}
-                            <form method="post">
-                                {% csrf_token %}
-                                <button class="danger"
-                                        type="submit"
-                                        name="remove_recommend"
-                                        value="{{ song.lid }}">
-                                    却下
-                                </button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-    {% if user.player.isActivated and playlist.isEditable and not isEditor %}
+{% endif %}
+{% if user.player.isActivated and playlist.isEditable and not isEditor %}
+    <h3>
+        譜面を推薦する
+    </h3>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
+        </p>
+        <input type="text" size="100px" name="recommend_song"/>
+        <button class="btn" type="submit">
+            追加
+        </button>
+    </form>
+{% endif %}
+{% if isEditor %}
+    <hr style="height:5px; background-color:ff8628;">
+    {% if playlist.isEditable %}
         <h3>
-            譜面を推薦する
+            プレイリストの削除
         </h3>
         <form method="post">
             {% csrf_token %}
-            <p>
-                譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
-            </p>
-            <input type="text" size="100px" name="recommend_song"/>
-            <button class="btn" type="submit">
-                追加
+            <Label>
+                Title :
+            </Label>
+            <input type="text" size="40px" name="remove_playlist"/>
+            <button class="danger"
+                    type="submit"
+                    name="confirm"
+                    value="{{ playlist.title }}">
+                削除
             </button>
+            <p>
+                <ul>
+                    <li>
+                        誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
+                    </li>
+                    <li>
+                        確認画面等は一切出ませんので、ご注意ください。
+                    </li>
+                </ul>
+            </p>
         </form>
+    {% else %}
+        <p>
+            更新不可能にしたプレイリストを削除することはできません
+        </p>
     {% endif %}
-    {% if isEditor %}
-        <hr style="height:5px; background-color:ff8628;">
-        {% if playlist.isEditable %}
-            <h3>
-                プレイリストの削除
-            </h3>
-            <form method="post">
-                {% csrf_token %}
-                <Label>
-                    Title :
-                </Label>
-                <input type="text" size="40px" name="remove_playlist"/>
-                <button class="danger"
-                        type="submit"
-                        name="confirm"
-                        value="{{ playlist.title }}">
-                    削除
-                </button>
-                <p>
-                    <ul>
-                        <li>
-                            誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
-                        </li>
-                        <li>
-                            確認画面等は一切出ませんので、ご注意ください。
-                        </li>
-                    </ul>
-                </p>
-            </form>
-        {% else %}
-        <p>更新不可能にしたプレイリストを削除することはできません</p>
-        {% endif %}
-    {% endif %}
-    <script>
+{% endif %}
+<script>
     function check(){
         if(window.confirm('プレイリストを固定化しますか？　編集・削除ができなくなります。')){ // 確認ダイアログを表示
             return true; // 「OK」時は送信を実行
@@ -251,5 +256,5 @@
         }
     
     }
-    </script>
+</script>
 {% endblock content %}

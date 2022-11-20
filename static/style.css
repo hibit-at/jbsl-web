@@ -1,15 +1,17 @@
 a {
     text-decoration: none;
-    color: white;
-    position: relative;
-    display: inline-block;
+    color: inherit;
+    transition-duration: .2s;
 }
 
 a:hover {
-    color: white;
+    color: inherit;
+    letter-spacing: 0.04em;
+    font-weight: bold;
 }
 
-a::after {
+
+/* a::after {
     position: absolute;
     bottom: -4px;
     left: 0;
@@ -24,7 +26,7 @@ a::after {
 
 a:hover::after {
     transform: scale(1, 1);
-}
+} */
 
 .table {
     background: linear-gradient(to right, rgba(255, 160, 80, .7), rgba(255, 220, 200, .7));

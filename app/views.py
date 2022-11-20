@@ -1752,6 +1752,7 @@ def short_leaderboard(request, pk=0):
         valid_count = len(score_list)
         max_pos = league.max_valid * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
+        count_weight_acc = sum([s.weight_acc for s in score_list])
         theoretical = count_pos / max_pos * 100
         count_acc = 0
         if valid_count > 0:
@@ -1778,6 +1779,7 @@ def short_leaderboard(request, pk=0):
         tooltip_acc = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
         setattr(player, 'count_pos', count_pos)
+        setattr(player, 'count_weight_acc', count_weight_acc)
         setattr(player, 'theoretical', theoretical)
         setattr(player, 'count_acc', count_acc)
         setattr(player, 'valid', valid_count)

@@ -39,6 +39,10 @@
                         順位点
                     </th>
                     <th width="100px">
+                        有効重<br />
+                        付精度
+                    </th>
+                    <th width="100px">
                         順位点
                         <br />
                         比率
@@ -71,6 +75,9 @@
                             <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
                                 {{ player.count_pos }}
                             </span>
+                        </td>
+                        <td>
+                            {{ player.count_weight_acc|floatformat:2 }}
                         </td>
                         <td>
                             {% if player.theoretical == 100 %}

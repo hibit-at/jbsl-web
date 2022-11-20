@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load static %}
+    <h3>
+        <a href="{% url 'app:leaderboard' pk=league.pk  %}" style="color:{{ league.color }}">{{ league }}</a>'s Leaderboard
+    </h3>
+    <p>
+        <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+            {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
+        </span></span> by {{ song.author }}
+        <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
+           style="filter:invert()">
+            <img src="{% static 'ScoreSaberLogo.png' %}"
+                 width="30px"
+                 height="30px"
+                 alt="scoresaber"
+                 loading="lazy"/>
+        </a>
+        <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
+    </p>
+    <div id="{{ song.lid }}"
+         class="top5-target"
+         style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
+        <div style="display:flex">
+            <img src="{{ song.imageURL }}" class="thumb" alt="thumb" loading="lazy"/>
+            <table class="table table-striped table-borderless"
+                   style="background : rgba(255,255,255,.5)">
+                <thead>
+                    <tr>
+                        <th width="70px">Rank</th>
+                        <th width="250px">Player</th>
+                        <th width="70px">順位点</th>
+                        <th width="70px">
+                            有効
+                            <br>
+                            譜面
+                        </th>
+                        <th width="100px">Accuracy</th>
+                        <th width="100px">Miss</th>
+                        <th width="auto">Message</th>
+                    </tr>
+                </thead>
+                <tbody style="color:black">
+                    {% for score in song.scores %}
+                        <tr>
+                            <td>#{{ score.rank }}</td>
+                            <td>
+                                {% if user.player == score.player or user.player.rival == score.player %}
+                                    <div style="border-radius:10px;
+                                                border:3px dashed rgba(0,0,0,.5);
+                                                padding:10px;">
+                                    {% endif %}
+                                    <a href="{% url 'app:userpage' sid=score.player.sid %}"
+                                       style="color:black">
+                                        <img src="{{ score.player.imageURL }}" class="icon" loading="lazy">
+                                        {% include "player_element.html" with player=score.player %}
+                                    </a>
+                                </div>
+                            </td>
+                            <td>{{ score.pos }}</td>
+                            <td>
+                                {% if score.valid %}
+                                    <img src
+                                         {% static 'simple_check.png' %}
+                                         height="15px"
+                                         width="15px"
+                                         loading="lazy">
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span style="{{ score.decorate }}">{{ score.acc|floatformat:2 }} %</span>
+                            </td>
+                            <td>
+                                {% if score.miss == 0 %}
+                                    <span class="diff" style="color:white">FC</span>
+                                {% else %}
+                                    {{ score.miss }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.player == score.player %}
+                                    <form method="post" action="{% url 'app:score_comment' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="score" value="{{ score.id }}">
+                                        <input type="image"
+                                               src="{% static 'pencil.png' %}"
+                                               width="25px"
+                                               height="25px">
+                                        {{ score.comment }}
+                                    </form>
+                                {% else %}
+                                    {{ score.comment }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if scored_rank|length > 5 %}
+            <a class="top5-trigger" href="#{{ song.lid }}" style="margin-left:158px">すべて表示</a>
+        {% endif %}
+    </div>
+{% endblock content %}

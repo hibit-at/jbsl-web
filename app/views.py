@@ -1620,8 +1620,8 @@ def manual_league_update(request, pk=0):
 
 
 def test_leaderboard(request, pk=0):
-    from time import time
 
+    from time import time
     duration_start = time()
     params = {}
     user = request.user
@@ -1634,6 +1634,10 @@ def test_leaderboard(request, pk=0):
     params['league'] = league
     songs = league.playlist.songs.all()
     params['songs'] = songs
+
+    if len(songs) >= 10:
+        print('long!')
+        return short_leaderboard(request, pk=pk)
 
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
@@ -1793,3 +1797,21 @@ def short_leaderboard(request, pk=0):
     params['duration'] = durtaion * 1000
 
     return render(request, 'short_leaderboard.html', params)
+
+
+def song_leaderboard(request, league_pk, song_pk):
+    params = {}
+    user = request.user
+    player = None
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+        player = Player.objects.get(user=user)
+    league = League.objects.get(pk=league_pk)
+    song = Song.objects.get(lid=song_pk)
+    scores = Score.objects.filter(
+            song=song, league=league, player__league=league).order_by('-score')
+    setattr(song,'scores',scores)
+    params['league'] = league
+    params['song'] = song
+    return render(request, 'song_leaderboard.html',params)

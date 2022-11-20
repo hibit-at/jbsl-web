@@ -871,7 +871,7 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         setattr(player, 'tooltip_valid', tooltip_valid)
         setattr(player, 'tooltip_acc', tooltip_acc)
         if Participant.objects.filter(league=league, player=player).exists():
-            comment = Participant.objects.get(league=league, player=player)
+            comment = Participant.objects.get(league=league, player=player).message
             setattr(player, 'comment', comment)
         players.append(player)
     # 順位点→精度でソート

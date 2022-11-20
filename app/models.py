@@ -132,6 +132,16 @@ class Participant(models.Model):
     message = models.CharField(default='', max_length=50, blank=True)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     league = models.ForeignKey(League, on_delete=models.CASCADE)
+    # rank = models.IntegerField(default=0)
+    # pos = models.IntegerField(default=0)
+    # theoretical = models.FloatField(default=0)
+    # weight_acc = models.IntegerField(default=0)
+    # valid_count = models.IntegerField(default=0)
+    # valid_acc = models.FloatField(default=0)
+    # tooltip_pos = models.CharField(max_length=1500)
+    # tooltip_weight_acc = models.CharField(max_length=1500)
+    # tooltip_valid = models.CharField(max_length=1500)
+    # tooltip_pos = models.CharField(max_length=1500)
 
     def __str__(self):
         return str(self.message)

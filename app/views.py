@@ -1592,7 +1592,13 @@ def pos_acc_update(pk):
             score.rank = rank+1
             score.pos = pos
             score.weight_acc = score.score/max_score*100
-            print(score.weight_acc)            # 精度により点数を強調
+
+            if rank <= league.max_valid:
+                score.valid = 1
+            else:
+                score.valid = 0
+
+            print(score.weight_acc)
 
             decorate = 'None'
             if score.acc < 50:

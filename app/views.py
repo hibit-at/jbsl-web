@@ -1676,12 +1676,12 @@ def pos_acc_update(pk):
         participant.save()
 
     # 順位点→精度でソート
-    participants = Participant.objects.filter(league=league)
+    participants = Participant.objects.filter(league=league).order_by('-count_pos')
 
     for rank, participant in enumerate(participants):
         # setattr(player, 'rank', rank+1)
         participant.rank = rank+1
-        participant.save
+        participant.save()
 
 
 

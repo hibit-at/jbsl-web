@@ -121,19 +121,22 @@
     </div>
     <hr />
     <h2 style="text-align:center">譜面別リーグ内順位</h2>
-    <div style="display:flex;flex-wrap: wrap; margin:20px; color:black">
+    <div style="display:flex;flex-wrap: wrap; margin:20px;color:black">
         {% for song in songs %}
-        <div style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0)); padding:20px; border-radius:10px; width:300px; display:flex">
-            <div style="width:150px">
-                <img src="{{ song.imageURL }}" class="thumb">
-                {{ song.title }}
-                </div>
-                <div>
-                    {% for score in  song.scores %}
-                        <p>
-                            <img src="{{ score.player.imageURL }}" class="icon">
-                        </p>
-                    {% endfor %}
+            <div style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0)); padding:10px; margin:10px; border-radius:10px; width:300px;">
+                <div style="background-color:rgba(255,255,255,.5);margin:5px; padding : 10px; border-radius: 5px; display:flex">
+                    <div style="width:130px;">
+                        <img src="{{ song.imageURL }}" class="thumb">
+                        {{ song.title|truncatechars:40 }}
+                    </div>
+                    <div style="text-align:center;margin-left:10px;width:170">
+                        Top3
+                        {% for score in  song.scores %}
+                            <p>
+                                <img src="{{ score.player.imageURL }}" class="icon">
+                            </p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         {% endfor %}

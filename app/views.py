@@ -1612,6 +1612,7 @@ def pos_acc_update(pk):
 
             score.save()
 
+
 def manual_league_update(request, pk=0):
     if not request.user.is_staff:
         return redirect('app:index')
@@ -1734,6 +1735,18 @@ def short_leaderboard(request, pk=0):
             song=song, league=league, player__league=league).order_by('-score')[:3]
         setattr(song, 'scores', query)
 
+        player_rank = -1
+    
+        if user.is_authenticated:
+            if Score.objects.filter(song=song, league=league, player=player).exists():
+                player_rank = Score.objects.get(song=song, league=league, player=player).rank
+            print('player_rank',player_rank)
+            if player_rank > 0:
+                additional_scores = Score.objects.filter(
+                song=song, league=league, player__league=league).order_by('-score')[max(0,player_rank-2):player_rank+1]
+                print(additional_scores)
+                params['additional_scores'] = additional_scores
+
     players = Player.objects.filter(league=league)
     count_range = league.max_valid
 
@@ -1810,8 +1823,8 @@ def song_leaderboard(request, league_pk, song_pk):
     league = League.objects.get(pk=league_pk)
     song = Song.objects.get(lid=song_pk)
     scores = Score.objects.filter(
-            song=song, league=league, player__league=league).order_by('-score')
-    setattr(song,'scores',scores)
+        song=song, league=league, player__league=league).order_by('-score')
+    setattr(song, 'scores', scores)
     params['league'] = league
     params['song'] = song
-    return render(request, 'song_leaderboard.html',params)
+    return render(request, 'song_leaderboard.html', params)

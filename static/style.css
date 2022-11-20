@@ -246,3 +246,11 @@ pre {
     white-space: pre-wrap;
     line-height: 140%
 }
+
+.song_card {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 300px;
+    transition-duration: .5s;
+}

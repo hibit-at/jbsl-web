@@ -35,7 +35,6 @@ urlpatterns = [
     path('badge_adding/<int:sid>/<slug:badge_name>',
          views.badge_adding, name='badge_adding'),
     path('manual_league_update/<int:pk>', views.manual_league_update, name='manual_league_update'),
-    path('test_leaderboard/<int:pk>', views.test_leaderboard, name='test_leaderboard'),
     path('short_leaderboard/<int:pk>', views.short_leaderboard, name='short_leaderboard'),
     path('song_leaderboard/<int:league_pk>/<int:song_pk>', views.song_leaderboard, name='song_leaderboard'),
 ]

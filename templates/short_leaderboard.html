@@ -62,9 +62,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for player in players %}
+                {% for participant in participants %}
+                    {% with participant.player as player %}
                     <tr>
-                        <td>#{{ player.rank }}</td>
+                        <td>#{{ participant.rank }}</td>
                         <td>
                             {% if user.player == player or user.player.rival == player %}<div class="enclosure">{% endif %}
                             <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
@@ -73,28 +74,28 @@
                             </a>
                         </td>
                         <td>
-                            <span {% if player.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_pos }}" {% endif %}>
-                                {{ player.count_pos|intcomma }}
+                            <span {% if participant.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_pos }}" {% endif %}>
+                                {{ participant.count_pos|intcomma }}
                             </span>
                         </td>
                         <td>
-                            {{ player.count_weight_acc|floatformat:2|intcomma }}
+                            {{ participant.count_weight_acc|floatformat:2|intcomma }}
                         </td>
                         <td>
-                            {% if player.theoretical == 100 %}
+                            {% if participant.theoretical == 100 %}
                                 <span class="diff" style="color:white">MAX</span>
                             {% else %}
-                                ({{ player.theoretical|floatformat:2 }} %)
+                                ({{ participant.theoretical|floatformat:2 }} %)
                             {% endif %}
                         </td>
                         <td>
-                            <span {% if player.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_valid }}" {% endif %}>
-                                {{ player.valid }}
+                            <span {% if participant.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_valid }}" {% endif %}>
+                                {{ participant.valid_count }}
                             </span>
                         </td>
                         <td>
                             <span style="{{ player.decorate }}"
-                                  {% if player.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ player.tooltip_acc }}" {% endif %}> {{ player.count_acc|floatformat:2 }} %
+                                  {% if participant.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_acc }}" {% endif %}> {{ participant.count_acc|floatformat:2 }} %
                             </span>
                         </td>
                         <td>
@@ -107,13 +108,14 @@
                                            src="{% static 'pencil.png' %}"
                                            width="25px"
                                            height="25px">
-                                    {{ player.comment }}
+                                    {{ participant.message }}
                                 </form>
                             {% else %}
-                                {{ player.comment }}
+                                {{ participant.message }}
                             {% endif %}
                         </td>
                     </tr>
+                    {% endwith %}
                 {% endfor %}
             </tbody>
         </table>

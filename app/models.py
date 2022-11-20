@@ -25,7 +25,7 @@ class Player(models.Model):
     hmd = models.CharField(default='', max_length=50)
     isSupporter = models.BooleanField(default=False)
     userColor = models.CharField(default='firebrick', max_length=100)
-    bgColor = models.CharField(default='#000000',max_length=100)
+    bgColor = models.CharField(default='#000000', max_length=100)
     isShadow = models.BooleanField(default=False)
 
     def __str__(self):
@@ -57,7 +57,8 @@ class Playlist(models.Model):
         Song, related_name='recommend', blank=True)
     description = models.CharField(default='', max_length=200, blank=True)
     isEditable = models.BooleanField(default=False)
-    CoEditor = models.ManyToManyField(Player, related_name='CoEditor',blank=True)
+    CoEditor = models.ManyToManyField(
+        Player, related_name='CoEditor', blank=True)
     isHidden = models.BooleanField(default=False)
 
     def __str__(self):
@@ -71,6 +72,7 @@ class SongInfo(models.Model):
 
     def __str__(self):
         return f'{self.playlist} {self.song} {self.order}'
+
 
 class League(models.Model):
     name = models.CharField(max_length=50)
@@ -121,7 +123,6 @@ class Score(models.Model):
     decorate = models.CharField(max_length=100, blank=True)
     valid = models.BooleanField(default=False)
 
-
     def __str__(self):
         name = self.player.name
         title = self.song.title
@@ -132,23 +133,25 @@ class Participant(models.Model):
     message = models.CharField(default='', max_length=50, blank=True)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     league = models.ForeignKey(League, on_delete=models.CASCADE)
-    # rank = models.IntegerField(default=0)
-    # pos = models.IntegerField(default=0)
-    # theoretical = models.FloatField(default=0)
-    # weight_acc = models.IntegerField(default=0)
-    # valid_count = models.IntegerField(default=0)
-    # valid_acc = models.FloatField(default=0)
-    # tooltip_pos = models.CharField(max_length=1500)
-    # tooltip_weight_acc = models.CharField(max_length=1500)
-    # tooltip_valid = models.CharField(max_length=1500)
-    # tooltip_pos = models.CharField(max_length=1500)
+    rank = models.IntegerField(default=0)
+    count_pos = models.IntegerField(default=0)
+    count_weight_acc = models.IntegerField(default=0)
+    theoretical = models.FloatField(default=0)
+    valid_count = models.IntegerField(default=0)
+    count_acc = models.FloatField(default=0)
+    tooltip_pos = models.CharField(default='', max_length=2000)
+    tooltip_weight_acc = models.CharField(default='', max_length=2000)
+    tooltip_valid = models.CharField(default='', max_length=2000)
+    tooltip_acc = models.CharField(default='', max_length=2000)
+    decorate = models.CharField(default='', max_length=100, blank=True)
 
     def __str__(self):
-        return str(self.message)
+        return f'{self.player} in {self.league}'
 
 
 class Headline(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True, blank=True)
+    player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(default='', max_length=200)
     time = models.DateTimeField()
 
@@ -159,7 +162,8 @@ class Headline(models.Model):
 class Badge(models.Model):
     name = models.CharField(max_length=50)
     image_name = models.CharField(max_length=50)
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='badges')
+    player = models.ForeignKey(
+        Player, on_delete=models.SET_NULL, null=True, blank=True, related_name='badges')
 
     def __str__(self):
         return str(self.name)

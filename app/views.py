@@ -1612,11 +1612,84 @@ def pos_acc_update(pk):
 
             score.save()
 
+    players = Player.objects.filter(league=league)
+    count_range = league.max_valid
+
+    for player in players:
+        participant = None
+        if Participant.objects.filter(league=league,player=player).exists():
+            participant = Participant.objects.get(league=league,player=player)
+        else:
+            participant = Participant.objects.create(league=league,player=player)
+        print(participant)
+        query = Score.objects.filter(league=league, player=player).order_by('-pos')
+        for i,score in enumerate(query):
+            score.valid = (i < count_range)
+            score.save()
+        score_list = query[:count_range]
+        valid_count = len(score_list)
+        max_pos = league.max_valid * (base + slope(1))
+        count_pos = sum([s.pos for s in score_list])
+        count_weight_acc = sum([s.weight_acc for s in score_list])
+        theoretical = count_pos / max_pos * 100
+        count_acc = 0
+        if valid_count > 0:
+            count_acc = sum([s.acc for s in score_list])/valid_count
+
+        # 精度により点数を強調
+        decorate = 'None'
+        if 95 <= count_acc and count_acc < 96:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+        if 96 <= count_acc and count_acc < 97:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+        if 97 <= count_acc and count_acc < 98:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+        if 98 <= count_acc and count_acc < 99:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+        if 99 <= count_acc and count_acc <= 100:
+            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+        # setattr(player, 'decorate', decorate)
+        participant.decorate = decorate
+
+        tooltip_pos = '<br>'.join(
+            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
+        tooltip_valid = '<br>'.join(
+            [f'{score.song.title[:25]}...' for score in score_list])
+        tooltip_acc = '<br>'.join(
+            [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
+        # setattr(player, 'count_pos', count_pos)
+        participant.count_pos = count_pos
+        # setattr(player, 'count_weight_acc', count_weight_acc)
+        participant.count_weight_acc = count_weight_acc
+        # setattr(player, 'theoretical', theoretical)
+        participant.theoretical = theoretical
+        # setattr(player, 'count_acc', count_acc)
+        participant.count_acc = count_acc
+        # setattr(player, 'valid', valid_count)
+        participant.valid_count = valid_count
+        # setattr(player, 'tooltip_pos', tooltip_pos)
+        participant.tooltip_pos = tooltip_pos
+        # setattr(player, 'tooltip_valid', tooltip_valid)
+        participant.tooltip_valid = tooltip_valid
+        # setattr(player, 'tooltip_acc', tooltip_acc)
+        participant.tooltip_acc = tooltip_acc
+        participant.save()
+
+    # 順位点→精度でソート
+    participants = Participant.objects.filter(league=league)
+
+    for rank, participant in enumerate(participants):
+        # setattr(player, 'rank', rank+1)
+        participant.rank = rank+1
+        participant.save
+
+
 
 def manual_league_update(request, pk=0):
     if not request.user.is_staff:
         return redirect('app:index')
     pos_acc_update(pk)
+    print('complete')
     return redirect('app:index')
 
 
@@ -1727,12 +1800,9 @@ def short_leaderboard(request, pk=0):
     songs = league.playlist.songs.all()
     params['songs'] = songs
 
-    # リーグ内プレイヤーの人数
-    base = league.player.count() + 3
-
     for song in songs:
         query = Score.objects.filter(
-            song=song, league=league, player__league=league).order_by('-score')[:3]
+            song=song, league=league, player__league=league).order_by('-score')[0]
         setattr(song, 'scores', query)
 
         if user.is_authenticated:
@@ -1741,62 +1811,7 @@ def short_leaderboard(request, pk=0):
                 print(additional_score)
                 setattr(song,'additional_score',additional_score)
 
-    players = Player.objects.filter(league=league)
-    count_range = league.max_valid
-
-    for player in players:
-        query = Score.objects.filter(league=league, player=player).order_by('-pos')
-        score_list = query[:count_range]
-        for score in score_list:
-            setattr(score, 'valid', 1)
-        valid_count = len(score_list)
-        max_pos = league.max_valid * (base + slope(1))
-        count_pos = sum([s.pos for s in score_list])
-        count_weight_acc = sum([s.weight_acc for s in score_list])
-        theoretical = count_pos / max_pos * 100
-        count_acc = 0
-        if valid_count > 0:
-            count_acc = sum([s.acc for s in score_list])/valid_count
-
-        # 精度により点数を強調
-        decorate = 'None'
-        if 95 <= count_acc and count_acc < 96:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-        if 96 <= count_acc and count_acc < 97:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-        if 97 <= count_acc and count_acc < 98:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-        if 98 <= count_acc and count_acc < 99:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-        if 99 <= count_acc and count_acc <= 100:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
-        setattr(player, 'decorate', decorate)
-
-        tooltip_pos = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
-        tooltip_valid = '<br>'.join(
-            [f'{score.song.title[:25]}...' for score in score_list])
-        tooltip_acc = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
-        setattr(player, 'count_pos', count_pos)
-        setattr(player, 'count_weight_acc', count_weight_acc)
-        setattr(player, 'theoretical', theoretical)
-        setattr(player, 'count_acc', count_acc)
-        setattr(player, 'valid', valid_count)
-        setattr(player, 'tooltip_pos', tooltip_pos)
-        setattr(player, 'tooltip_valid', tooltip_valid)
-        setattr(player, 'tooltip_acc', tooltip_acc)
-        if Participant.objects.filter(league=league, player=player).exists():
-            comment = Participant.objects.get(league=league, player=player)
-            setattr(player, 'comment', comment)
-    # 順位点→精度でソート
-    players = sorted(
-        players, key=lambda x: (-x.count_pos, -x.count_acc))
-
-    for rank, player in enumerate(players):
-        setattr(player, 'rank', rank+1)
-
-    params['players'] = players
+    params['participants'] = Participant.objects.filter(league=league)
     durtaion = time() - duration_start
     params['duration'] = durtaion * 1000
 

@@ -21,9 +21,7 @@
     in <a href="{% url 'app:short_leaderboard' pk=league.pk  %}"
     style="color:{{ league.color }}">{{ league }}</a>
 </p>
-<div id="{{ song.lid }}"
-     class="top5-target"
-     style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
+<div style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
     <div style="display:flex">
         <img src="{{ song.imageURL }}" class="thumb" alt="thumb" loading="lazy"/>
         <table class="table table-striped table-borderless"
@@ -33,7 +31,11 @@
                     <th width="70px">Rank</th>
                     <th width="250px">Player</th>
                     <th width="70px">順位点</th>
-                    <th width="70px">加重<br>精度</th>
+                    <th width="70px">
+                        加重
+                        <br>
+                        精度
+                    </th>
                     <th width="70px">
                         有効
                         <br>
@@ -101,8 +103,5 @@
             </tbody>
         </table>
     </div>
-    {% if scored_rank|length > 5 %}
-        <a class="top5-trigger" href="#{{ song.lid }}" style="margin-left:158px">すべて表示</a>
-    {% endif %}
 </div>
 {% endblock content %}

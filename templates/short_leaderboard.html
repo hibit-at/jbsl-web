@@ -156,30 +156,28 @@
                             </div>
                         </div>
                     </div>
-                    {% if additional_scores %}
+                    {% if additional_score %}
                     <div>
                         <table class="table table-striped table-borderless" style="width:90%;background:rgba(255,255,255,.5)">
                             <thead>
                                 <tr>
                                 <th>Rank</th>
-                                <th>Player</th>
+                                <th>You</th>
                                 <th>Acc</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for score in additional_scores %}
                                 <tr>
                                     <td>
-                                        {{score.rank}}
+                                        {{additional_score.rank}}
                                     </td>
                                     <td>
-                                        {{score.player}}
+                                        <img src="{{ additional_score.player.imageURL }}" class="icon">
                                     </td>
                                     <td>
-                                        {{score.acc|floatformat:2}}
+                                        {{additional_score.acc|floatformat:2}}
                                     </td>
                                 </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

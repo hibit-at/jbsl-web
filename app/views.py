@@ -1735,25 +1735,17 @@ def short_leaderboard(request, pk=0):
             song=song, league=league, player__league=league).order_by('-score')[:3]
         setattr(song, 'scores', query)
 
-        player_rank = -1
-    
         if user.is_authenticated:
-            if Score.objects.filter(song=song, league=league, player=player).exists():
-                player_rank = Score.objects.get(song=song, league=league, player=player).rank
-            print('player_rank',player_rank)
-            if player_rank > 0:
-                additional_scores = Score.objects.filter(
-                song=song, league=league, player__league=league).order_by('-score')[max(0,player_rank-2):player_rank+1]
-                print(additional_scores)
-                params['additional_scores'] = additional_scores
+            if Score.objects.filter(song=song, league=league, player=user.player).exists():
+                additional_score = Score.objects.get(song=song, league=league, player=user.player)
+                print(additional_score)
+                params['additional_score'] = additional_score
 
     players = Player.objects.filter(league=league)
     count_range = league.max_valid
 
     for player in players:
         query = Score.objects.filter(song=song, player=player).order_by('-pos')
-        print(player)
-        print(query)
         score_list = query[:count_range]
         for score in score_list:
             setattr(score, 'valid', 1)
@@ -1806,7 +1798,6 @@ def short_leaderboard(request, pk=0):
 
     params['players'] = players
     durtaion = time() - duration_start
-    print(durtaion)
     params['duration'] = durtaion * 1000
 
     return render(request, 'short_leaderboard.html', params)

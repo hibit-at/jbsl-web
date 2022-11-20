@@ -142,7 +142,7 @@
                                     {% endwith %}
                                 {% endif %}
                             </p>
-                            <div style="display:flex">
+                            {% comment %} <div style="display:flex">
                                 <p>
                                     {% if song.scores.1 %}
                                         {% with song.scores.1 as score %}<img src="{{ score.player.imageURL }}" class="icon">{% endwith %}
@@ -153,7 +153,7 @@
                                         {% with song.scores.2 as score %}<img src="{{ score.player.imageURL }}" class="icon">{% endwith %}
                                     {% endif %}
                                 </p>
-                            </div>
+                            </div> {% endcomment %}
                         </div>
                     </div>
                     {% if song.additional_score %}

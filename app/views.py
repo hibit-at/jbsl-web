@@ -1745,7 +1745,7 @@ def short_leaderboard(request, pk=0):
     count_range = league.max_valid
 
     for player in players:
-        query = Score.objects.filter(song=song, player=player).order_by('-pos')
+        query = Score.objects.filter(league=league, player=player).order_by('-pos')
         score_list = query[:count_range]
         for score in score_list:
             setattr(score, 'valid', 1)
@@ -1790,8 +1790,6 @@ def short_leaderboard(request, pk=0):
     # 順位点→精度でソート
     players = sorted(
         players, key=lambda x: (-x.count_pos, -x.count_acc))
-
-    players = players[:8]
 
     for rank, player in enumerate(players):
         setattr(player, 'rank', rank+1)

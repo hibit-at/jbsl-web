@@ -169,14 +169,14 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        {{ song.additional_score.rank }}
+                                        # {{ song.additional_score.rank }}
                                     </td>
                                     <td>
                                         <img src="{{ song.additional_score.player.imageURL }}" class="icon">
                                     </td>
                                     <td>
                                         <span style="{{ song.additional_score.decorate }}">
-                                        {{ song.additional_score.acc|floatformat:2 }}
+                                        {{ song.additional_score.acc|floatformat:2 }} %
                                         </span>
                                     </td>
                                 </tr>

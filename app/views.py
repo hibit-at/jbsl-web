@@ -1657,7 +1657,7 @@ def pos_acc_update(pk):
         tooltip_pos = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
         tooltip_weight_acc = '<br>'.join(
-            [f'{score.song.title[:25]}...({score.weight_acc:.2f}' for score in score_list])
+            [f'{score.song.title[:25]}...({score.weight_acc:.2f})' for score in score_list])
         tooltip_valid = '<br>'.join(
             [f'{score.song.title[:25]}...' for score in score_list])
         tooltip_acc = '<br>'.join(

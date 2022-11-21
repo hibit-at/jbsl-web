@@ -79,7 +79,7 @@
                             </span>
                         </td>
                         <td>
-                            {{ participant.count_weight_acc|floatformat:2|intcomma }}
+                            {{ participant.count_weight_acc|floatformat:2 }}
                         </td>
                         <td>
                             {% if participant.theoretical == 100 %}
@@ -94,7 +94,7 @@
                             </span>
                         </td>
                         <td>
-                            <span style="{{ player.decorate }}"
+                            <span style="{{ participant.decorate }}"
                                   {% if participant.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_acc }}" {% endif %}> {{ participant.count_acc|floatformat:2 }} %
                             </span>
                         </td>

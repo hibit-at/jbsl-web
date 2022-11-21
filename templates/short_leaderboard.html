@@ -137,8 +137,8 @@
                         <div style="text-align:center;margin-left:10px;width:170">
                             Top
                             <p style="margin-top:5px">
-                                {% if song.scores.0 %}
-                                    {% with song.scores.0 as score %}
+                                {% if song.scores %}
+                                    {% with song.scores as score %}
                                         <img src="{{ score.player.imageURL }}"
                                              class="icon"
                                              style="width:60px;height:60px;border-radius:40px">

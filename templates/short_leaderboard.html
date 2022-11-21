@@ -40,7 +40,8 @@
                         順位点
                     </th>
                     <th width="100px">
-                        有効重<br />
+                        有効重
+                        <br />
                         付精度
                     </th>
                     <th width="100px">
@@ -64,57 +65,59 @@
             <tbody>
                 {% for participant in participants %}
                     {% with participant.player as player %}
-                    <tr>
-                        <td>#{{ participant.rank }}</td>
-                        <td>
-                            {% if user.player == player or user.player.rival == player %}<div class="enclosure">{% endif %}
-                            <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
-                                <img src="{{ player.imageURL }}" class="icon" alt="icon" />
-                                {% include 'player_element.html' %}
-                            </a>
-                        </td>
-                        <td>
-                            <span {% if participant.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_pos }}" {% endif %}>
-                                {{ participant.count_pos|intcomma }}
-                            </span>
-                        </td>
-                        <td>
-                            {{ participant.count_weight_acc|floatformat:2|intcomma }}
-                        </td>
-                        <td>
-                            {% if participant.theoretical == 100 %}
-                                <span class="diff" style="color:white">MAX</span>
-                            {% else %}
-                                ({{ participant.theoretical|floatformat:2 }} %)
-                            {% endif %}
-                        </td>
-                        <td>
-                            <span {% if participant.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_valid }}" {% endif %}>
-                                {{ participant.valid_count }}
-                            </span>
-                        </td>
-                        <td>
-                            <span style="{{ participant.decorate }}"
-                                  {% if participant.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_acc }}" {% endif %}> {{ participant.count_acc|floatformat:2 }} %
-                            </span>
-                        </td>
-                        <td>
-                            {% if user.player == player %}
-                                <form method="post" action="{% url 'app:league_comment' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="player" value=" {{ player.pk }} ">
-                                    <input type="hidden" name="league" value=" {{ league.pk }} ">
-                                    <input type="image"
-                                           src="{% static 'pencil.png' %}"
-                                           width="25px"
-                                           height="25px">
+                        <tr>
+                            <td>#{{ participant.rank }}</td>
+                            <td>
+                                {% if user.player == player or user.player.rival == player %}<div class="enclosure">{% endif %}
+                                <a href="{% url 'app:userpage' sid=player.sid %}" style="color:black">
+                                    <img src="{{ player.imageURL }}" class="icon" alt="icon" />
+                                    {% include 'player_element.html' %}
+                                </a>
+                            </td>
+                            <td>
+                                <span {% if participant.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_pos }}" {% endif %}>
+                                    {{ participant.count_pos|intcomma }}
+                                </span>
+                            </td>
+                            <td>
+                                <span {% if participant.tooltip_weight_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_weight_acc }}" {% endif %}>
+                                    {{ participant.count_weight_acc|floatformat:2|intcomma }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if participant.theoretical == 100 %}
+                                    <span class="diff" style="color:white">MAX</span>
+                                {% else %}
+                                    ({{ participant.theoretical|floatformat:2 }} %)
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span {% if participant.tooltip_valid %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_valid }}" {% endif %}>
+                                    {{ participant.valid_count }}
+                                </span>
+                            </td>
+                            <td>
+                                <span style="{{ participant.decorate }}"
+                                      {% if participant.tooltip_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_acc }}" {% endif %}> {{ participant.count_acc|floatformat:2 }} %
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.player == player %}
+                                    <form method="post" action="{% url 'app:league_comment' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="player" value=" {{ player.pk }} ">
+                                        <input type="hidden" name="league" value=" {{ league.pk }} ">
+                                        <input type="image"
+                                               src="{% static 'pencil.png' %}"
+                                               width="25px"
+                                               height="25px">
+                                        {{ participant.message }}
+                                    </form>
+                                {% else %}
                                     {{ participant.message }}
-                                </form>
-                            {% else %}
-                                {{ participant.message }}
-                            {% endif %}
-                        </td>
-                    </tr>
+                                {% endif %}
+                            </td>
+                        </tr>
                     {% endwith %}
                 {% endfor %}
             </tbody>

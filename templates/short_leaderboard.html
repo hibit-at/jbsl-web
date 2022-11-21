@@ -79,7 +79,7 @@
                             </span>
                         </td>
                         <td>
-                            {{ participant.count_weight_acc|floatformat:2 }}
+                            {{ participant.count_weight_acc|floatformat:2|intcomma }}
                         </td>
                         <td>
                             {% if participant.theoretical == 100 %}

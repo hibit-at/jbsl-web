@@ -871,7 +871,8 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         setattr(player, 'tooltip_valid', tooltip_valid)
         setattr(player, 'tooltip_acc', tooltip_acc)
         if Participant.objects.filter(league=league, player=player).exists():
-            comment = Participant.objects.get(league=league, player=player).message
+            comment = Participant.objects.get(
+                league=league, player=player).message
             setattr(player, 'comment', comment)
         players.append(player)
     # 順位点→精度でソート
@@ -1617,13 +1618,15 @@ def pos_acc_update(pk):
 
     for player in players:
         participant = None
-        if Participant.objects.filter(league=league,player=player).exists():
-            participant = Participant.objects.get(league=league,player=player)
+        if Participant.objects.filter(league=league, player=player).exists():
+            participant = Participant.objects.get(league=league, player=player)
         else:
-            participant = Participant.objects.create(league=league,player=player)
+            participant = Participant.objects.create(
+                league=league, player=player)
         print(participant)
-        query = Score.objects.filter(league=league, player=player).order_by('-pos')
-        for i,score in enumerate(query):
+        query = Score.objects.filter(
+            league=league, player=player).order_by('-pos')
+        for i, score in enumerate(query):
             score.valid = (i < count_range)
             score.save()
         score_list = query[:count_range]
@@ -1653,6 +1656,8 @@ def pos_acc_update(pk):
 
         tooltip_pos = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
+        tooltip_weight_acc = '<br>'.join(
+            [f'{score.song.title[:25]}...({score.weight_acc:.2f}' for score in score_list])
         tooltip_valid = '<br>'.join(
             [f'{score.song.title[:25]}...' for score in score_list])
         tooltip_acc = '<br>'.join(
@@ -1673,16 +1678,17 @@ def pos_acc_update(pk):
         participant.tooltip_valid = tooltip_valid
         # setattr(player, 'tooltip_acc', tooltip_acc)
         participant.tooltip_acc = tooltip_acc
+        participant.tooltip_weight_acc = tooltip_weight_acc
         participant.save()
 
     # 順位点→精度でソート
-    participants = Participant.objects.filter(league=league).order_by('-count_pos')
+    participants = Participant.objects.filter(
+        league=league).order_by('-count_pos')
 
     for rank, participant in enumerate(participants):
         # setattr(player, 'rank', rank+1)
         participant.rank = rank+1
         participant.save()
-
 
 
 def manual_league_update(request, pk=0):
@@ -1714,11 +1720,13 @@ def short_leaderboard(request, pk=0):
 
         if user.is_authenticated:
             if Score.objects.filter(song=song, league=league, player=user.player).exists():
-                additional_score = Score.objects.get(song=song, league=league, player=user.player)
+                additional_score = Score.objects.get(
+                    song=song, league=league, player=user.player)
                 print(additional_score)
-                setattr(song,'additional_score',additional_score)
+                setattr(song, 'additional_score', additional_score)
 
-    params['participants'] = Participant.objects.filter(league=league).order_by('-count_pos')
+    params['participants'] = Participant.objects.filter(
+        league=league).order_by('-count_pos')
     durtaion = time() - duration_start
     params['duration'] = durtaion * 1000
 

@@ -18,7 +18,7 @@
     <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
 </h3>
 <p>
-    in <a href="{% url 'app:short_leaderboard' pk=league.pk  %}"
+    in <a href="{% url 'app:short_leaderboard' pk=league.pk %}"
     style="color:{{ league.color }}">{{ league }}</a>
 </p>
 <div style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">

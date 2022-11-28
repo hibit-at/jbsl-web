@@ -8,7 +8,7 @@
         Player : {{ player.name }}
     </p>
     <p>
-        現在のコメント : {{ player.comment }}
+        現在のコメント : {{ player.comment.message }}
     </p>
     <form method="POST">
         {% csrf_token %}
@@ -17,7 +17,7 @@
         <input type="text"
         size="80px"
         name="comment"
-        value="{{ player.comment }}"/>
+        value="{{ player.comment.message }}"/>
         <button type="submit" class="btn">変更</button>
     </form>
 {% endblock content %}

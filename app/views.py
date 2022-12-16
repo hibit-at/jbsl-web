@@ -1781,7 +1781,7 @@ def beatleader_submission(request):
         print(score)
         defaults = {
             'score': score,
-            'acc': float(res['accuracy']),
+            'acc': float(res['accuracy'])*100,
             'rawPP': 0,
             'miss': int(res['missedNotes']),
             }

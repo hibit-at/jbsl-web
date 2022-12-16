@@ -358,7 +358,7 @@
     <p>
         順位の計算に要した時間：{{ duration | floatformat:0 }} ms
     </p>
-    {% if league.isLive %}
+    {% if league.isLive and isMember%}
         <form method="POST" action="{% url 'app:beatleader_submission' %}">
             {% csrf_token %}
             Beta :

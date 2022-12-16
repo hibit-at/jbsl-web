@@ -50,14 +50,20 @@
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
                 <span class="dl_link">PLAYLIST
-                    <img src="{% static 'DL_white.png' %}" height="25px" width="25px" loading="lazy">
+                    <img src="{% static 'DL_white.png' %}"
+                         height="25px"
+                         width="25px"
+                         loading="lazy">
                 </span>
             </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
                     <h4>プレイリストの詳細</h4>
                     ">
-                    <img src="{% static 'pict_playlist.png' %}" height="40px" width="40px" loading="lazy">
+                    <img src="{% static 'pict_playlist.png' %}"
+                         height="40px"
+                         width="40px"
+                         loading="lazy">
                 </span>
             </a>
         </h3>
@@ -75,22 +81,22 @@
             {% endif %}
             有効譜面数 {{ league.max_valid }}
         </p>
-            <div style="display:inline-flex;">
-                {% if join_state < 5 %}
-                    {{ join_comment }}
-                {% else %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
-                    </form>
-                {% endif %}
-                {% if not isMember and user.is_authenticated %}
-                    <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
-                        <button class="btn" style="margin-left:20px">バーチャル参加</button>
-                    </form>
-                {% endif %}
-            </div>
-        <details style="margin-bottom:20px" {{ comment_open }} >
+        <div style="display:inline-flex;">
+            {% if join_state < 5 %}
+                {{ join_comment }}
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
+                </form>
+            {% endif %}
+            {% if not isMember and user.is_authenticated %}
+                <form method="get" action="{% url 'app:virtual_league' pk=league.pk %}">
+                    <button class="btn" style="margin-left:20px">バーチャル参加</button>
+                </form>
+            {% endif %}
+        </div>
+        <details style="margin-bottom:20px" {{ comment_open }}>
             <summary>
                 Owner's Comment
             </summary>
@@ -246,7 +252,9 @@
                             </th>
                             <th width="100px">Accuracy</th>
                             <th width="100px">Miss</th>
-                            <th width="auto">Message</th>
+                            <th width="auto">
+                                Message
+                            </th>
                         </tr>
                     </thead>
                     <tbody style="color:black">
@@ -273,7 +281,11 @@
                                 </td>
                                 <td>
                                     {% if score.valid %}
-                                        <img src={% static 'simple_check.png' %} height="15px" width="15px" loading="lazy">
+                                        <img src
+                                             {% static 'simple_check.png' %}
+                                             height="15px"
+                                             width="15px"
+                                             loading="lazy">
                                     {% endif %}
                                 </td>
                                 <td>
@@ -340,13 +352,23 @@
             {% endif %}
         {% endif %}
     </div>
-    <p>現在の負荷係数：{{load_index }} ( = {{ league.playlist.songs.all | length }} x {{ league.player.all | length }} )</p>
-    <p>順位の計算に要した時間：{{duration | floatformat:0 }} ms</p>
-    <form method="POST" action="{% url 'app:beatleader_submission' %}">
-        {% csrf_token %}
-        Beta : <button class="btn" name="league_pk" value="{{ league.pk }}">BeatLeader Submission</button></a>
+    <p>
+        現在の負荷係数：{{ load_index }} ( = {{ league.playlist.songs.all | length }} x {{ league.player.all | length }} )
+    </p>
+    <p>
+        順位の計算に要した時間：{{ duration | floatformat:0 }} ms
+    </p>
+    {% if league.isLive %}
+        <form method="POST" action="{% url 'app:beatleader_submission' %}">
+            {% csrf_token %}
+            Beta :
+            <button class="btn" name="league_pk" value="{{ league.pk }}">
+                BeatLeader Submission
+            </button>
+        </a>
     </form>
-    <script>
+{% endif %}
+<script>
 function check(){
 if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
     return true; // 「OK」時は送信を実行
@@ -402,5 +424,5 @@ window.addEventListener('load',function(){
   setInterval('location.reload()',timer);
 });
 
-    </script>
+</script>
 {% endblock content %}

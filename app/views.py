@@ -1749,3 +1749,53 @@ def song_leaderboard(request, league_pk, song_pk):
     params['league'] = league
     params['song'] = song
     return render(request, 'song_leaderboard.html', params)
+
+
+@login_required
+def beatleader_submission(request):
+    if request.method != 'POST':
+        return redirect('app:index')
+    player = request.user.player
+    # print(player)
+    post = request.POST
+    # print(post)
+    league_pk = int(post['league_pk'])
+    league = League.objects.get(pk=league_pk)
+    # print(league)
+    playlist = league.playlist
+    songs = playlist.songs.all()
+    params = {}
+    results = []
+    print(songs)
+    for song in songs:
+        updated = False
+        url = f'https://api.beatleader.xyz/score/{player.sid}/{song.hash}/{song.diff}/{song.char}'
+        # print(url)
+        res = requests.get(url)
+        status_code = res.status_code
+        if status_code != 200:
+            continue
+        res = res.json()
+        # print(res)
+        score = int(res['modifiedScore'])
+        print(score)
+        defaults = {
+            'score': score,
+            'acc': float(res['accuracy']),
+            'rawPP': 0,
+            'miss': int(res['missedNotes']),
+            }
+        score_to_headline(score, song, player, league)
+        score_obj = Score.objects.update_or_create(
+            player=player,
+            song=song,
+            league=league,
+            defaults=defaults,
+        )[0]
+        result = f'score found {song} {score} ({score_obj.acc*100}) %'
+        if updated:
+            result += ' ... UPDATED!'
+        results.append(result)        
+    params['league'] = league
+    params['results'] = results
+    return render(request, 'beatleader_submission.html',params)

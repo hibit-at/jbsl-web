@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <h4>BeatLeader Submission</h4>
+    <p>
+        {{ laegue }}
+    </p>
+    <ul>
+        {% for result in results %}<li>{{ result }}</li>{% endfor %}
+    </ul>
+{% endblock content %}

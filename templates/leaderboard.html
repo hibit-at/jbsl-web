@@ -342,6 +342,10 @@
     </div>
     <p>現在の負荷係数：{{load_index }} ( = {{ league.playlist.songs.all | length }} x {{ league.player.all | length }} )</p>
     <p>順位の計算に要した時間：{{duration | floatformat:0 }} ms</p>
+    <form method="POST" action="{% url 'app:beatleader_submission' %}">
+        {% csrf_token %}
+        Beta : <button class="btn" name="league_pk" value="{{ league.pk }}">BeatLeader Submission</button></a>
+    </form>
     <script>
 function check(){
 if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示

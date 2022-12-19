@@ -122,7 +122,7 @@ class Score(models.Model):
     weight_acc = models.FloatField(default=0)
     decorate = models.CharField(max_length=100, blank=True)
     valid = models.BooleanField(default=False)
-    beatleader = models.CharField(default='', max_length=100)
+    beatleader = models.CharField(default='', max_length=100, blank=True)
 
     def __str__(self):
         name = self.player.name

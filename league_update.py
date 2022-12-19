@@ -109,6 +109,11 @@ def league_update_process():
                         'rawPP': rawPP,
                         'miss': miss,
                     }
+                    if Score.objects.filter(player=player, song=song, league=league).exists():
+                        old_score = Score.objects.get(player=player, song=song, league=league)
+                        if score <= old_score.score:
+                            print('already updated score')
+                            break
                     if league in player.league.all():
                         score_to_headline(score, song, player, league)
                     Score.objects.update_or_create(

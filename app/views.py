@@ -289,7 +289,7 @@ def score_to_headline(new_score, song, player, league):
             old_acc = old_score.acc
             # new_acc = new_score/(115*8*int(song.notes)-7245)*100
             new_acc = score_to_acc(new_score, song.notes)
-            Headline.objects.create(
+            return Headline.objects.create(
                 player=player,
                 time=datetime.now(),
                 text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
@@ -297,7 +297,7 @@ def score_to_headline(new_score, song, player, league):
     else:
         # new_acc = new_score/(115*8*int(song.notes)-7245)*100
         new_acc = score_to_acc(new_score, song.notes)
-        Headline.objects.create(
+        return Headline.objects.create(
             player=player,
             time=datetime.now(),
             text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {new_acc:.2f} %'

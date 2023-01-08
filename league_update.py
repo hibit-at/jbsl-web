@@ -114,14 +114,21 @@ def league_update_process():
                         if score <= old_score.score:
                             print('already updated score')
                             break
+                    new_headline = None
                     if league in player.league.all():
-                        score_to_headline(score, song, player, league)
-                    Score.objects.update_or_create(
+                        new_headline = score_to_headline(score, song, player, league)
+                    if new_headline != None:
+                        print("headline attached", new_headline)
+                    new_score, check = Score.objects.update_or_create(
                         player=player,
                         song=song,
                         league=league,
                         defaults=defaults,
                     )
+                    if new_headline != None:
+                        print(new_score)
+                        new_headline.score = new_score
+                        new_headline.save()
                     print('score updated!')
                     break
         print(league)

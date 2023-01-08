@@ -155,6 +155,7 @@ class Headline(models.Model):
         Player, on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(default='', max_length=200)
     time = models.DateTimeField()
+    score = models.ForeignKey(Score, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'{str(self.player)} -> {str(self.text)}'

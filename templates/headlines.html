@@ -3,14 +3,7 @@
     <h4>All Headlines</h4>
     {% for headline in headlines %}
         <ul>
-            <li>
-                {% if headline.player != None %}
-                    <a href="{% url 'app:userpage' sid=headline.player.sid %}">
-                        <img src="{{ headline.player.imageURL }}" class="icon"/>
-                    </a>
-                {% endif %}
-                {{ headline.text }} （{{ headline.time }}）
-            </li>
+            {% include 'headline_object.html' %}
         </ul>
     {% endfor %}
     <div style="margin:20px">

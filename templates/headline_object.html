@@ -1,0 +1,19 @@
+{% load static %}
+<li>
+    {% if headline.player != None %}
+        <a href="{% url 'app:userpage' sid=headline.player.sid %}">
+            <img src="{{ headline.player.imageURL }}" class="icon" />
+        </a> {{ headline.text }} （{{ headline.time }}）
+    {% else %}
+        {{ headline.text }}
+    {% endif %}
+    {% if headline.score != None %}
+        <a href="{% url 'app:leaderboard' pk=headline.score.league.id%}#{{headline.score.song.lid}}" style="color:orange">League</a>
+        {% if headline.score.beatleader != '' %}
+            <a href="https://replay.beatleader.xyz/?scoreId={{ headline.score.beatleader }}"
+                target="blank">
+                <img src="{% static 'BeatLeader.png' %}" width=25 height=25 style="filter: brightness(300%)">
+            </a>
+        {% endif %}
+    {% endif %}
+</li>

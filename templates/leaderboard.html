@@ -252,6 +252,7 @@
                             </th>
                             <th width="100px">Accuracy</th>
                             <th width="100px">Miss</th>
+                            <th width="100px">Replay</th>
                             <th width="auto">
                                 Message
                             </th>
@@ -297,6 +298,11 @@
                                         <span class="diff" style="color:white">FC</span>
                                     {% else %}
                                         {{ score.miss }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if score.beatleader != '' %}
+                                    <a href="https://replay.beatleader.xyz/?scoreId={{score.beatleader}}" target="blank"><img src="{% static 'BeatLeader.png' %}" width=25 height=25></a>
                                     {% endif %}
                                 </td>
                                 <td>

@@ -40,7 +40,7 @@
                 <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
             </h3>
         {% endif %}
-        </div>
+    </div>
     <h3>Headlines</h3>
     {% for headline in headlines %}
         <ul>
@@ -51,6 +51,14 @@
                     </a> {{ headline.text }} （{{ headline.time }}）
                 {% else %}
                     {{ headline.text }}
+                {% endif %}
+                {% if headline.score != None %}
+                    {% if headline.score.beatleader != '' %}
+                        <a href="https://replay.beatleader.xyz/?scoreId={{ headline.score.beatleader }}"
+                           target="blank">
+                            <img src="{% static 'BeatLeader.png' %}" width=25 height=25 style="filter: brightness(300%)">
+                        </a>
+                    {% endif %}
                 {% endif %}
             </li>
         </ul>

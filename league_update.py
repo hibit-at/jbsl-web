@@ -109,11 +109,29 @@ def league_update_process():
                         'rawPP': rawPP,
                         'miss': miss,
                     }
+
+
                     if Score.objects.filter(player=player, song=song, league=league).exists():
                         old_score = Score.objects.get(player=player, song=song, league=league)
                         if score <= old_score.score:
                             print('already updated score')
                             break
+
+                    # BeatLeader Get
+                    sid = player.sid
+                    hash = song.hash
+                    diff = song.diff
+                    mode = song.char
+                    print(sid,hash,diff,mode)
+                    url = f'https://api.beatleader.xyz/score/{sid}/{hash}/{diff}/{mode}'
+                    print(url)
+                    res = requests.get(url)
+                    print(res.status_code)
+                    if res.status_code == 200:
+                        beatleader = res.json()['id']
+                        print(beatleader)
+                        defaults['beatleader'] = beatleader
+
                     new_headline = None
                     if league in player.league.all():
                         new_headline = score_to_headline(score, song, player, league)

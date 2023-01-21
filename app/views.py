@@ -1171,7 +1171,10 @@ def players(request):
             invitations = player.invite.all()
             params['invitations'] = invitations
     active_players = Player.objects.filter(
-        isActivated=True).order_by('-borderPP')
+        isActivated=True).order_by('-yurufuwa')
+    
+    
+
     params['active_players'] = active_players
     return render(request, 'players.html', params)
 

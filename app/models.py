@@ -27,6 +27,7 @@ class Player(models.Model):
     userColor = models.CharField(default='firebrick', max_length=100)
     bgColor = models.CharField(default='#000000', max_length=100)
     isShadow = models.BooleanField(default=False)
+    yurufuwa = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.name)

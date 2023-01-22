@@ -18,6 +18,11 @@ def update_process():
         player.save()
     
     for league in League.objects.all():
+        for player in league.player.all():
+            player.yurufuwa += 1
+            player.save()
+        league.owner.yurufuwa += 1
+        league.owner.save()
         if league.first != None:
             league.first.yurufuwa += 3
             league.first.save()

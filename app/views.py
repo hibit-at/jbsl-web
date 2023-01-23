@@ -39,6 +39,7 @@ char_dict = {
 char_dict_inv = {
     'Standard': 'SoloStandard',
     'Lawless': 'SoloLawless',
+    'OneSaber' : 'SoloOneSaber'
 }
 
 col_dict = {
@@ -442,18 +443,31 @@ def search_lid(hash, gameMode, diff_num):
 def add_playlist(playlist, json_data):
     for song in json_data['songs']:
         hash = song['hash']
-        print(song)
+        print('searched song is', song)
+        key = song['key']
+        difficulty = None
+        gameMode = None
+        char = None
         if 'difficulties' not in song:
-            continue
-        difficulty = song['difficulties'][0]
-        char = difficulty['characteristic']
-        gameMode = char_dict_inv[char]
-        diff = difficulty['name']
-        diff = diff[0].upper() + diff[1:]
+            url = f'https://api.beatsaver.com/maps/id/{key}'
+            res =requests.get(url).json()
+            version = res['versions'][0]
+            difficulty = version['diffs'][-1]
+            diff = difficulty['difficulty']
+            char = difficulty['characteristic']
+            gameMode = char_dict_inv[char]
+        else:
+            difficulty = song['difficulties'][0]
+            char = difficulty['characteristic']
+            gameMode = char_dict_inv[char]
+            diff = difficulty['name']
+            diff = diff[0].upper() + diff[1:]
         print(diff)
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
+            print('song does not exist so create')
             diff_num = diff_label_inv[diff]
-            if search_lid(hash, gameMode, diff_num) == False:
+            if search_lid(hash, gameMode, diff_num) == None:
+                print('no LID')
                 continue
             lid = search_lid(hash, gameMode, diff_num)
             create_song_by_hash(hash, diff_num, char, lid)
@@ -480,8 +494,7 @@ def create_playlist(request):
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
             image = json_data['image']
-            if image.startswith('base64'):
-                image = 'data:image/png;' + image
+            image = 'data:image/png;base64,' + image
             description = ''
             if 'playlistDescription' in json_data:
                 description = json_data['playlistDescription']
@@ -505,7 +518,7 @@ def create_playlist(request):
             add_playlist(playlist, json_data)
             print(playlist.title)
             print(playlist.songs.all())
-            return redirect('app:playlists')
+            return redirect('app:playlists',1)
         if 'title' in post:
             title = post['title']
             description = post['description']
@@ -705,7 +718,7 @@ def playlist(request, pk):
             print(confirm, title)
             if confirm == title:
                 playlist.delete()
-                return redirect('app:playlists')
+                return redirect('app:playlists', 1)
         if 'editable' in post:
             playlist.isEditable = not playlist.isEditable
             playlist.save()

@@ -108,7 +108,7 @@
             <td>{{ song.author }}</td>
             <td>
                 <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                {% if song.char == 'Lawless' %}<b> Lawless</b>{% endif %}
+                {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
             </td>
             <td>
                 {% if isEditor and playlist.isEditable %}

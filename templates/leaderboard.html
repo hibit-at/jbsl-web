@@ -221,7 +221,7 @@
     {% for song in LBs %}
         <p>
             <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
-                {% if song.char == 'Lawless' %}{{ song.char }}{% endif %}
+                {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
             </span></span> by {{ song.author }}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
                style="filter:invert()">

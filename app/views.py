@@ -39,7 +39,7 @@ char_dict = {
 char_dict_inv = {
     'Standard': 'SoloStandard',
     'Lawless': 'SoloLawless',
-    'OneSaber' : 'SoloOneSaber'
+    'OneSaber': 'SoloOneSaber'
 }
 
 col_dict = {
@@ -210,8 +210,27 @@ def userpage(request, sid=0):
         else:
             player.isShadow = False
         if 'mapper' in post:
-            player.mapper = post['mapper']
-        player.save()
+            if post['mapper'] == '':
+                player.mapper = 0
+                player.mapper_name = ''
+            else:
+                mapper_id = post['mapper']
+                if Player.objects.filter(mapper=mapper_id).exists():
+                    params['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
+                else:
+                    url = f'https://api.beatsaver.com/users/id/{mapper_id}'
+                    mapper_name = requests.get(url).json()['name']
+                    player.mapper = int(mapper_id)
+                    player.mapper_name = mapper_name
+                    player.save()
+                    import sys
+                    sys.path.append('../')
+                    import JPMap_process
+                    JPMap_process.collect_by_player(player)
+                    print('collect player latest maps')
+                    JPMap_process.weekly()
+                    JPMap_process.biweekly()
+            player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)
     params['eyebeam'] = eyebeam
@@ -452,7 +471,7 @@ def add_playlist(playlist, json_data):
         char = None
         if 'difficulties' not in song:
             url = f'https://api.beatsaver.com/maps/id/{key}'
-            res =requests.get(url).json()
+            res = requests.get(url).json()
             version = res['versions'][0]
             difficulty = version['diffs'][-1]
             diff = difficulty['difficulty']
@@ -520,7 +539,7 @@ def create_playlist(request):
             add_playlist(playlist, json_data)
             print(playlist.title)
             print(playlist.songs.all())
-            return redirect('app:playlists',1)
+            return redirect('app:playlists', 1)
         if 'title' in post:
             title = post['title']
             description = post['description']
@@ -1186,9 +1205,7 @@ def players(request):
             invitations = player.invite.all()
             params['invitations'] = invitations
     active_players = Player.objects.filter(
-        isActivated=True).order_by('-yurufuwa','-borderPP')
-    
-    
+        isActivated=True).order_by('-yurufuwa', '-borderPP')
 
     params['active_players'] = active_players
     return render(request, 'players.html', params)
@@ -1802,7 +1819,7 @@ def beatleader_submission(request):
             'acc': float(res['accuracy'])*100,
             'rawPP': 0,
             'miss': int(res['missedNotes']),
-            }
+        }
         score_to_headline(score, song, player, league)
         score_obj = Score.objects.update_or_create(
             player=player,
@@ -1813,7 +1830,7 @@ def beatleader_submission(request):
         result = f'score found {song} {score} ({score_obj.acc*100}) %'
         if updated:
             result += ' ... UPDATED!'
-        results.append(result)        
+        results.append(result)
     params['league'] = league
     params['results'] = results
-    return render(request, 'beatleader_submission.html',params)
+    return render(request, 'beatleader_submission.html', params)

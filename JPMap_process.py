@@ -6,6 +6,51 @@ from datetime import datetime, timedelta
 import calendar
 
 
+def collect_by_player(player):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    from app.models import JPMap
+    print(player.mapper)
+    mapper = player.mapper
+    if mapper > 0:
+        url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
+        res = requests.get(url).json()['docs']
+        print(res)
+        for r in res:
+            name = r['name']
+            bsr = r['id']
+            hash = r['versions'][0]['hash']
+            # print(r['name'])
+            createdAt = r['createdAt']
+            # print(r['createdAt'])
+            for d in r['versions'][0]['diffs']:
+                # print(d)
+                nps = d['nps']
+                char = d['characteristic']
+                dif = d['difficulty']
+                print(name, createdAt, nps, char, dif)
+                year = int(createdAt[0:4])
+                month = int(createdAt[5:7])
+                day = int(createdAt[8:10])
+                hour = int(createdAt[11:13])
+                minute = int(createdAt[14:16])
+                print(year, month, day, hour, minute)
+                time = datetime(year, month, day, hour, minute)
+                if JPMap.objects.filter(hash=hash, diff=dif, char=char).exists():
+                    print('exist!')
+                    continue
+                JPMap.objects.create(
+                    uploader=player,
+                    name=name,
+                    bsr=bsr,
+                    hash=hash,
+                    char=char,
+                    diff=dif,
+                    nps=nps,
+                    createdAt=time,
+                )
+
+
 def collection():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -13,7 +58,7 @@ def collection():
     for player in Player.objects.all():
         print(player.mapper)
         mapper = player.mapper
-        if mapper > 1:
+        if mapper > 0:
             url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
             res = requests.get(url).json()['docs']
             print(res)
@@ -169,7 +214,7 @@ def monthly():
 def weekly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import JPMap, Playlist, Player
+    from app.models import JPMap, Playlist, Player, Song
     from app.views import create_song_by_hash, search_lid,diff_label_inv,char_dict_inv
     now = datetime.now()
     start = now - timedelta(days=7)
@@ -195,10 +240,13 @@ def weekly():
             continue
         gameMode = char_dict_inv[song.char]
         print(gameMode)
-        lid = search_lid(song.hash, gameMode, dif_num)
-        if lid == None:
-            print('no lid detected')
-            continue
+        if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
+            lid = search_lid(song.hash, gameMode, dif_num)
+            if lid == None:
+                print('no lid detected')
+                continue
+        else:
+            lid = Song.objects.get(hash=song.hash, diff=song.diff, char=song.char).lid
         print(lid)
         new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
         print(new_song)
@@ -209,7 +257,7 @@ def weekly():
 def biweekly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import JPMap, Playlist, Player
+    from app.models import JPMap, Playlist, Player, Song
     from app.views import create_song_by_hash, search_lid,diff_label_inv,char_dict_inv
     now = datetime.now()
     start = now - timedelta(days=14)
@@ -235,10 +283,13 @@ def biweekly():
             continue
         gameMode = char_dict_inv[song.char]
         print(gameMode)
-        lid = search_lid(song.hash, gameMode, dif_num)
-        if lid == None:
-            print('no lid detected')
-            continue
+        if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
+            lid = search_lid(song.hash, gameMode, dif_num)
+            if lid == None:
+                print('no lid detected')
+                continue
+        else:
+            lid = Song.objects.get(hash=song.hash, diff=song.diff, char=song.char).lid
         print(lid)
         new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
         print(new_song)

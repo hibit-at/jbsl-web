@@ -2,6 +2,7 @@
 {% block content %}
     {% load static %}
     {% load humanize %}
+    {% if mapper_error %}<h2 style="color:yellow">{{ mapper_error }}</h2>{% endif %}
     <h3>
         {% include "player_element.html" %}
         's Page
@@ -201,11 +202,10 @@
         マッパー情報
     </h4>
     <p>
-        BeatSaverUploaderID :
         {% if player.mapper == 0 %}
-            登録なし
+            マッパー名 : 登録なし
         {% else %}
-            {{ player.mapper }}
+            マッパー名 : {{ player.mapper_name }}
         {% endif %}
     </p>
     {% if user.player == player %}
@@ -217,9 +217,13 @@
                 {% csrf_token %}
                 <p>
                     <label>
-                        BeatSaverUploaderID :
+                        https://beatsaver.com/profile/
                     </label>
-                    <input type="text" size="50" name="mapper" value={{ player.mapper }}>
+                    {% if player.mapper == 0 %}
+                        <input type="text" size="50" name="mapper" value=''>
+                    {% else %}
+                        <input type="text" size="50" name="mapper" value={{ player.mapper }}>
+                    {% endif %}
                 </p>
                 <button class="btn" type="submit">
                     登録/変更

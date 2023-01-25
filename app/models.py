@@ -28,6 +28,7 @@ class Player(models.Model):
     bgColor = models.CharField(default='#000000', max_length=100)
     isShadow = models.BooleanField(default=False)
     yurufuwa = models.IntegerField(default=0)
+    mapper = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.name)
@@ -47,6 +48,20 @@ class Song(models.Model):
 
     def __str__(self):
         return f'{self.title} ({self.diff}) by {self.author}'
+
+
+class JPMap(models.Model):
+    uploader = models.ForeignKey(Player, on_delete=models.CASCADE, default=None)
+    name = models.CharField(default='', max_length=200)
+    bsr = models.CharField(default='', max_length=10)
+    hash = models.CharField(default='', max_length=100)
+    char = models.CharField(default='', max_length=50)
+    diff = models.CharField(default='', max_length=20)
+    nps = models.FloatField(default=0)
+    createdAt = models.DateTimeField()
+
+    def __str__(self):
+        return f'{self.name}-{self.diff}-{self.char} by {self.uploader.name}'
 
 
 class Playlist(models.Model):
@@ -156,7 +171,8 @@ class Headline(models.Model):
         Player, on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(default='', max_length=200)
     time = models.DateTimeField()
-    score = models.ForeignKey(Score, on_delete=models.SET_NULL, null=True, blank=True)
+    score = models.ForeignKey(
+        Score, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'{str(self.player)} -> {str(self.text)}'

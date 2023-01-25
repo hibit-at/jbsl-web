@@ -197,4 +197,52 @@
             </tr>
         {% endfor %}
     </table>
+    <h4>
+        マッパー情報
+    </h4>
+    <p>
+        BeatSaverUploaderID :
+        {% if player.mapper == 0 %}
+            登録なし
+        {% else %}
+            {{ player.mapper }}
+        {% endif %}
+    </p>
+    {% if user.player == player %}
+        <div class="info-submit">
+            <h4>
+                マッパー情報の登録
+            </h4>
+            <form method="post">
+                {% csrf_token %}
+                <p>
+                    <label>
+                        BeatSaverUploaderID :
+                    </label>
+                    <input type="text" size="50" name="mapper" value={{ player.mapper }}>
+                </p>
+                <button class="btn" type="submit">
+                    登録/変更
+                </button>
+            </form>
+        </div>
+    {% endif %}
+    <p>
+        マッパー情報を登録すると、
+        <ul>
+            <li>
+                一週間ごとの新着譜面（JP Weekly）
+            </li>
+            <li>
+                二週間ごとの新着譜面（JP Biweekly）
+            </li>
+            <li>
+                月ごとの定期リーグ
+            </li>
+        </ul>
+        に自動登録されます。
+    </p>
+    <p>
+        なりすまし厳禁！
+    </p>
 {% endblock content %}

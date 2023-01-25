@@ -209,6 +209,8 @@ def userpage(request, sid=0):
             player.isShadow = True
         else:
             player.isShadow = False
+        if 'mapper' in post:
+            player.mapper = post['mapper']
         player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)

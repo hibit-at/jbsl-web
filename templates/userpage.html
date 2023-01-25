@@ -203,7 +203,7 @@
     </h4>
     <p>
         {% if player.mapper == 0 %}
-            マッパー名 : 登録なし
+            登録なし
         {% else %}
             マッパー名 : {{ player.mapper_name }}
         {% endif %}
@@ -230,23 +230,23 @@
                 </button>
             </form>
         </div>
+        <p>
+            マッパー情報を登録すると、
+            <ul>
+                <li>
+                    一週間ごとの新着譜面（JP Weekly）
+                </li>
+                <li>
+                    二週間ごとの新着譜面（JP Biweekly）
+                </li>
+                <li>
+                    月ごとの定期リーグ
+                </li>
+            </ul>
+            に自動登録されます。
+        </p>
+        <p>
+            なりすまし厳禁！
+        </p>
     {% endif %}
-    <p>
-        マッパー情報を登録すると、
-        <ul>
-            <li>
-                一週間ごとの新着譜面（JP Weekly）
-            </li>
-            <li>
-                二週間ごとの新着譜面（JP Biweekly）
-            </li>
-            <li>
-                月ごとの定期リーグ
-            </li>
-        </ul>
-        に自動登録されます。
-    </p>
-    <p>
-        なりすまし厳禁！
-    </p>
 {% endblock content %}

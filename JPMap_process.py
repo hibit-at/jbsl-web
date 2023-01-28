@@ -4,6 +4,36 @@ import sys
 import requests
 from datetime import datetime, timedelta
 import calendar
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+import base64
+
+
+def text_over(img, text, height, fontsize=36):
+    ttfontname = "./.fonts/meiryob.ttc"
+    textRGB = (0, 0, 0, 0)
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype(ttfontname, fontsize)
+    textTopLeft = (30, height)
+    draw.text(textTopLeft, text, fill=textRGB, font=font)
+    return img
+
+
+def create_img(year=1000, month=13, div=0):
+    canvasSize = (256, 256)
+    backgroundRGB = (255, 255, 255, 255)
+    img = Image.new('RGBA', canvasSize, backgroundRGB)
+    img = text_over(img, 'JP Monthly', 50)
+    img = text_over(img, f'{year} - {month}', 100)
+    img = text_over(img, f'Div. {div}', 150)
+    return img
+
+
+def pil_to_base64(img, format="png"):
+    buffer = BytesIO()
+    img.save(buffer, format)
+    img_str = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return img_str
 
 
 def collect_by_player(player):
@@ -103,7 +133,7 @@ def monthly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Playlist, Player
-    from app.views import create_song_by_hash, search_lid,diff_label_inv,char_dict_inv
+    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
     now = datetime.now()
     pre = now - timedelta(days=26)
     start = pre.replace(day=1)
@@ -145,10 +175,14 @@ def monthly():
         title = f"JP Monthly {start.year}-{start.month} Div.3"
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
         print(title, description)
+        img = create_img(start.year, start.month, 3)
+        img_str = 'data:image/png;base64,' + pil_to_base64(img)
+        print(img_str)
         playlist, check = Playlist.objects.update_or_create(
             title=title,
             editor=superuser,
             description=description,
+            image=img_str,
         )
         for song in J3_songs:
             dif_num = diff_label_inv[song.diff]
@@ -168,10 +202,14 @@ def monthly():
         title = f"JP Monthly {start.year}-{start.month} Div.2"
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
         print(title, description)
+        img = create_img(start.year, start.month, 2)
+        img_str = 'data:image/png;base64,' + pil_to_base64(img)
+        print(img_str)
         playlist, check = Playlist.objects.update_or_create(
             title=title,
             editor=superuser,
             description=description,
+            image=img_str,
         )
         for song in J2_songs:
             dif_num = diff_label_inv[song.diff]
@@ -191,10 +229,14 @@ def monthly():
         title = f"JP Monthly {start.year}-{start.month} Div.1"
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
         print(title, description)
+        img = create_img(start.year, start.month, 1)
+        img_str = 'data:image/png;base64,' + pil_to_base64(img)
+        print(img_str)
         playlist, check = Playlist.objects.update_or_create(
             title=title,
             editor=superuser,
             description=description,
+            image=img_str,
         )
         for song in J1_songs:
             dif_num = diff_label_inv[song.diff]
@@ -215,7 +257,7 @@ def weekly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Playlist, Player, Song
-    from app.views import create_song_by_hash, search_lid,diff_label_inv,char_dict_inv
+    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
     now = datetime.now()
     start = now - timedelta(days=7)
     print(start, 'to')
@@ -246,19 +288,19 @@ def weekly():
                 print('no lid detected')
                 continue
         else:
-            lid = Song.objects.get(hash=song.hash, diff=song.diff, char=song.char).lid
+            lid = Song.objects.get(
+                hash=song.hash, diff=song.diff, char=song.char).lid
         print(lid)
         new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
         print(new_song)
         playlist.songs.add(new_song)
 
-            
 
 def biweekly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Playlist, Player, Song
-    from app.views import create_song_by_hash, search_lid,diff_label_inv,char_dict_inv
+    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
     now = datetime.now()
     start = now - timedelta(days=14)
     print(start, 'to')
@@ -289,12 +331,12 @@ def biweekly():
                 print('no lid detected')
                 continue
         else:
-            lid = Song.objects.get(hash=song.hash, diff=song.diff, char=song.char).lid
+            lid = Song.objects.get(
+                hash=song.hash, diff=song.diff, char=song.char).lid
         print(lid)
         new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
         print(new_song)
         playlist.songs.add(new_song)
-
 
 
 if __name__ == '__main__':

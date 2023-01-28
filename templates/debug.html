@@ -5,7 +5,7 @@
             <li>
                 {{ player }} (discord : {{ player.user }})
                 {% if player.rival != None %}(rival : {{ player.rival }}){% endif %}
-                {% if player.mapper != '' %}(mapper : {{ player.mapper_name }}){% endif %}
+                {% if player.mapper > 0 %}(mapper : {{ player.mapper_name }}){% endif %}
                 <ul>
                     {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
                 </ul>

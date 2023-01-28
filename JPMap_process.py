@@ -10,7 +10,7 @@ import base64
 
 
 def text_over(img, text, height, fontsize=36):
-    file = open("app/.fonts/meiryob.ttc","rb")
+    file = open("app/.fonts/meiryob.ttc", "rb")
     bytes_font = BytesIO(file.read())
     # ttfontname = "/app/.fonts/meiryob.ttc"
     textRGB = (0, 0, 0, 0)
@@ -131,14 +131,15 @@ def collection():
 
 def monthly():
     def get_last_date(dt: datetime):
+        dt = dt.replace(hour=23, minute=59)
         return dt.replace(day=calendar.monthrange(dt.year, dt.month)[1])
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import JPMap, Playlist, Player
+    from app.models import JPMap, Playlist, Player, Song, League
     from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
     now = datetime.now()
     pre = now - timedelta(days=26)
-    start = pre.replace(day=1)
+    start = pre.replace(day=1,hour=0,minute=0)
     start_end = get_last_date(start)
     print(start, 'to', start_end)
     J3_songs = []
@@ -191,14 +192,29 @@ def monthly():
             if song.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[song.char]
-            lid = search_lid(song.hash, gameMode, dif_num)
-            if lid == None:
-                print('no lid detected')
-                continue
+            if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
+                lid = search_lid(song.hash, gameMode, dif_num)
+                if lid == None:
+                    print('no lid detected')
+                    continue
+            else:
+                lid = Song.objects.get(
+                    hash=song.hash, diff=song.diff, char=song.char).lid
             print(lid)
             new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
             print(new_song)
             playlist.songs.add(new_song)
+        League.objects.create(
+            name=playlist.title,
+            owner=superuser,
+            description=description,
+            color='rgba(255,128,60,.8)',
+            max_valid=min(5, playlist.songs.count()),
+            limit=800,
+            end=last,
+            isOpen=True,
+            playlist=playlist,
+        )
 
     if len(J2_songs) > 0:
         title = f"JP Monthly {start.year}-{start.month} Div.2"
@@ -218,14 +234,29 @@ def monthly():
             if song.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[song.char]
-            lid = search_lid(song.hash, gameMode, dif_num)
-            if lid == None:
-                print('no lid detected')
-                continue
+            if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
+                lid = search_lid(song.hash, gameMode, dif_num)
+                if lid == None:
+                    print('no lid detected')
+                    continue
+            else:
+                lid = Song.objects.get(
+                    hash=song.hash, diff=song.diff, char=song.char).lid
             print(lid)
             new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
             print(new_song)
             playlist.songs.add(new_song)
+        League.objects.create(
+            name=playlist.title,
+            owner=superuser,
+            description=description,
+            color='rgba(255,128,128,.8)',
+            max_valid=min(5, playlist.songs.count()),
+            limit=1050,
+            end=last,
+            isOpen=True,
+            playlist=playlist,
+        )
 
     if len(J1_songs) > 0:
         title = f"JP Monthly {start.year}-{start.month} Div.1"
@@ -245,14 +276,29 @@ def monthly():
             if song.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[song.char]
-            lid = search_lid(song.hash, gameMode, dif_num)
-            if lid == None:
-                print('no lid detected')
-                continue
+            if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
+                lid = search_lid(song.hash, gameMode, dif_num)
+                if lid == None:
+                    print('no lid detected')
+                    continue
+            else:
+                lid = Song.objects.get(
+                    hash=song.hash, diff=song.diff, char=song.char).lid
             print(lid)
             new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
             print(new_song)
             playlist.songs.add(new_song)
+        League.objects.create(
+            name=playlist.title,
+            owner=superuser,
+            description=description,
+            color='rgba(220,130,250,.8)',
+            max_valid=min(5, playlist.songs.count()),
+            limit=2000,
+            end=last,
+            isOpen=True,
+            playlist=playlist,
+        )
 
 
 def weekly():

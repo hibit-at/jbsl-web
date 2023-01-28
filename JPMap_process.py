@@ -10,10 +10,12 @@ import base64
 
 
 def text_over(img, text, height, fontsize=36):
-    ttfontname = "/app/.fonts/meiryob.ttc"
+    file = open("app/.fonts/meiryob.ttc","rb")
+    bytes_font = BytesIO(file.read())
+    # ttfontname = "/app/.fonts/meiryob.ttc"
     textRGB = (0, 0, 0, 0)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(ttfontname, fontsize)
+    font = ImageFont.truetype(bytes_font, fontsize)
     textTopLeft = (30, height)
     draw.text(textTopLeft, text, fill=textRGB, font=font)
     return img

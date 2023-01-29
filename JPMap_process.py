@@ -387,6 +387,52 @@ def biweekly():
         playlist.songs.add(new_song)
 
 
+def latest():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    from app.models import JPMap, Playlist, Player, Song, SongInfo
+    from app.views import search_lid,create_song_by_hash, diff_label_inv, char_dict_inv
+    playlist = Playlist.objects.get(title='JP Latest')
+
+    for song in playlist.songs.all():
+        playlist.songs.remove(song)
+
+    song_order = 0
+
+    for player in Player.objects.filter(mapper__gt=0):
+        print(player.mapper_name)
+        from collections import defaultdict
+        hash_count = defaultdict(int)
+        mapper_count = 0
+        for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt','-nps'):
+            if mapper_count == 2:
+                break
+            # print(jmap)
+            hash = jmap.hash
+            if hash_count[hash] > 0:
+                continue
+            dif_num = diff_label_inv[jmap.diff]
+            if jmap.char == 'Lightshow':
+                continue
+            gameMode = char_dict_inv[jmap.char]
+            if not Song.objects.filter(hash=jmap.hash, diff=jmap.diff, char=jmap.char).exists():
+                lid = search_lid(jmap.hash, gameMode, dif_num)
+                if lid == None:
+                    print('no lid detected')
+                    continue
+            else:
+                lid = Song.objects.get(
+                    hash=jmap.hash, diff=jmap.diff, char=jmap.char).lid
+            new_song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
+            hash_count[hash] = 1
+            playlist.songs.add(new_song)
+            mapper_count += 1
+            song_info = SongInfo.objects.get(playlist=playlist,song=new_song)
+            song_info.order = song_order
+            song_order += 1
+            song_info.save()
+            print(song_info) 
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         eval(f'{sys.argv[1]}()')

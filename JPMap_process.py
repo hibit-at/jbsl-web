@@ -139,7 +139,7 @@ def monthly():
     from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
     now = datetime.now()
     pre = now - timedelta(days=26)
-    start = pre.replace(day=1,hour=0,minute=0)
+    start = pre.replace(day=1, hour=0, minute=0)
     start_end = get_last_date(start)
     print(start, 'to', start_end)
     J3_songs = []
@@ -391,7 +391,7 @@ def latest():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Playlist, Player, Song, SongInfo
-    from app.views import search_lid,create_song_by_hash, diff_label_inv, char_dict_inv
+    from app.views import search_lid, create_song_by_hash, diff_label_inv, char_dict_inv
     playlist = Playlist.objects.get(title='JP Latest')
 
     for song in playlist.songs.all():
@@ -404,7 +404,7 @@ def latest():
         from collections import defaultdict
         hash_count = defaultdict(int)
         mapper_count = 0
-        for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt','-nps'):
+        for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt', '-nps'):
             if mapper_count == 2:
                 break
             # print(jmap)
@@ -427,11 +427,13 @@ def latest():
             hash_count[hash] = 1
             playlist.songs.add(new_song)
             mapper_count += 1
-            song_info = SongInfo.objects.get(playlist=playlist,song=new_song)
-            song_info.order = song_order
+            SongInfo.objects.update_or_create(
+                song=new_song,
+                playlist=playlist,
+                order=song_order,
+            )
             song_order += 1
-            song_info.save()
-            print(song_info) 
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

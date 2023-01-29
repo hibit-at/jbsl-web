@@ -620,8 +620,10 @@ def playlists(request, page=1):
     # playlists = make_sorted_playlists(playlists)
     weekly = Playlist.objects.get(title='JP Weekly')
     biweekly = Playlist.objects.get(title='JP Biweekly')
+    latest = Playlist.objects.get(title='JP Latest')
     params['weekly'] = weekly
     params['biweekly'] = biweekly
+    params['latest'] = latest
     params['playlists'] = playlists
     params['archives'] = archives
     params['page'] = page

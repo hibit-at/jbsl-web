@@ -12,11 +12,15 @@
     </h3>
     <a href="{% url 'app:download_playlist' pk=weekly.pk %}"
        download="{{ weekly.title }}.json">
-        <span class="dl_link">JP Weekly</span>
+        <span class="dl_link">JP Weekly DL</span>
     </a>
     <a href="{% url 'app:download_playlist' pk=biweekly.pk %}"
        download="{{ biweekly.title }}.json">
-        <span class="dl_link">JP Biweekly</span>
+        <span class="dl_link">JP Biweekly DL</span>
+    </a>
+    <a href="{% url 'app:download_playlist' pk=latest.pk %}"
+       download="{{ latest.title }}.json">
+        <span class="dl_link">JP Latest DL</span>
     </a>
     <table class="table table-striped table-borderless">
         <thead>

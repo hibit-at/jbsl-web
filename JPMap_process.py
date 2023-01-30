@@ -399,7 +399,7 @@ def latest():
 
     song_order = 0
 
-    for player in Player.objects.filter(mapper__gt=0):
+    for player in Player.objects.filter(mapper__gt=0).order_by('mapper_name'):
         print(player.mapper_name)
         from collections import defaultdict
         hash_count = defaultdict(int)

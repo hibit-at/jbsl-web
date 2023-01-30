@@ -230,6 +230,7 @@ def userpage(request, sid=0):
                     print('collect player latest maps')
                     JPMap_process.weekly()
                     JPMap_process.biweekly()
+                    JPMap_process.latest()
             player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)

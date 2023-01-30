@@ -427,10 +427,11 @@ def latest():
             hash_count[hash] = 1
             playlist.songs.add(new_song)
             mapper_count += 1
+            defaults = {'order': song_order}
             SongInfo.objects.update_or_create(
                 song=new_song,
                 playlist=playlist,
-                order=song_order,
+                defaults=defaults,
             )
             song_order += 1
 

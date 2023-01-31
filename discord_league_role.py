@@ -38,6 +38,7 @@ def league_role_total():
             valid_name = league.name.lower().replace(' ', '-')
             valid_name = valid_name.replace('[','')
             valid_name = valid_name.replace(']','')
+            valid_name = valid_name.replace('.','')
             print(valid_name)
             if not valid_name in channel_names:
                 current_channel = await category.create_text_channel(valid_name)

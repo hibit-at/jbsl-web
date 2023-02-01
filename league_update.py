@@ -164,6 +164,7 @@ def league_update_process():
                         valid_name = valid_name.replace('[','')
                         valid_name = valid_name.replace(']','')
                         valid_name = valid_name.replace('\'','')
+                        valid_name = valid_name.replace('.','')
                         discord_message_process_with_channel(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！',   valid_name)
                 league.first = player
             if i == 1:

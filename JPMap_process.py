@@ -441,4 +441,5 @@ if __name__ == '__main__':
         eval(f'{sys.argv[1]}()')
     else:
         collection()
-        monthly()
+        weekly()
+        biweekly()

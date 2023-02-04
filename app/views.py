@@ -1826,6 +1826,7 @@ def beatleader_submission(request):
             'acc': float(res['accuracy'])*100,
             'rawPP': 0,
             'miss': int(res['missedNotes']),
+            'beatleader' : res['id'],
         }
         score_to_headline(score, song, player, league)
         score_obj = Score.objects.update_or_create(
@@ -1834,7 +1835,7 @@ def beatleader_submission(request):
             league=league,
             defaults=defaults,
         )[0]
-        result = f'score found {song} {score} ({score_obj.acc*100}) %'
+        result = f'score found {song} {score} ({score_obj.acc:.2f}) %'
         if updated:
             result += ' ... UPDATED!'
         results.append(result)

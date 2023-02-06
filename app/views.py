@@ -257,21 +257,20 @@ def userpage(request, sid=0):
 
     player_type = ''
 
-    if accIndex >= techIndex + 20 and accIndex >= passIndex + 20:
-        player_type = f'{player.name} さんはかなり精度型です'
-    elif accIndex >= techIndex + 10 and accIndex >= passIndex + 10:
-        player_type = f'{player.name} さんは精度型です'
+    if techIndex > accIndex and techIndex > passIndex:
+        player_type = f'{player.name} さんは　かなりテック型　です'
+    elif techIndex > accIndex - 10 and techIndex > passIndex - 10:
+        player_type = f'{player.name} さんは　テック型　です'
+    elif accIndex > techIndex + 20 and accIndex > passIndex + 20:
+        player_type = f'{player.name} さんは　かなり精度型　です'
+    elif accIndex > techIndex + 10 and accIndex > passIndex + 10:
+        player_type = f'{player.name} さんは　精度型　です'
+    elif passIndex > accIndex + 20 and passIndex > techIndex + 20:
+        player_type = f'{player.name} さんは　かなりクリアラー型　です'
+    elif passIndex > accIndex + 10 and passIndex > techIndex + 10:
+        player_type = f'{player.name} さんは　クリアラー型　です'
     else:
-        if techIndex >= passIndex + 20:
-            player_type = f'{player.name} さんはかなりテック型です'
-        elif techIndex >= passIndex + 10:
-            player_type = f'{player.name} さんはテック型です'
-        elif passIndex >= techIndex + 20:
-            player_type = f'{player.name} さんはかなりクリアラー型です'
-        elif passIndex >= techIndex + 10:
-            player_type = f'{player.name} さんはクリアラー型です'
-        else:
-            player_type = f'{player.name} さんはバランス型です'
+        player_type = f'{player.name} さんは　バランス型　です'
     
     params['player_type'] = player_type
     

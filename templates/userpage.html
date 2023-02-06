@@ -2,6 +2,7 @@
 {% block content %}
     {% load static %}
     {% load humanize %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
     {% if mapper_error %}<h2 style="color:yellow">{{ mapper_error }}</h2>{% endif %}
     <h3>
         {% include "player_element.html" %}
@@ -12,6 +13,12 @@
     <p>
         <img class="thumb" src={{ player.imageURL }} />
     </p>
+    {% if acc > 0 %}
+    <div style="width:250px;height:250px;">
+        <canvas id="myRadarChart" width="100" height="100"></canvas>
+    </div>
+    {{player_type}}
+    {% endif %}
     {% if user.player == player %}
         <p>
             <form method="post">
@@ -163,7 +170,9 @@
             <th>Accuracy</th>
             <th>PP</th>
             <th>Miss</th>
-            <th>有効PP</th>
+            <th>
+                有効PP
+            </th>
         </thead>
         {% for t in top10 %}
             <tr>
@@ -249,4 +258,44 @@
             なりすまし厳禁！
         </p>
     {% endif %}
+    <script>
+    var ctx = document.getElementById("myRadarChart");
+    var myRadarChart = new Chart(ctx, {
+    //グラフの種類
+    type: 'radar',
+    //データの設定
+    data: {
+        labels: ['Acc', 'Tech', 'Pass'],
+        datasets: [{
+        label: 'BeatLeader PP Index',
+        //グラフのデータ
+        data: [{{acc}}, {{tech}}, {{pass}}],
+        backgroundColor : 'rgba(255,128,0,.5)'
+        }],
+    },
+    //オプションの設定
+    options: {
+        scales: {
+                r: {
+                //グラフの最小値・最大値
+                min: 0,
+                max: 100,
+                //背景色
+                backgroundColor: 'rgba(0,0,0,0)',
+                //アングルライン
+                angleLines: {
+                color: 'orange',
+                },
+                //各項目のラベル
+                pointLabels: {
+                color: 'white',
+                },
+                ticks : {
+                    display : false,
+                }
+            },
+        },
+    },
+    });
+    </script>
 {% endblock content %}

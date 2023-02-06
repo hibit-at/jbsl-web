@@ -243,6 +243,33 @@ def userpage(request, sid=0):
     print(badges)
     params['badges'] = badges
 
+    accIndex = player.accPP/12000*100
+    techIndex = player.techPP/2000*100
+    passIndex = player.passPP/6000*100
+
+    params['acc'] = accIndex
+    params['tech'] = techIndex
+    params['pass'] = passIndex
+
+    player_type = ''
+
+    if accIndex >= techIndex + 20 and accIndex >= passIndex + 20:
+        player_type = f'{player.name} さんは精度型です'
+    else:
+        if techIndex >= passIndex + 20:
+            player_type = f'{player.name} さんはかなりテック型です'
+        elif techIndex >= passIndex + 10:
+            player_type = f'{player.name} さんはテック型です'
+        elif passIndex >= techIndex + 20:
+            player_type = f'{player.name} さんはかなりクリアラー型です'
+        elif passIndex >= techIndex + 10:
+            player_type = f'{player.name} さんはクリアラー型です'
+        else:
+            player_type = f'{player.name} さんはバランス型です'
+    
+    params['player_type'] = player_type
+    
+
     return render(request, 'userpage.html', params)
 
 

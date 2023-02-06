@@ -30,6 +30,9 @@ class Player(models.Model):
     yurufuwa = models.IntegerField(default=0)
     mapper = models.IntegerField(default=0)
     mapper_name = models.CharField(default='',max_length=100)
+    accPP = models.FloatField(default=0)
+    techPP = models.FloatField(default=0)
+    passPP = models.FloatField(default=0)
 
     def __str__(self):
         return str(self.name)

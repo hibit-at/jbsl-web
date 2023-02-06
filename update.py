@@ -1,6 +1,6 @@
 import os
 import django
-
+import requests
 
 def update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
@@ -9,6 +9,15 @@ def update_process():
     from app.models import Player,League
     for player in Player.objects.filter(isActivated=True):
         top_score_registration(player)
+        
+        print(player.sid)
+        url = f'https://stage.api.beatleader.net/player/{player.sid}?stats=true'
+        res = requests.get(url).json()
+        print(res)
+        player.accPP = res['accPp']
+        player.techPP = res['techPp']
+        player.passPP = res['passPp']
+        player.save()
         print(f'{player} updated!')
     
     # initialize

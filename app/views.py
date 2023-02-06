@@ -243,9 +243,13 @@ def userpage(request, sid=0):
     print(badges)
     params['badges'] = badges
 
-    accIndex = player.accPP/12000*100
-    techIndex = player.techPP/2000*100
-    passIndex = player.passPP/6000*100
+    accMax = Player.objects.order_by('-accPP')[0].accPP
+    techMax = Player.objects.order_by('-techPP')[0].techPP
+    passMax = Player.objects.order_by('-passPP')[0].passPP
+
+    accIndex = player.accPP/accMax*100
+    techIndex = player.techPP/techMax*100
+    passIndex = player.passPP/passMax*100
 
     params['acc'] = accIndex
     params['tech'] = techIndex
@@ -254,6 +258,8 @@ def userpage(request, sid=0):
     player_type = ''
 
     if accIndex >= techIndex + 20 and accIndex >= passIndex + 20:
+        player_type = f'{player.name} さんはかなり精度型です'
+    elif accIndex >= techIndex + 10 and accIndex >= passIndex + 10:
         player_type = f'{player.name} さんは精度型です'
     else:
         if techIndex >= passIndex + 20:

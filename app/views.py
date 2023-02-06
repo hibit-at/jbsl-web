@@ -259,15 +259,15 @@ def userpage(request, sid=0):
 
     if techIndex > accIndex and techIndex > passIndex:
         player_type = f'{player.name} さんは　かなりテック型　です'
-    elif techIndex > accIndex - 10 and techIndex > passIndex - 10:
+    elif techIndex > accIndex*0.9 and techIndex > passIndex*0.9:
         player_type = f'{player.name} さんは　テック型　です'
-    elif accIndex > techIndex + 20 and accIndex > passIndex + 20:
+    elif accIndex > techIndex*1.2 and accIndex > passIndex*1.2:
         player_type = f'{player.name} さんは　かなり精度型　です'
-    elif accIndex > techIndex + 10 and accIndex > passIndex + 10:
+    elif accIndex > techIndex*1.1 and accIndex > passIndex*1.1:
         player_type = f'{player.name} さんは　精度型　です'
-    elif passIndex > accIndex + 20 and passIndex > techIndex + 20:
+    elif passIndex > accIndex*1.2 and passIndex > techIndex*1.2:
         player_type = f'{player.name} さんは　かなりクリアラー型　です'
-    elif passIndex > accIndex + 10 and passIndex > techIndex + 10:
+    elif passIndex > accIndex*1.1 and passIndex > techIndex*1.1:
         player_type = f'{player.name} さんは　クリアラー型　です'
     else:
         player_type = f'{player.name} さんは　バランス型　です'

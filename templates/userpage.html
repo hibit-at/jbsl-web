@@ -265,9 +265,9 @@
     type: 'radar',
     //データの設定
     data: {
-        labels: ['Acc', 'Tech', 'Pass'],
+        labels: ['Acc' + {{ acc|floatformat:1 }}, 'Tech' + {{ tech|floatformat:1 }}, 'Pass' + {{ pass|floatformat:1 }}],
         datasets: [{
-        label: 'BeatLeader PP Index',
+        label: 'BeatLeader PP Ratio',
         //グラフのデータ
         data: [{{acc}}, {{tech}}, {{pass}}],
         backgroundColor : 'rgba(255,128,0,.5)'

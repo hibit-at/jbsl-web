@@ -6,13 +6,42 @@
         <img src= {% static 'pict_player.png' %} width="40px" height="40px">
         Players
     </h3>
+    <p>
+        {% if sort != 'borderPP' %}
+            <a href="{% url 'app:players' %}">
+                <button class="btn">有効PP</button>
+            </a>
+        {% else %}
+            Sort by 有効PP
+        {% endif %}
+        {% if sort != 'techPP' %}
+            <a href="{% url 'app:players' %}?sort=techPP">
+                <button class="btn">TechPP</button>
+            </a>
+        {% else %}
+            Sort by TechPP
+        {% endif %}
+        {% if sort != 'passPP' %}
+            <a href="{% url 'app:players' %}?sort=passPP">
+                <button class="btn">PassPP</button>
+            </a>
+        {% else %}
+            Sort by PassPP
+        {% endif %}
+        {% if sort != 'yurufuwa' %}
+            <a href="{% url 'app:players' %}?sort=yurufuwa">
+                <button class="btn">ゆるふわポイント</button>
+            </a>
+        {% else %}
+            Sort by ゆるふわポイント
+        {% endif %}
+    </p>
     <table class="table table-striped table-borderless">
         <thead>
             <th>Player</th>
             <th>Social</th>
             <th>HMD</th>
-            <th>YP</th>
-            <th>有効 PP</th>
+            <th>{{ label }}</th>
             <th>Message</th>
         </thead>
         {% for player in active_players %}
@@ -47,8 +76,12 @@
                 <td>
                     <img width="30px" height="30px" src="{% static player.hmd %}.png" />
                 </td>
-                <td>{{ player.yurufuwa }}</td>
-                <td>{{ player.borderPP | floatformat:2 | intcomma }}</td>
+                <td>
+                    {% if sort == 'borderPP' %}{{ player.borderPP | floatformat:2 | intcomma }}{% endif %}
+                    {% if sort == 'yurufuwa' %}{{ player.yurufuwa }}{% endif %}
+                    {% if sort == 'techPP' %}{{ player.techPP|floatformat:2 }}{% endif %}
+                    {% if sort == 'passPP' %}{{ player.passPP|floatformat:2 }}{% endif %}
+                </td>
                 <td>{{ player.message }}</td>
             </tr>
         {% endfor %}

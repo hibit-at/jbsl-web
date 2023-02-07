@@ -1233,9 +1233,12 @@ def headlines(request, page=1):
     return render(request, 'headlines.html', params)
 
 
-def players(request):
+def players(request,sort='borderPP'):
     params = {}
     user = request.user
+    print(request.GET)
+    if 'sort' in request.GET:
+        sort = request.GET['sort']
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
@@ -1244,9 +1247,20 @@ def players(request):
             invitations = player.invite.all()
             params['invitations'] = invitations
     active_players = Player.objects.filter(
-        isActivated=True).order_by('-yurufuwa', '-borderPP')
+        isActivated=True).order_by(f'-{sort}', '-borderPP')
+    print(active_players)
+
+    label = {
+        'borderPP' : '有効PP',
+        'yurufuwa' : 'YP',
+        'techPP' : 'TechPP',
+        'passPP' : 'PassPP', 
+    }
 
     params['active_players'] = active_players
+    params['sort'] = sort
+    params['label'] = label[sort]
+    print(params)
     return render(request, 'players.html', params)
 
 

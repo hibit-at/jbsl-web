@@ -405,7 +405,7 @@ def latest():
         hash_count = defaultdict(int)
         mapper_count = 0
         for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt', '-nps'):
-            if mapper_count == 2:
+            if mapper_count == 1:
                 break
             # print(jmap)
             hash = jmap.hash

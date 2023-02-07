@@ -10,17 +10,14 @@
         <img width="40px" height="40px" src={% static 'pict_playlist.png' %}>
         Playlists
     </h3>
-    <a href="{% url 'app:download_playlist' pk=weekly.pk %}"
-       download="{{ weekly.title }}.json">
-        <span class="dl_link">JP Weekly DL</span>
+    <a href="{% url 'app:playlist' pk=weekly.pk %}">
+        <span class="dl_link">JP Weekly</span>
     </a>
-    <a href="{% url 'app:download_playlist' pk=biweekly.pk %}"
-       download="{{ biweekly.title }}.json">
-        <span class="dl_link">JP Biweekly DL</span>
+    <a href="{% url 'app:playlist' pk=biweekly.pk %}">
+        <span class="dl_link">JP Biweekly</span>
     </a>
-    <a href="{% url 'app:download_playlist' pk=latest.pk %}"
-       download="{{ latest.title }}.json">
-        <span class="dl_link">JP Latest DL</span>
+    <a href="{% url 'app:playlist' pk=latest.pk %}">
+        <span class="dl_link">JP Latest</span>
     </a>
     <table class="table table-striped table-borderless">
         <thead>

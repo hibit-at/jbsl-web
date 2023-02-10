@@ -267,10 +267,11 @@
     data: {
         labels: ['Acc' + {{ acc|floatformat:1 }}, 'Tech' + {{ tech|floatformat:1 }}, 'Pass' + {{ pass|floatformat:1 }}],
         datasets: [{
-        label: 'BeatLeader PP Ratio in JP',
+        label: 'BeatLeader PP Ratio in',
         //グラフのデータ
         data: [{{acc}}, {{tech}}, {{pass}}],
         backgroundColor : 'rgba(255,128,0,.5)'
+        {% comment %} backgroundColor : {{ style_color }} {% endcomment %}
         }],
     },
     //オプションの設定

@@ -34,12 +34,17 @@ diff_label_inv = {
 char_dict = {
     'SoloStandard': 'Standard',
     'SoloLawless': 'Lawless',
+    'SoloOneSaber' : 'OneSaber',
+    'Solo90Degree' : '90Degree',
+    'Solo360Degree' : '360Degree' ,
 }
 
 char_dict_inv = {
     'Standard': 'SoloStandard',
     'Lawless': 'SoloLawless',
-    'OneSaber': 'SoloOneSaber'
+    'OneSaber': 'SoloOneSaber',
+    '90Degree' : 'Solo90Degree',
+    '360Degree' : 'Solo360Degree',
 }
 
 col_dict = {
@@ -255,6 +260,13 @@ def userpage(request, sid=0):
     params['tech'] = techIndex
     params['pass'] = passIndex
 
+    max_color = max(accIndex,techIndex,passIndex)
+
+    pass_col = int(passIndex*255/max_color)
+    acc_col = int(accIndex*255/max_color)
+    tech_col = int(techIndex*255/max_color)
+
+    params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''
 
     if techIndex > accIndex and techIndex > passIndex:

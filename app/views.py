@@ -262,9 +262,14 @@ def userpage(request, sid=0):
 
     max_color = max(accIndex,techIndex,passIndex)
 
-    pass_col = int(passIndex*255/max_color)
-    acc_col = int(accIndex*255/max_color)
-    tech_col = int(techIndex*255/max_color)
+    if max_color == 0:
+        pass_col = 0
+        acc_col = 0
+        tech_col = 0
+    else:
+        pass_col = int(passIndex*255/max_color)
+        acc_col = int(accIndex*255/max_color)
+        tech_col = int(techIndex*255/max_color)
 
     params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''

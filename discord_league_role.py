@@ -39,6 +39,7 @@ def league_role_total():
             valid_name = valid_name.replace('[','')
             valid_name = valid_name.replace(']','')
             valid_name = valid_name.replace('.','')
+            valid_name = valid_name.replace('!','')
             valid_name = valid_name.strip()
             print(valid_name)
             if not valid_name in channel_names:

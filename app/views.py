@@ -834,12 +834,18 @@ def playlist(request, pk):
 
 
 def download_playlist(request, pk):
+    from django.urls import reverse
     json_data = {}
     playlist = Playlist.objects.get(pk=pk)
     playlist = make_sorted_playlist(playlist)
     json_data['playlistTitle'] = playlist.title
     json_data['playlistAuthor'] = 'JBSL_Web_System'
+    download_url = reverse('app:download_playlist', args = [pk])
+    meta_url = request._current_scheme_host
+    print(meta_url)
+    print(download_url)
     json_data['playlistDescription'] = playlist.description
+    json_data['customData'] = {'syncURL' : meta_url + download_url}
     songs = []
     for song in playlist.sorted_songs:
         append_dict = {}

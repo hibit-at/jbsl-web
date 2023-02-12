@@ -1905,3 +1905,11 @@ def beatleader_submission(request):
     params['league'] = league
     params['results'] = results
     return render(request, 'beatleader_submission.html', params)
+
+def archive(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    return render(request, 'archive.html', params)

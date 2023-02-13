@@ -502,13 +502,14 @@ def search_lid(hash, gameMode, diff_num):
     url = f'https://scoresaber.com/api/leaderboard/get-difficulties/{hash}'
     res = requests.get(url).json()
     if 'errorMessage' in res:
-        return False
+        return None
     for r in res:
         if r['difficulty'] != diff_num:
             continue
         if r['gameMode'] != gameMode:
             continue
         return r['leaderboardId']
+    return None
 
 
 def add_playlist(playlist, json_data):
@@ -728,11 +729,14 @@ def playlist(request, pk):
                 songInfo.order = i
                 songInfo.save()
 
+    params['playlist'] = playlist
+
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
         isEditor = user.player == playlist.editor or user.player in playlist.CoEditor.all()
         params['isEditor'] = isEditor
+
     if request.method == 'POST':
         post = request.POST
         files = request.FILES
@@ -742,6 +746,25 @@ def playlist(request, pk):
             lid = post['add_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
             res = requests.get(url).json()
+            if 'errorMessage' in res:
+                # then retry in bsr key
+                bsr = lid
+                url = f'https://api.beatsaver.com/maps/id/{bsr}'
+                res = requests.get(url)
+                if res.status_code == 200:
+                    res = res.json()
+                    print(res)
+                    name = res['name']
+                    author = res['uploader']['name']
+                    hash = res['versions'][0]['hash']
+                    params['hash'] = hash
+                    params['name']= name
+                    params['author'] = author
+                    data = res['versions'][0]['diffs']
+                    params['data'] = data
+                    return render(request, 'add_diff_by_map.html', params)
+                params['errorMessage'] = 'URL の解析に失敗しました。'
+                return render(request, 'playlist.html', params)
             hash = res['songHash']
             diff_num = res['difficulty']['difficulty']
             gameMode = res['difficulty']['gameMode']
@@ -827,6 +850,29 @@ def playlist(request, pk):
                 swapped_song.order -= 1
                 swapped_song.save()
             songInfo.save()
+        if 'add_from_map' in post:
+            hash = post['hash']
+            char = post['char']
+            dif = post['dif']
+            gameMode = char_dict_inv[char]
+            diff_num = diff_label_inv[dif]
+            print(hash,char,dif)
+            lid = search_lid(hash,gameMode, diff_num)
+            if lid == None:
+                print('no lid')
+                params['errorMessage'] = 'スコアセイバーの ID が見つかりません'
+            else:
+                print(lid)
+                song = create_song_by_hash(hash, diff_num, char, lid)
+                if song is not None:
+                    playlist.songs.add(song)
+                    SongInfo.objects.update_or_create(
+                        song=song,
+                        playlist=playlist,
+                        defaults={'order': playlist.songs.all().count()},
+                    )
+                    playlist.recommend.remove(song)
+                return redirect('app:playlist', pk=pk)
     playlist = make_sorted_playlist(playlist)
     params['playlist'] = playlist
 

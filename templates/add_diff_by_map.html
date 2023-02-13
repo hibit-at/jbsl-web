@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>譜面から難易度の追加</h3>
+    <p>
+        あれほどまでにスコセイの ID を入れてくれと言ったのに bsr key を入れてしまったのですね……
+    </p>
+    <p>
+        プレイリスト : {{ playlist }}
+    </p>
+    <p>
+        {{ name }} by {{ author }} (hash : {{ hash }})
+    </p>
+    <ul>
+        {% for dif in data %}
+            {% if dif.characteristic != 'Lightshow' %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <li>
+                        {{ dif.characteristic }} {{ dif.difficulty }} (nps : {{ dif.notes }})
+                        <input type="hidden" name="hash" value="{{ hash }}">
+                        <input type="hidden" name="char" value="{{ dif.characteristic }}">
+                        <input type="hidden" name="dif" value="{{ dif.difficulty }}">
+                        <input type="hidden" name="pk" value="{{ playlist.pk }}">
+                        <button class="btn" name="add_from_map" value="1">Add this difficulty</button>
+                    </li>
+                </form>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock content %}

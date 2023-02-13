@@ -1256,20 +1256,13 @@ def rivalpage(request):
             print(rival_scores)
             my_top = my_scores[0]
             rival_top = rival_scores[0]
-            if my_top.score >= rival_top.score:
-                compares.append({
-                    'your': my_top,
-                    'rival': rival_top,
-                    'win': True
-                })
-                win += 1
-            else:
-                compares.append({
-                    'your': my_top,
-                    'rival': rival_top,
-                    'win': False
-                })
-    print(compares)
+            compares.append({
+                'your': my_top,
+                'rival': rival_top,
+                'win': my_top.score >= rival_top.score,
+                'dif' : my_top.score - rival_top.score
+            })
+    compares = sorted(compares, key=lambda x : x.dif)
     params['compares'] = compares
     params['match'] = match
     params['win'] = win

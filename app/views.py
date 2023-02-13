@@ -1262,7 +1262,7 @@ def rivalpage(request):
                 'win': my_top.score >= rival_top.score,
                 'dif' : my_top.score - rival_top.score
             })
-    compares = sorted(compares, key=lambda x : x.dif)
+    compares = sorted(compares, key=lambda x : x['dif'])
     params['compares'] = compares
     params['match'] = match
     params['win'] = win

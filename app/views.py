@@ -1246,23 +1246,63 @@ def rivalpage(request):
     compares = []
     match = 0
     win = 0
-    for song in songs:
-        my_scores = song.score.filter(player=player).order_by('-score')
-        rival_scores = song.score.filter(
-            player=player.rival).order_by('-score')
-        if len(my_scores) > 0 and len(rival_scores) > 0:
+
+    class compared_score:
+        
+        my_acc = 0
+        rival_acc = 0
+
+        def __init__(self) -> None:
+            pass
+
+        def set_my_acc(self, acc : float):
+            self.my_acc = max(self.my_acc, acc)
+
+        def set_rival_acc(self, acc : float):
+            self.rival_acc = max(self.rival_acc, acc)
+
+        def win(self) -> bool:
+            return self.my_acc >= self.rival_acc
+
+        def dif(self) -> int:
+            return self.my_acc - self.rival_acc
+
+        def __repr__(self) -> str:
+            return f'{self.my_acc} vs {self.rival_acc}'
+
+    from collections import defaultdict
+
+    d = defaultdict(compared_score)
+
+
+    for league in League.objects.filter(player=player):
+        print(league)
+        for score in Score.objects.filter(league=league,player=player):
+            print(score)
+            song = score.song
+            d[song].set_my_acc(score.acc)
+            
+    for league in League.objects.filter(player=player.rival):
+        print(league)
+        for score in Score.objects.filter(league=league,player=player.rival):
+            print(score)
+            song = score.song
+            d[song].set_rival_acc(score.acc)
+
+
+    for key,val in d.items():
+        print(key,val)
+        if val.my_acc > 0 and val.rival_acc > 0:
             match += 1
-            print(my_scores)
-            print(rival_scores)
-            my_top = my_scores[0]
-            rival_top = rival_scores[0]
             compares.append({
-                'your': my_top,
-                'rival': rival_top,
-                'win': my_top.score >= rival_top.score,
-                'dif' : my_top.score - rival_top.score
+                'song' : key,
+                'your_acc': val.my_acc,
+                'rival_acc': val.rival_acc,
+                'win': val.win(),
+                'dif' : val.dif(),
             })
-            win += my_top.score >= rival_top.score
+            win += val.win()
+
     compares = sorted(compares, key=lambda x : -x['dif'])
     params['compares'] = compares
     params['match'] = match

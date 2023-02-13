@@ -25,21 +25,21 @@
                     {% endif %}
                 </td>
                 <td>
-                    <img src="{{ compare.your.song.imageURL }}" class="thumb">
+                    <img src="{{ compare.song.imageURL }}" class="thumb">
                 </td>
-                <td>{{ compare.your.song.title }}</td>
+                <td>{{ compare.song.title }}</td>
                 <td>
                     {% if compare.win %}
-                        <span class="diff" style="color:white">{{ compare.your.acc|floatformat:2 }}</span>
+                        <span class="diff" style="color:white">{{ compare.your_acc|floatformat:2 }}</span>
                     {% else %}
-                        {{ compare.your.acc|floatformat:2 }}
+                        {{ compare.your_acc|floatformat:2 }}
                     {% endif %}
                 </td>
                 <td>
                     {% if not compare.win %}
-                        <span class="diff" style="color:white">{{ compare.rival.acc|floatformat:2 }}</span>
+                        <span class="diff" style="color:white">{{ compare.rival_acc|floatformat:2 }}</span>
                     {% else %}
-                        {{ compare.rival.acc|floatformat:2 }}
+                        {{ compare.rival_acc|floatformat:2 }}
                     {% endif %}
                 </td>
             </tr>

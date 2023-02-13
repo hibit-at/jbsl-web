@@ -1276,22 +1276,17 @@ def rivalpage(request):
 
 
     for league in League.objects.filter(player=player):
-        print(league)
         for score in Score.objects.filter(league=league,player=player):
-            print(score)
             song = score.song
             d[song].set_my_acc(score.acc)
             
     for league in League.objects.filter(player=player.rival):
-        print(league)
         for score in Score.objects.filter(league=league,player=player.rival):
-            print(score)
             song = score.song
             d[song].set_rival_acc(score.acc)
 
 
     for key,val in d.items():
-        print(key,val)
         if val.my_acc > 0 and val.rival_acc > 0:
             match += 1
             compares.append({

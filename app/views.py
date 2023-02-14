@@ -196,6 +196,7 @@ def userpage(request, sid=0):
             rival = Player.objects.get(sid=rival_sid)
             user.player.rival = rival
             user.player.save()
+            return redirect('app:rivalpage')
         if 'icon_scoresaber' in post:
             url = f'https://scoresaber.com/api/player/{player.sid}/basic'
             res = requests.get(url).json()

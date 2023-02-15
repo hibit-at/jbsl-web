@@ -256,3 +256,60 @@ pre {
     width: 300px;
     transition-duration: .5s;
 }
+
+.match-border {
+    border-style: solid;
+    height: 1080px;
+    width: 1920px;
+    color: red;
+    font-size: 80px;
+}
+
+.match-title {
+    position: fixed;
+    left: 50%;
+    top: 5px;
+    transform: translateX(-50%);
+}
+
+.match-player1 {
+    position: fixed;
+    left: 100px;
+    top: 100px;
+    width: auto;
+    height: auto;
+}
+
+.match-player2 {
+    position: fixed;
+    right: 100px;
+    top: 100px;
+    width: auto;
+    height: auto;
+}
+
+.match-results {
+    position: fixed;
+    left: 50%;
+    top: 100px;
+    transform: translateX(-50%)
+}
+
+.match-image {
+    position: fixed;
+    left: 100px;
+    bottom: 50px;
+    width: 256px;
+    height: 256px;
+    border-style: solid;
+    border-color: red;
+}
+
+.match-info {
+    position: fixed;
+    font-size: 60px;
+    left: 450px;
+    bottom: 50px;
+    width: auto;
+    height: auto;
+}

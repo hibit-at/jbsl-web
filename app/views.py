@@ -1995,3 +1995,7 @@ def archive(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     return render(request, 'archive.html', params)
+
+
+def match(request):
+    return render(request, 'match.html')

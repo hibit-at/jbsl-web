@@ -1999,9 +1999,20 @@ def archive(request):
 
 def match(request, pk=1):
     match = Match.objects.get(pk=pk)
+    playlists = Playlist.objects.all()
     params = {}
     params['match'] = match
     params['pk'] = pk
+    params['isEditor'] = False
+    params['playlists'] = playlists
+    print(playlists)
+    user = request.user
+    if user.is_authenticated:
+        player = Player.objects.get(user=user)
+        if player in match.editor.all():
+            params['isEditor'] = True
+
+    print(params['isEditor'])
 
     if request.method == 'POST':
         post = request.POST
@@ -2019,6 +2030,15 @@ def match(request, pk=1):
             player2 = Player.objects.get(sid=sid2)
             match.player1 = player1
             match.player2 = player2
+            match.save()
+        if 'title' in post:
+            title = post['title']
+            match.title = title
+            match.save()
+        if 'playlist' in post:
+            pk = post['playlist']
+            playlist = Playlist.objects.get(pk=pk)
+            match.playlist = playlist
             match.save()
 
     return render(request, 'match.html', params)

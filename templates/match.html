@@ -16,8 +16,10 @@
     <meta name="twitter:card" content="{% static 'card.png' %}">
     <meta name="twitter:site" content="@115_jbsl">
 </head>
-<div class="match-border" style="color:red">
-    <div class="match-title">Match1</div>
+<div class="match-border"
+     {% if isEditor %}style="color:red"{% endif %}
+     style="color:white">
+    <div class="match-title" id="title">Match1</div>
     <div class="match-player1">
         <img src=""
              id="player1-icon"
@@ -39,7 +41,7 @@
     <div class="match-image">
         <img src="" id="imageURL" height="256" width="256">
     </div>
-    <div class="match-info" style="line-height:40px">
+    <div class="match-info" style="line-height:40px;font-size:40px">
         <p id="map-info1">
             MAP Info
         </p>
@@ -55,42 +57,61 @@
     </div>
 </div>
 </div>
-<div class="coordinator">
-    <p>
-        この部分はコーディネーター用の調整領域になります
-    </p>
-    <p>
-        ブラウザソースでは、この部分は表示されません
-    </p>
-    <form method="POST">
-        player1 : 
-        {% csrf_token %}
-        <select name="player1">
-            {% for player in match.league.player.all %}
-            <option value={{ player.sid }}> {{ player }}
-            </option>
-            {% endfor %}
-        </select>
-        <select name="player2">
-            {% for player in match.league.player.all %}
-            <option value={{ player.sid }}> {{ player }}
-            </option>
-            {% endfor %}
-        </select>
-        <button class="btn" type="submit">選手切り替え</button>
-    </form>
-    <form method="post">
-        now_playing : 
-        {% csrf_token %}
-        <select name="next-song">
-            {% for song in match.playlist.songs.all %}
-                <option value={{ song.lid }}> {{ song }}
-                </option>
-            {% endfor %}
-        </select>
-        <button class="btn" type="submit">譜面切り替え</button>
-    </form>
-</div>
+{% if isEditor %}
+    <div class="coordinator">
+        <p>
+            この部分はコーディネーター用の調整領域になります
+        </p>
+        <p>
+            ブラウザソースでは、この部分は表示されません
+        </p>
+        <form method="POST">
+            player1 :
+            {% csrf_token %}
+            <select name="player1">
+                {% for player in match.league.player.all %}
+                    <option value={{ player.sid }} {% if player == match.player1 %}selected{% endif %}> {{ player }}
+                    </option>
+                {% endfor %}
+            </select>
+            <select name="player2">
+                {% for player in match.league.player.all %}
+                    <option value={{ player.sid }}  {% if player == match.player2 %}selected{% endif %}> {{ player }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">選手切り替え</button>
+        </form>
+        <form method="post">
+            now_playing :
+            {% csrf_token %}
+            <select name="next-song">
+                {% for song in match.playlist.songs.all %}
+                    <option value={{ song.lid }} {% if song == match.now_playing %}selected{% endif %}> {{ song }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">譜面切り替え</button>
+        </form>
+        <form method="post">
+            playlist :
+            {% csrf_token %}
+            <select name="playlist">
+                {% for playlist in playlists %}
+                    <option value={{ playlist.pk }}> {{ playlist }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">プレイリスト切り替え</button>
+        </form>
+        <form method="post">
+            match_title :
+            {% csrf_token %}
+            <input text name="title" value="{{ match.title }}">
+            <button class="btn" type="submit">タイトル切り替え</button>
+        </form>
+    </div>
+{% endif %}
 <script>
     window.onload = function(){
         console.log('loaded');
@@ -98,6 +119,7 @@
 
     function update(data){
         // console.log(data);
+        document.getElementById("title").innerHTML = data['title'];
         document.getElementById("player1").innerHTML = data['player1'];
         document.getElementById("player1-icon").src = data['player1-imageURL'];
         document.getElementById("player2").innerHTML = data['player2'];

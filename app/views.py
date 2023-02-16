@@ -1999,7 +1999,7 @@ def archive(request):
 
 def match(request, pk=1):
     match = Match.objects.get(pk=pk)
-    playlists = Playlist.objects.all()
+    playlists = Playlist.objects.all().order_by('-pk')
     params = {}
     params['match'] = match
     params['pk'] = pk

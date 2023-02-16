@@ -277,7 +277,7 @@ pre {
     top: 120px;
     width: auto;
     height: auto;
-    font-family: 'Anton', sans-serif;
+    font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
 }
 
 .match-winbutton1 {
@@ -294,7 +294,7 @@ pre {
     top: 120px;
     width: auto;
     height: auto;
-    font-family: 'Anton', sans-serif;
+    font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
 }
 
 .match-winbutton2 {
@@ -354,7 +354,7 @@ pre {
     white-space: nowrap;
     overflow: hidden;
     height: auto;
-    font-family: 'Fjalla One', sans-serif;
+    font-family: 'Fjalla One', "M PLUS Rounded 1c", sans-serif;
 }
 
 .coordinator {

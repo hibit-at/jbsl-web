@@ -2011,7 +2011,9 @@ def api_match(request, pk):
     ans = {}
     ans['title'] = match.title
     ans['player1'] = match.player1.name
+    ans['player1-imageURL'] = match.player1.imageURL
     ans['player2'] = match.player2.name
+    ans['player2-imageURL'] = match.player2.imageURL
     ans['result1'] = match.result1
     ans['result2'] = match.result2
     ans['retry1'] = match.retry1

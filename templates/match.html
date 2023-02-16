@@ -18,10 +18,22 @@
 </head>
 <div class="match-border" style="color:red">
     <div class="match-title">Match1</div>
-    <div class="match-player1" id="player1">Player1</div>
+    <div class="match-player1">
+        <img src=""
+             id="player1-icon"
+             class="icon"
+             style="width:100px;height:100px;border-radius:50px">
+        <span id="player1">Player1</span>
+    </div>
     <div class="match-result1">Result1</div>
     <div class="match-bomb1">B1</div>
-    <div class="match-player2" id="player2">Player2</div>
+    <div class="match-player2">
+        <span id="player2">Player2</span>
+        <img src=""
+             id="player2-icon"
+             class="icon"
+             style="width:100px;height:100px;border-radius:50px">
+    </div>
     <div class="match-result2">Result2</div>
     <div class="match-bomb2">B2</div>
     <div class="match-image">
@@ -93,13 +105,10 @@
     function update(data){
         // console.log(data);
         document.getElementById("player1").innerHTML = data['player1'];
+        document.getElementById("player1-icon").src = data['player1-imageURL'];
         document.getElementById("player2").innerHTML = data['player2'];
-        var old_imageURL = document.getElementById("imageURL").src;
-        var new_imageURL = data['imageURL'];
-        if(old_imageURL != new_imageURL){
-            console.log("change!");
-            document.getElementById("imageURL").src = data['imageURL'];
-        }
+        document.getElementById("player2-icon").src = data['player2-imageURL'];
+        document.getElementById("imageURL").src = data['imageURL'];
     }
 
     setInterval(function () {

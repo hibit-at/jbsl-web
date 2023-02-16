@@ -40,16 +40,16 @@
         <img src="" id="imageURL" height="256" width="256">
     </div>
     <div class="match-info" style="line-height:40px">
-        <p id="map_info1">
+        <p id="map-info1">
             MAP Info
         </p>
-        <p id="map_info2">
+        <p id="map-info2">
             MAP Info
         </p>
-        <p id="map_info3">
+        <p id="map-info3" style="">
             MAP Info
         </p>
-        <p id="map_info4">
+        <p id="map-info4">
             MAP Info
         </p>
     </div>
@@ -63,38 +63,32 @@
         ブラウザソースでは、この部分は表示されません
     </p>
     <form method="POST">
+        player1 : 
         {% csrf_token %}
-        <P>
-            Per Fight
-        </p>
-        <p>
-            Per Map
-        </p>
-        <p>
-            Now playing Map
-            <input text>
-        </p>
-        <p>
-            <b>Per Match</b>
-        </p>
-        <p>
-            <Label>Match Title</Label>
-            :
-            <input text>
-        </p>
-        <p>
-            <Label>Left Player (Player 1)</Label>
-            :
-            <input text>
-        </p>
-        <p>
-            <Label>Right Player (Player 2)</Label>
-            :
-            <input text>
-        </p>
-        <p>
-            <button>send</button>
-        </p>
+        <select name="player1">
+            {% for player in match.league.player.all %}
+            <option value={{ player.sid }}> {{ player }}
+            </option>
+            {% endfor %}
+        </select>
+        <select name="player2">
+            {% for player in match.league.player.all %}
+            <option value={{ player.sid }}> {{ player }}
+            </option>
+            {% endfor %}
+        </select>
+        <button class="btn" type="submit">選手切り替え</button>
+    </form>
+    <form method="post">
+        now_playing : 
+        {% csrf_token %}
+        <select name="next-song">
+            {% for song in match.playlist.songs.all %}
+                <option value={{ song.lid }}> {{ song }}
+                </option>
+            {% endfor %}
+        </select>
+        <button class="btn" type="submit">譜面切り替え</button>
     </form>
 </div>
 <script>
@@ -109,6 +103,10 @@
         document.getElementById("player2").innerHTML = data['player2'];
         document.getElementById("player2-icon").src = data['player2-imageURL'];
         document.getElementById("imageURL").src = data['imageURL'];
+        document.getElementById("map-info1").innerHTML = data['map-info1'];
+        document.getElementById("map-info2").innerHTML = data['map-info2'];
+        document.getElementById("map-info3").innerHTML = data['map-info3'];
+        document.getElementById("map-info3").style = "color:" + data['map-info3-color'];
     }
 
     setInterval(function () {

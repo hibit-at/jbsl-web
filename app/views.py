@@ -2002,6 +2002,25 @@ def match(request, pk=1):
     params = {}
     params['match'] = match
     params['pk'] = pk
+
+    if request.method == 'POST':
+        post = request.POST
+        print(post)
+        if 'next-song' in post:
+            lid = post['next-song']
+            song = Song.objects.get(lid=lid)
+            match.now_playing = song
+            match.save()
+        if 'player1' in post:
+            sid1 = post['player1']
+            sid2 = post['player2']
+            print(sid1,sid2)
+            player1 = Player.objects.get(sid=sid1)
+            player2 = Player.objects.get(sid=sid2)
+            match.player1 = player1
+            match.player2 = player2
+            match.save()
+
     return render(request, 'match.html', params)
 
 def api_match(request, pk):
@@ -2019,4 +2038,9 @@ def api_match(request, pk):
     ans['retry1'] = match.retry1
     ans['retry2'] = match.retry2
     ans['imageURL'] = match.now_playing.imageURL
+    ans['map-info1'] = match.now_playing.title
+    ans['map-info2'] = match.now_playing.author
+    ans['map-info3'] = match.now_playing.diff
+    ans['map-info3-color'] = match.now_playing.color
+
     return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))

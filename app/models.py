@@ -205,3 +205,5 @@ class Match(models.Model):
     highest_acc = models.FloatField(default=0)
     state = models.IntegerField(default=0)
     editor = models.ManyToManyField(Player)
+    playlist = models.ForeignKey(Playlist,on_delete=models.SET_NULL, null=True)
+    league = models.ForeignKey(League,on_delete=models.SET_NULL, null=True)

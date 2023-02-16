@@ -286,16 +286,41 @@ pre {
     height: auto;
 }
 
-.match-results {
+.match-result1 {
     position: fixed;
-    left: 50%;
+    left: 50px;
+    top: 5px;
+    width: auto;
+    height: auto;
+}
+
+.match-result2 {
+    position: fixed;
+    right: 50px;
+    top: 5px;
+    width: auto;
+    height: auto;
+}
+
+.match-bomb1 {
+    position: fixed;
+    left: 750px;
     top: 100px;
-    transform: translateX(-50%)
+    width: auto;
+    height: auto;
+}
+
+.match-bomb2 {
+    position: fixed;
+    left: 1050px;
+    top: 100px;
+    width: auto;
+    height: auto;
 }
 
 .match-image {
     position: fixed;
-    left: 100px;
+    left: 50px;
     bottom: 50px;
     width: 256px;
     height: 256px;
@@ -306,7 +331,7 @@ pre {
 .match-info {
     position: fixed;
     font-size: 60px;
-    left: 450px;
+    left: 350px;
     bottom: 50px;
     width: auto;
     height: auto;

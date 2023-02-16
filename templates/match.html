@@ -17,18 +17,31 @@
     <meta name="twitter:site" content="@115_jbsl">
 </head>
 <div class="match-border" style="color:red">
-    <div class="match-player1" id="player1">Player1</div>
     <div class="match-title">Match1</div>
-    <div class="match-results">Results&Bomb</div>
+    <div class="match-player1" id="player1">Player1</div>
+    <div class="match-result1">Result1</div>
+    <div class="match-bomb1">B1</div>
     <div class="match-player2" id="player2">Player2</div>
-    <div class="match-image"><img src="" id="imageURL" height="256" width="256"></div>
-    <div class="match-info">
-        MAP Info
-        <br>
-        MAP Info
-        <br>
-        MAP Info
+    <div class="match-result2">Result2</div>
+    <div class="match-bomb2">B2</div>
+    <div class="match-image">
+        <img src="" id="imageURL" height="256" width="256">
     </div>
+    <div class="match-info" style="line-height:40px">
+        <p id="map_info1">
+            MAP Info
+        </p>
+        <p id="map_info2">
+            MAP Info
+        </p>
+        <p id="map_info3">
+            MAP Info
+        </p>
+        <p id="map_info4">
+            MAP Info
+        </p>
+    </div>
+</div>
 </div>
 <div class="coordinator">
     <p>
@@ -81,7 +94,12 @@
         // console.log(data);
         document.getElementById("player1").innerHTML = data['player1'];
         document.getElementById("player2").innerHTML = data['player2'];
-        document.getElementById("imageURL").src = data['imageURL'];
+        var old_imageURL = document.getElementById("imageURL").src;
+        var new_imageURL = data['imageURL'];
+        if(old_imageURL != new_imageURL){
+            console.log("change!");
+            document.getElementById("imageURL").src = data['imageURL'];
+        }
     }
 
     setInterval(function () {

@@ -98,11 +98,22 @@
             {% csrf_token %}
             <select name="playlist">
                 {% for playlist in playlists %}
-                    <option value={{ playlist.pk }}> {{ playlist }}
+                    <option value={{ playlist.pk }} {% if playlist == match.playlist %}selected{% endif %} > {{ playlist }}
                     </option>
                 {% endfor %}
             </select>
             <button class="btn" type="submit">プレイリスト切り替え</button>
+        </form>
+        <form method="post">
+            league : 
+            {% csrf_token %}
+            <select name="league">
+                {% for league in leagues %}
+                    <option value={{ league.pk }} {% if league == match.league %}selected{% endif %} > {{ league }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">リーグ切り替え</button>
         </form>
         <form method="post">
             match_title :

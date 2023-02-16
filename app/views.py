@@ -2000,20 +2000,18 @@ def archive(request):
 def match(request, pk=1):
     match = Match.objects.get(pk=pk)
     playlists = Playlist.objects.all().order_by('-pk')
+    leagues = League.objects.all().order_by('-pk')
     params = {}
     params['match'] = match
     params['pk'] = pk
     params['isEditor'] = False
     params['playlists'] = playlists
-    print(playlists)
+    params['leagues'] = leagues
     user = request.user
     if user.is_authenticated:
         player = Player.objects.get(user=user)
         if player in match.editor.all():
             params['isEditor'] = True
-
-    print(params['isEditor'])
-
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -2041,6 +2039,15 @@ def match(request, pk=1):
             match.playlist = playlist
             match.now_playing = playlist.songs.all()[0]
             match.save()
+        if 'league' in post:
+            pk = post['league']
+            league = League.objects.get(pk=pk)
+            if league.player.all().count() >= 2:
+                print(league)
+                match.league = league
+                match.player1 = league.player.all()[0]
+                match.player2 = league.player.all()[1]
+                match.save()
 
     return render(request, 'match.html', params)
 

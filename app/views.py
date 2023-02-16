@@ -2028,6 +2028,8 @@ def match(request, pk=1):
             player2 = Player.objects.get(sid=sid2)
             match.player1 = player1
             match.player2 = player2
+            match.result1 = 0
+            match.result2 = 0
             match.save()
         if 'title' in post:
             title = post['title']
@@ -2048,6 +2050,12 @@ def match(request, pk=1):
                 match.player1 = league.player.all()[0]
                 match.player2 = league.player.all()[1]
                 match.save()
+        if 'player1_win' in post:
+            match.result1 += 2
+            match.save()
+        if 'player2_win' in post:
+            match.result2 += 2
+            match.save()
 
     return render(request, 'match.html', params)
 

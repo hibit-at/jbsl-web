@@ -305,10 +305,26 @@ pre {
     height: auto;
 }
 
-.match-result1 {
+.match-result1_1 {
     position: fixed;
     left: 10px;
     top: 0px;
+    width: auto;
+    height: auto;
+}
+
+.match-result1_2 {
+    position: fixed;
+    left: 110px;
+    top: 5px;
+    width: auto;
+    height: auto;
+}
+
+.match-result1_3 {
+    position: fixed;
+    left: 210px;
+    top: 10px;
     width: auto;
     height: auto;
 }

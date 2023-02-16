@@ -6,7 +6,8 @@
           crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c"
+          rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fjalla+One&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="{% static 'style.css' %}">
@@ -31,16 +32,14 @@
              style="width:100px;height:100px;border-radius:50px">
         <span id="player1">Player1</span>
     </div>
-    <div class="match-result1">
-        {% if match.result1 >= 1 %}
-            <img src="{% static 'star.png' %}" height=90 width=90 id="star1_1" style="animation: flash 2s linear infinite;">
-        {% endif %}
-        {% if match.result1 >= 3 %}
-            <img src="{% static 'star.png' %}" height=80 width=80>
-        {% endif %}
-        {% if match.result1 >= 5 %}
-            <img src="{% static 'star.png' %}" height=70 width=70>
-        {% endif %}
+    <div class="match-result1_1">
+        <img src="{% static 'vacant.png' %}" height="90" width="90" id="star1_1">
+    </div>
+    <div class="match-result1_2">
+        <img src="{% static 'vacant.png' %}" height="80" width="80" id="star1_2">
+    </div>
+    <div class="match-result1_3">
+        <img src="{% static 'vacant.png' %}" height="70" width="70"  id="star1_3">
     </div>
     <div class="match-bomb1">
         <img src="" height=150 width=150 id="bomb1">
@@ -81,12 +80,15 @@
 </div>
 {% if isEditor %}</div>{% endif %}
 {% if isEditor %}
-    <div class="match-winbutton1">
-        <button class="btn">{{ match.player1 }} WIN</button>
-    </div>
-    <div class="match-winbutton2">
-        <button class="btn">{{ match.player2 }} WIN</button>
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="match-winbutton1">
+            <button class="btn" name="player1_win">{{ match.player1 }} WIN</button>
+        </div>
+        <div class="match-winbutton2">
+            <button class="btn" name="player2_win">{{ match.player2 }} WIN</button>
+        </div>
+    </form>
     <div class="coordinator">
         <p>
             この部分はコーディネーター用の調整領域になります
@@ -163,6 +165,22 @@
         document.getElementById("player1").innerHTML = data['player1'];
         document.getElementById("player1-icon").src = data['player1-imageURL'];
         document.getElementById("bomb1").src = "{% static 'bomb_before.png' %}";
+        console.log(data['result1']);
+        if(data['result1'] >= 1){
+            document.getElementById("star1_1").src = "{% static 'star.png' %}";
+        }else{
+            document.getElementById("star1_1").src = "{% static 'vacant.png' %}";
+        }
+        if(data['result1'] >= 3){
+            document.getElementById("star1_2").src = "{% static 'star.png' %}";
+        }else{
+            document.getElementById("star1_2").src = "{% static 'vacant.png' %}";
+        }
+        if(data['result1'] >= 5){
+            document.getElementById("star1_3").src = "{% static 'star.png' %}";
+        }else{
+            document.getElementById("star1_3").src = "{% static 'vacant.png' %}";
+        }
         document.getElementById("player2").innerHTML = data['player2'];
         document.getElementById("player2-icon").src = data['player2-imageURL'];
         document.getElementById("bomb2").src = "{% static 'bomb_before.png' %}";

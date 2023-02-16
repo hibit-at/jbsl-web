@@ -2039,6 +2039,7 @@ def match(request, pk=1):
             pk = post['playlist']
             playlist = Playlist.objects.get(pk=pk)
             match.playlist = playlist
+            match.now_playing = playlist.songs.all()[0]
             match.save()
 
     return render(request, 'match.html', params)

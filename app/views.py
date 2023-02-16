@@ -5,7 +5,7 @@ import json
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge
+from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
@@ -1997,5 +1997,24 @@ def archive(request):
     return render(request, 'archive.html', params)
 
 
-def match(request):
-    return render(request, 'match.html')
+def match(request, pk=1):
+    match = Match.objects.get(pk=pk)
+    params = {}
+    params['match'] = match
+    params['pk'] = pk
+    return render(request, 'match.html', params)
+
+def api_match(request, pk):
+    params = {}
+    match = Match.objects.get(pk=pk)
+    params['match'] = match
+    ans = {}
+    ans['title'] = match.title
+    ans['player1'] = match.player1.name
+    ans['player2'] = match.player2.name
+    ans['result1'] = match.result1
+    ans['result2'] = match.result2
+    ans['retry1'] = match.retry1
+    ans['retry2'] = match.retry2
+    ans['imageURL'] = match.now_playing.imageURL
+    return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))

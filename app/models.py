@@ -190,3 +190,18 @@ class Badge(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class Match(models.Model):
+    title = models.CharField(max_length=50)
+    player1 = models.ForeignKey(Player,on_delete=models.SET_NULL, null=True,related_name='player1')
+    retry1 = models.BooleanField()
+    result1 = models.IntegerField(default=0)
+    player2 = models.ForeignKey(Player,on_delete=models.SET_NULL, null=True, related_name='player2')
+    retry2 = models.BooleanField()
+    result2 = models.IntegerField(default=0)
+    now_playing = models.ForeignKey(Song, on_delete=models.SET_NULL, null=True)
+    map_info = models.CharField(max_length=1000)
+    highest_acc = models.FloatField(default=0)
+    state = models.IntegerField(default=0)
+    editor = models.ManyToManyField(Player)

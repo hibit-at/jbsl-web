@@ -16,11 +16,78 @@
     <meta name="twitter:card" content="{% static 'card.png' %}">
     <meta name="twitter:site" content="@115_jbsl">
 </head>
-<div class="match-border">
-    <div class="match-player1">Player1</div>
+<div class="match-border" style="color:red">
+    <div class="match-player1" id="player1">Player1</div>
     <div class="match-title">Match1</div>
     <div class="match-results">Results&Bomb</div>
-    <div class="match-player2">Player2</div>
-    <div class="match-image">MAP Image</div>
-    <div class="match-info">MAP Info<br>MAP Info<br>MAP Info</div>
+    <div class="match-player2" id="player2">Player2</div>
+    <div class="match-image"><img src="" id="imageURL" height="256" width="256"></div>
+    <div class="match-info">
+        MAP Info
+        <br>
+        MAP Info
+        <br>
+        MAP Info
+    </div>
 </div>
+<div class="coordinator">
+    <p>
+        この部分はコーディネーター用の調整領域になります
+    </p>
+    <p>
+        ブラウザソースでは、この部分は表示されません
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        <P>
+            Per Fight
+        </p>
+        <p>
+            Per Map
+        </p>
+        <p>
+            Now playing Map
+            <input text>
+        </p>
+        <p>
+            <b>Per Match</b>
+        </p>
+        <p>
+            <Label>Match Title</Label>
+            :
+            <input text>
+        </p>
+        <p>
+            <Label>Left Player (Player 1)</Label>
+            :
+            <input text>
+        </p>
+        <p>
+            <Label>Right Player (Player 2)</Label>
+            :
+            <input text>
+        </p>
+        <p>
+            <button>send</button>
+        </p>
+    </form>
+</div>
+<script>
+    window.onload = function(){
+        console.log('loaded');
+    }
+
+    function update(data){
+        // console.log(data);
+        document.getElementById("player1").innerHTML = data['player1'];
+        document.getElementById("player2").innerHTML = data['player2'];
+        document.getElementById("imageURL").src = data['imageURL'];
+    }
+
+    setInterval(function () {
+        var url = "/match/api/" + {{ pk }};
+        const response = fetch(url).
+        then(response => response.json()).
+        then(data => update(data));
+    }, 500);
+</script>

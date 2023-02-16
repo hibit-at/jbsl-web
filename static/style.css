@@ -258,10 +258,8 @@ pre {
 }
 
 .match-border {
-    border-style: solid;
     height: 1080px;
     width: 1920px;
-    color: red;
     font-size: 80px;
 }
 
@@ -312,4 +310,14 @@ pre {
     bottom: 50px;
     width: auto;
     height: auto;
+}
+
+.coordinator {
+    position: fixed;
+    font-size: 60px;
+    left: 900px;
+    top: 300px;
+    width: auto;
+    height: auto;
+    font-size: 20px;
 }

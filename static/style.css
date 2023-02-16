@@ -334,7 +334,9 @@ pre {
     font-size: 60px;
     left: 350px;
     bottom: 50px;
-    width: auto;
+    width: 1200px;
+    white-space: nowrap;
+    overflow: hidden;
     height: auto;
     font-family: 'Fjalla One', sans-serif;
 }

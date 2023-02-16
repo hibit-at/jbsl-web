@@ -266,57 +266,73 @@ pre {
 .match-title {
     position: fixed;
     left: 50%;
-    top: 5px;
+    top: 120px;
     transform: translateX(-50%);
     font-family: 'Anton', sans-serif;
 }
 
 .match-player1 {
     position: fixed;
-    left: 100px;
-    top: 100px;
+    left: 0px;
+    top: 120px;
     width: auto;
     height: auto;
     font-family: 'Anton', sans-serif;
+}
+
+.match-winbutton1 {
+    position: fixed;
+    left: 0px;
+    top: 240px;
+    width: auto;
+    height: auto;
 }
 
 .match-player2 {
     position: fixed;
-    right: 100px;
-    top: 100px;
+    right: 0px;
+    top: 120px;
     width: auto;
     height: auto;
     font-family: 'Anton', sans-serif;
 }
 
+.match-winbutton2 {
+    position: fixed;
+    right: 0px;
+    top: 240px;
+    width: auto;
+    height: auto;
+}
+
 .match-result1 {
     position: fixed;
-    left: 50px;
-    top: 5px;
+    left: 10px;
+    top: 0px;
     width: auto;
     height: auto;
 }
 
 .match-result2 {
     position: fixed;
-    right: 50px;
-    top: 5px;
+    right: 10px;
+    top: 0px;
     width: auto;
     height: auto;
 }
 
 .match-bomb1 {
     position: fixed;
-    left: 750px;
-    top: 100px;
+    left: 600px;
+    top: 70px;
     width: auto;
     height: auto;
 }
 
 .match-bomb2 {
     position: fixed;
-    left: 1050px;
-    top: 100px;
+    right: 600px;
+    top: 70px;
     width: auto;
     height: auto;
 }
@@ -349,4 +365,14 @@ pre {
     width: auto;
     height: auto;
     font-size: 20px;
+}
+
+@keyframes flash {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
 }

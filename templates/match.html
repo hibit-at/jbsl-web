@@ -6,8 +6,10 @@
           crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fjalla+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fjalla+One&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>JBSL</title>
     <meta property="og:title" content="JapanBeatSaberLeague" />
@@ -20,9 +22,8 @@
     <meta name="twitter:card" content="{% static 'card.png' %}">
     <meta name="twitter:site" content="@115_jbsl">
 </head>
-<div class="match-border"
-     {% if isEditor %}style="color:red"{% endif %}
-     style="color:white">
+{% if isEditor %}<div style="background-color:grey">{% endif %}
+<div class="match-border" style="color:white">
     <div class="match-title" id="title">Match1</div>
     <div class="match-player1">
         <img src=""
@@ -31,8 +32,20 @@
              style="width:100px;height:100px;border-radius:50px">
         <span id="player1">Player1</span>
     </div>
-    <div class="match-result1">Result1</div>
-    <div class="match-bomb1">B1</div>
+    <div class="match-result1">
+        {% if match.result1 >= 1 %}
+            <img src="{% static 'star.png' %}" height=90 width=90 id="star1_1" style="animation: flash 2s linear infinite;">
+        {% endif %}
+        {% if match.result1 >= 3 %}
+            <img src="{% static 'star.png' %}" height=80 width=80>
+        {% endif %}
+        {% if match.result1 >= 5 %}
+            <img src="{% static 'star.png' %}" height=70 width=70>
+        {% endif %}
+    </div>
+    <div class="match-bomb1">
+        <img src="" height=150 width=150 id="bomb1">
+    </div>
     <div class="match-player2">
         <span id="player2">Player2</span>
         <img src=""
@@ -41,9 +54,16 @@
              style="width:100px;height:100px;border-radius:50px">
     </div>
     <div class="match-result2">Result2</div>
-    <div class="match-bomb2">B2</div>
+    <div class="match-bomb2">
+        <img src="" height=150 width=150 id="bomb2">
+    </div>
     <div class="match-image">
-        <img src="" id="imageURL" height="256" width="256" style="border-radius:20px;box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, .3);">
+        <img src=""
+             id="imageURL"
+             height="256"
+             width="256"
+             style="border-radius:20px;
+                    box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, .3);">
     </div>
     <div class="match-info" style="line-height:40px;font-size:40px">
         <p id="map-info1">
@@ -60,8 +80,14 @@
         </p>
     </div>
 </div>
-</div>
+{% if isEditor %}</div>{% endif %}
 {% if isEditor %}
+    <div class="match-winbutton1">
+        <button class="btn">{{ match.player1 }} WIN</button>
+    </div>
+    <div class="match-winbutton2">
+        <button class="btn">{{ match.player2 }} WIN</button>
+    </div>
     <div class="coordinator">
         <p>
             この部分はコーディネーター用の調整領域になります
@@ -69,8 +95,19 @@
         <p>
             ブラウザソースでは、この部分は表示されません
         </p>
+        <form method="post">
+            now_playing :
+            {% csrf_token %}
+            <select name="next-song">
+                {% for song in match.playlist.songs.all %}
+                    <option value={{ song.lid }} {% if song == match.now_playing %}selected{% endif %}> {{ song }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button class="btn" type="submit">譜面切り替え</button>
+        </form>
         <form method="POST">
-            player1 :
+            player_set :
             {% csrf_token %}
             <select name="player1">
                 {% for player in match.league.player.all %}
@@ -87,33 +124,22 @@
             <button class="btn" type="submit">選手切り替え</button>
         </form>
         <form method="post">
-            now_playing :
-            {% csrf_token %}
-            <select name="next-song">
-                {% for song in match.playlist.songs.all %}
-                    <option value={{ song.lid }} {% if song == match.now_playing %}selected{% endif %}> {{ song }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button class="btn" type="submit">譜面切り替え</button>
-        </form>
-        <form method="post">
             playlist :
             {% csrf_token %}
             <select name="playlist">
                 {% for playlist in playlists %}
-                    <option value={{ playlist.pk }} {% if playlist == match.playlist %}selected{% endif %} > {{ playlist }}
+                    <option value={{ playlist.pk }} {% if playlist == match.playlist %}selected{% endif %}> {{ playlist }}
                     </option>
                 {% endfor %}
             </select>
             <button class="btn" type="submit">プレイリスト切り替え</button>
         </form>
         <form method="post">
-            member : 
+            member :
             {% csrf_token %}
             <select name="league">
                 {% for league in leagues %}
-                    <option value={{ league.pk }} {% if league == match.league %}selected{% endif %} > {{ league }}
+                    <option value={{ league.pk }} {% if league == match.league %}selected{% endif %}> {{ league }}
                     </option>
                 {% endfor %}
             </select>
@@ -137,8 +163,10 @@
         document.getElementById("title").innerHTML = data['title'];
         document.getElementById("player1").innerHTML = data['player1'];
         document.getElementById("player1-icon").src = data['player1-imageURL'];
+        document.getElementById("bomb1").src = "{% static 'bomb_before.png' %}";
         document.getElementById("player2").innerHTML = data['player2'];
         document.getElementById("player2-icon").src = data['player2-imageURL'];
+        document.getElementById("bomb2").src = "{% static 'bomb_before.png' %}";
         document.getElementById("imageURL").src = data['imageURL'];
         document.getElementById("map-info1").innerHTML = data['map-info1'];
         document.getElementById("map-info2").innerHTML = data['map-info2'];

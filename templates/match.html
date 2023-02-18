@@ -32,17 +32,43 @@
              style="width:100px;height:100px;border-radius:50px">
         <span id="player1">Player1</span>
     </div>
+
     <div class="match-result1_1">
         <img src="{% static 'vacant.png' %}" height="90" width="90" id="star1_1">
+    </div>
+    <div class="match-result1_1">
+        <img src="{% static 'vacant.png' %}"
+             height="90"
+             width="90"
+             id="star1_1_t"
+             style="animation: flash 2s linear infinite;">
     </div>
     <div class="match-result1_2">
         <img src="{% static 'vacant.png' %}" height="80" width="80" id="star1_2">
     </div>
+    <div class="match-result1_2">
+        <img src="{% static 'vacant.png' %}"
+             height="80"
+             width="80"
+             id="star1_2_t"
+             style="animation: flash 2s linear infinite;">
+    </div>
     <div class="match-result1_3">
         <img src="{% static 'vacant.png' %}" height="70" width="70"  id="star1_3">
     </div>
+    <div class="match-result1_3">
+        <img src="{% static 'vacant.png' %}"
+             height="70"
+             width="70"
+             id="star1_3_t"
+             style="animation: flash 2s linear infinite;">
+    </div>
+
     <div class="match-bomb1">
         <img src="" height=150 width=150 id="bomb1">
+    </div>
+    <div class="match-highest1">
+        ADVANTAGE {{ match.highest_acc }} %!!
     </div>
     <div class="match-player2">
         <span id="player2">Player2</span>
@@ -51,7 +77,39 @@
              class="icon"
              style="width:100px;height:100px;border-radius:50px">
     </div>
-    <div class="match-result2">Result2</div>
+
+
+    <div class="match-result2_1">
+        <img src="{% static 'vacant.png' %}" height="90" width="90" id="star2_1">
+    </div>
+    <div class="match-result2_1">
+        <img src="{% static 'vacant.png' %}"
+             height="90"
+             width="90"
+             id="star2_1_t"
+             style="animation: flash 2s linear infinite;">
+    </div>
+    <div class="match-result2_2">
+        <img src="{% static 'vacant.png' %}" height="80" width="80" id="star2_2">
+    </div>
+    <div class="match-result2_2">
+        <img src="{% static 'vacant.png' %}"
+             height="80"
+             width="80"
+             id="star2_2_t"
+             style="animation: flash 2s linear infinite;">
+    </div>
+    <div class="match-result2_3">
+        <img src="{% static 'vacant.png' %}" height="70" width="70"  id="star2_3">
+    </div>
+    <div class="match-result2_3">
+        <img src="{% static 'vacant.png' %}"
+             height="70"
+             width="70"
+             id="star2_3_t"
+             style="animation: flash 2s linear infinite;">
+    </div>
+
     <div class="match-bomb2">
         <img src="" height=150 width=150 id="bomb2">
     </div>
@@ -80,21 +138,46 @@
 </div>
 {% if isEditor %}</div>{% endif %}
 {% if isEditor %}
-    <form method="post">
-        {% csrf_token %}
-        <div class="match-winbutton1">
-            <button class="btn" name="player1_win">{{ match.player1 }} WIN</button>
-        </div>
-        <div class="match-winbutton2">
-            <button class="btn" name="player2_win">{{ match.player2 }} WIN</button>
-        </div>
-    </form>
+    {% if inMatch  %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="match-winbutton1">
+                <input value name="highest1" placeholder="winner's acc"><button class="btn" name="player1_win">{{ match.player1 }} WIN</button>
+            </div>
+            <div class="match-winbutton2">
+                <input value name="highest2" placeholder="winner's acc"><button class="btn" name="player2_win">{{ match.player2 }} WIN</button>
+            </div>
+        </form>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {% if not match.retry1 and match.state == 1 %}
+                <div class="match-retrybutton1">
+                    <button class="btn" name="player1_retry" style="background-color:red">{{ match.player1 }} RETRY</button>
+                </div>
+            {% endif %}
+            <div class="match-noretry">
+                <button class="btn" name="no_retry">NO RETRY</button>
+            </div>
+            {% if not match.retry2 and match.state == -1 %}
+                <div class="match-retrybutton2">
+                    <button class="btn" name="player2_retry" style="background-color:red">{{ match.player2 }} RETRY</button>
+                </div>
+            {% endif %}
+        </form>
+    {% endif %}
     <div class="coordinator">
         <p>
             この部分はコーディネーター用の調整領域になります
         </p>
         <p>
             ブラウザソースでは、この部分は表示されません
+        </p>
+        <p>
+            現在の状態 : {{ state }}
+        </p>
+        <p>
+            PLAYER1_SCORE : {{ match.result1 }} / 6 PLAYER2_SCORE : {{ match.result2 }} / 6
         </p>
         <form method="post">
             now_playing :
@@ -144,7 +227,7 @@
                     </option>
                 {% endfor %}
             </select>
-            <button class="btn" type="submit">リーグ切り替え</button>
+            <button class="btn" type="submit">メンバー切り替え</button>
         </form>
         <form method="post">
             match_title :
@@ -164,31 +247,92 @@
         document.getElementById("title").innerHTML = data['title'];
         document.getElementById("player1").innerHTML = data['player1'];
         document.getElementById("player1-icon").src = data['player1-imageURL'];
-        document.getElementById("bomb1").src = "{% static 'bomb_before.png' %}";
-        console.log(data['result1']);
+        if(!data['retry1']){
+            document.getElementById("bomb1").src = "{% static 'bomb_before.png' %}";
+         }else{
+            document.getElementById("bomb1").src = "{% static 'bomb_after.png' %}";
+        }
+
+        // star1
         if(data['result1'] >= 1){
-            document.getElementById("star1_1").src = "{% static 'star.png' %}";
+            if(data['result1'] == 1){
+            document.getElementById("star1_1_t").src = "{% static 'star.png' %}"; 
+            }else{
+            document.getElementById("star1_1").src = "{% static 'star.png' %}"; 
+            }
         }else{
+            document.getElementById("star1_1_t").src = "{% static 'vacant.png' %}";
             document.getElementById("star1_1").src = "{% static 'vacant.png' %}";
         }
         if(data['result1'] >= 3){
-            document.getElementById("star1_2").src = "{% static 'star.png' %}";
+            if(data['result1'] == 3){
+                document.getElementById("star1_2_t").src = "{% static 'star.png' %}";
+            }else{
+                document.getElementById("star1_2").src =  "{% static 'star.png' %}";
+            }
         }else{
+            document.getElementById("star1_2_t").src = "{% static 'vacant.png' %}";
             document.getElementById("star1_2").src = "{% static 'vacant.png' %}";
         }
         if(data['result1'] >= 5){
-            document.getElementById("star1_3").src = "{% static 'star.png' %}";
+            if(data['result1'] == 5){
+                document.getElementById("star1_3_t").src = "{% static 'star.png' %}";
+            }else{
+                document.getElementById("star1_3").src = "{% static 'star.png' %}";
+            }
         }else{
+            document.getElementById("star1_3_t").src = "{% static 'vacant.png' %}";
             document.getElementById("star1_3").src = "{% static 'vacant.png' %}";
         }
+        //star1
+
         document.getElementById("player2").innerHTML = data['player2'];
         document.getElementById("player2-icon").src = data['player2-imageURL'];
-        document.getElementById("bomb2").src = "{% static 'bomb_before.png' %}";
+        if(!data['retry2']){
+            document.getElementById("bomb2").src = "{% static 'bomb_before.png' %}";
+        }else{
+            document.getElementById("bomb2").src = "{% static 'bomb_after.png' %}";
+        }
+
+
+        // star2
+        if(data['result2'] >= 1){
+            if(data['result2'] == 1){
+                document.getElementById("star2_1_t").src = "{% static 'star.png' %}"; 
+            }else{
+                document.getElementById("star2_1").src = "{% static 'star.png' %}"; 
+            }
+        }else{
+            document.getElementById("star2_1_t").src = "{% static 'vacant.png' %}";
+            document.getElementById("star2_1").src = "{% static 'vacant.png' %}";
+        }
+        if(data['result2'] >= 3){
+            if(data['result2'] == 3){
+                document.getElementById("star2_2_t").src = "{% static 'star.png' %}";
+            }else{
+                document.getElementById("star2_2").src =  "{% static 'star.png' %}";
+            }
+        }else{
+            document.getElementById("star2_2").src = "{% static 'vacant.png' %}";
+        }
+        if(data['result2'] >= 5){
+            if(data['result2'] == 5){
+                document.getElementById("star2_3_t").src = "{% static 'star.png' %}";
+            }else{
+                document.getElementById("star2_3").src = "{% static 'star.png' %}";
+            }
+        }else{
+            document.getElementById("star2_3").src = "{% static 'vacant.png' %}";
+        }
+        //star2
+
         document.getElementById("imageURL").src = data['imageURL'];
         document.getElementById("map-info1").innerHTML = data['map-info1'];
         document.getElementById("map-info2").innerHTML = data['map-info2'];
         document.getElementById("map-info3").innerHTML = data['map-info3'];
         document.getElementById("map-info3").style = "color:" + data['map-info3-color'];
+        document.getElementById("map-info4").innerHTML = data['map-info4'];
+
     }
 
     setInterval(function () {

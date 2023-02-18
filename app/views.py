@@ -34,17 +34,17 @@ diff_label_inv = {
 char_dict = {
     'SoloStandard': 'Standard',
     'SoloLawless': 'Lawless',
-    'SoloOneSaber' : 'OneSaber',
-    'Solo90Degree' : '90Degree',
-    'Solo360Degree' : '360Degree' ,
+    'SoloOneSaber': 'OneSaber',
+    'Solo90Degree': '90Degree',
+    'Solo360Degree': '360Degree',
 }
 
 char_dict_inv = {
     'Standard': 'SoloStandard',
     'Lawless': 'SoloLawless',
     'OneSaber': 'SoloOneSaber',
-    '90Degree' : 'Solo90Degree',
-    '360Degree' : 'Solo360Degree',
+    '90Degree': 'Solo90Degree',
+    '360Degree': 'Solo360Degree',
 }
 
 col_dict = {
@@ -261,7 +261,7 @@ def userpage(request, sid=0):
     params['tech'] = techIndex
     params['pass'] = passIndex
 
-    max_color = max(accIndex,techIndex,passIndex)
+    max_color = max(accIndex, techIndex, passIndex)
 
     if max_color == 0:
         pass_col = 0
@@ -289,9 +289,8 @@ def userpage(request, sid=0):
         player_type = f'{player.name} さんは　クリアラー型　です'
     else:
         player_type = f'{player.name} さんは　バランス型　です'
-    
+
     params['player_type'] = player_type
-    
 
     return render(request, 'userpage.html', params)
 
@@ -759,7 +758,7 @@ def playlist(request, pk):
                     author = res['uploader']['name']
                     hash = res['versions'][0]['hash']
                     params['hash'] = hash
-                    params['name']= name
+                    params['name'] = name
                     params['author'] = author
                     data = res['versions'][0]['diffs']
                     params['data'] = data
@@ -857,8 +856,8 @@ def playlist(request, pk):
             dif = post['dif']
             gameMode = char_dict_inv[char]
             diff_num = diff_label_inv[dif]
-            print(hash,char,dif)
-            lid = search_lid(hash,gameMode, diff_num)
+            print(hash, char, dif)
+            lid = search_lid(hash, gameMode, diff_num)
             if lid == None:
                 print('no lid')
                 params['errorMessage'] = 'スコアセイバーの ID が見つかりません'
@@ -887,12 +886,12 @@ def download_playlist(request, pk):
     playlist = make_sorted_playlist(playlist)
     json_data['playlistTitle'] = playlist.title
     json_data['playlistAuthor'] = 'JBSL_Web_System'
-    download_url = reverse('app:download_playlist', args = [pk])
+    download_url = reverse('app:download_playlist', args=[pk])
     meta_url = request._current_scheme_host
     print(meta_url)
     print(download_url)
     json_data['playlistDescription'] = playlist.description
-    json_data['customData'] = {'syncURL' : meta_url + download_url}
+    json_data['customData'] = {'syncURL': meta_url + download_url}
     songs = []
     for song in playlist.sorted_songs:
         append_dict = {}
@@ -1249,17 +1248,17 @@ def rivalpage(request):
     win = 0
 
     class compared_score:
-        
+
         my_acc = 0
         rival_acc = 0
 
         def __init__(self) -> None:
             pass
 
-        def set_my_acc(self, acc : float):
+        def set_my_acc(self, acc: float):
             self.my_acc = max(self.my_acc, acc)
 
-        def set_rival_acc(self, acc : float):
+        def set_rival_acc(self, acc: float):
             self.rival_acc = max(self.rival_acc, acc)
 
         def win(self) -> bool:
@@ -1275,31 +1274,29 @@ def rivalpage(request):
 
     d = defaultdict(compared_score)
 
-
     for league in League.objects.filter(player=player):
-        for score in Score.objects.filter(league=league,player=player):
+        for score in Score.objects.filter(league=league, player=player):
             song = score.song
             d[song].set_my_acc(score.acc)
-            
+
     for league in League.objects.filter(player=player.rival):
-        for score in Score.objects.filter(league=league,player=player.rival):
+        for score in Score.objects.filter(league=league, player=player.rival):
             song = score.song
             d[song].set_rival_acc(score.acc)
 
-
-    for key,val in d.items():
+    for key, val in d.items():
         if val.my_acc > 0 and val.rival_acc > 0:
             match += 1
             compares.append({
-                'song' : key,
+                'song': key,
                 'your_acc': val.my_acc,
                 'rival_acc': val.rival_acc,
                 'win': val.win(),
-                'dif' : val.dif(),
+                'dif': val.dif(),
             })
             win += val.win()
 
-    compares = sorted(compares, key=lambda x : -x['dif'])
+    compares = sorted(compares, key=lambda x: -x['dif'])
     params['compares'] = compares
     params['match'] = match
     params['win'] = win
@@ -1332,7 +1329,7 @@ def headlines(request, page=1):
     return render(request, 'headlines.html', params)
 
 
-def players(request,sort='borderPP'):
+def players(request, sort='borderPP'):
     params = {}
     user = request.user
     print(request.GET)
@@ -1350,10 +1347,10 @@ def players(request,sort='borderPP'):
     print(active_players)
 
     label = {
-        'borderPP' : '有効PP',
-        'yurufuwa' : 'YP',
-        'techPP' : 'TechPP',
-        'passPP' : 'PassPP', 
+        'borderPP': '有効PP',
+        'yurufuwa': 'YP',
+        'techPP': 'TechPP',
+        'passPP': 'PassPP',
     }
 
     params['active_players'] = active_players
@@ -1971,7 +1968,7 @@ def beatleader_submission(request):
             'acc': float(res['accuracy'])*100,
             'rawPP': 0,
             'miss': int(res['missedNotes']),
-            'beatleader' : res['id'],
+            'beatleader': res['id'],
         }
         score_to_headline(score, song, player, league)
         score_obj = Score.objects.update_or_create(
@@ -1988,6 +1985,7 @@ def beatleader_submission(request):
     params['results'] = results
     return render(request, 'beatleader_submission.html', params)
 
+
 def archive(request):
     params = {}
     user = request.user
@@ -1998,6 +1996,14 @@ def archive(request):
 
 
 def match(request, pk=1):
+    state_dict = {
+        -2: 'RETRY PLAYER1 ADVANTAGE',
+        -1: 'PLAYER1 WIN SUSPEND',
+        0: 'STAND BY',
+        1: 'PLAYER2 WIN SUSPEND',
+        2: 'RETRY PLAYER2 ADVANTAGE',
+    }
+
     match = Match.objects.get(pk=pk)
     playlists = Playlist.objects.all().order_by('-pk')
     leagues = League.objects.all().order_by('-pk')
@@ -2012,6 +2018,7 @@ def match(request, pk=1):
         player = Player.objects.get(user=user)
         if player in match.editor.all():
             params['isEditor'] = True
+
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -2019,17 +2026,32 @@ def match(request, pk=1):
             lid = post['next-song']
             song = Song.objects.get(lid=lid)
             match.now_playing = song
+            url = f'https://api.beatsaver.com/maps/id/{song.bsr}'
+            res = requests.get(url).json()
+            bpm = res['metadata']['bpm']
+            res = res['versions'][0]['diffs']
+            match.map_info = "map info parse failed..."
+            for r in res:
+                if r['characteristic'] == song.char and r['difficulty'] == song.diff:
+                    nps = r['nps']
+                    njs = r['njs']
+                    notes = int(r['notes'])
+                    bombs = r['bombs']
+                    match.map_info = f'BPM:{bpm:.1f} NOTES:{notes} BOMBS:{bombs} NPS:{nps:.1f} NJS:{njs:.1f}'
             match.save()
         if 'player1' in post:
             sid1 = post['player1']
             sid2 = post['player2']
-            print(sid1,sid2)
+            print(sid1, sid2)
             player1 = Player.objects.get(sid=sid1)
             player2 = Player.objects.get(sid=sid2)
             match.player1 = player1
             match.player2 = player2
             match.result1 = 0
             match.result2 = 0
+            match.retry1 = 0
+            match.retry2 = 0
+            match.state = 0
             match.save()
         if 'title' in post:
             title = post['title']
@@ -2051,13 +2073,51 @@ def match(request, pk=1):
                 match.player2 = league.player.all()[1]
                 match.save()
         if 'player1_win' in post:
-            match.result1 += 2
+            if post['highest1'] != '':
+                match.highest_acc = float(post['highest1'])
+            match.result1 += 1
+            match.result2 -= match.result2 % 2
+            if match.retry2:
+                match.result1 += 1
+                match.result1 -= match.result1 % 2
+            else:
+                match.state = -1
             match.save()
         if 'player2_win' in post:
-            match.result2 += 2
+            if post['highest2'] != '':
+                match.highest_acc = float(post['highest2'])
+            match.result2 += 1
+            match.result1 -= match.result1 % 2
+            if match.retry1:
+                match.result2 += 1
+                match.result2 -= match.result2 % 2
+            else:
+                match.state = 1
+            match.save()
+        if 'player1_retry' in post:
+            match.retry1 = True
+            match.state = 2
             match.save()
 
+        if 'player2_retry' in post:
+            match.retry2 = True
+            match.state = -2
+            match.save()
+
+        if 'no_retry' in post:
+            if match.state == -1:
+                match.result1 += 1
+            if match.state == 1:
+                match.result2 += 1
+            match.state = 0
+            match.save()
+
+    params['highest'] = match.highest_acc
+    params['state'] = state_dict[match.state]
+    params['inMatch'] = match.state % 2 == 0
+
     return render(request, 'match.html', params)
+
 
 def api_match(request, pk):
     params = {}
@@ -2078,5 +2138,13 @@ def api_match(request, pk):
     ans['map-info2'] = match.now_playing.author
     ans['map-info3'] = match.now_playing.diff
     ans['map-info3-color'] = match.now_playing.color
+    ans['map-info4'] = match.map_info
 
     return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))
+
+# def api_profile_overlay(request, sid):
+#     url = f'https://scoresaber.com/api/player/{sid}/full'
+#     from django.http import JsonResponse
+#     res = JsonResponse(requests.get(url).json())
+#     res['Access-Control-Allow-Origin'] = '*'
+#     return res

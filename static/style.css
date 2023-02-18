@@ -305,6 +305,9 @@ pre {
     height: auto;
 }
 
+
+/* star1 */
+
 .match-result1_1 {
     position: fixed;
     left: 10px;
@@ -329,7 +332,13 @@ pre {
     height: auto;
 }
 
-.match-result2 {
+
+/* star1 */
+
+
+/* star2 */
+
+.match-result2_1 {
     position: fixed;
     right: 10px;
     top: 0px;
@@ -337,10 +346,37 @@ pre {
     height: auto;
 }
 
+.match-result2_2 {
+    position: fixed;
+    right: 110px;
+    top: 5px;
+    width: auto;
+    height: auto;
+}
+
+.match-result2_3 {
+    position: fixed;
+    right: 210px;
+    top: 10px;
+    width: auto;
+    height: auto;
+}
+
+
+/* star2 */
+
 .match-bomb1 {
     position: fixed;
     left: 600px;
     top: 70px;
+    width: auto;
+    height: auto;
+}
+
+.match-retrybutton1 {
+    position: fixed;
+    left: 600px;
+    top: 250px;
     width: auto;
     height: auto;
 }
@@ -351,6 +387,23 @@ pre {
     top: 70px;
     width: auto;
     height: auto;
+}
+
+.match-retrybutton2 {
+    position: fixed;
+    right: 600px;
+    top: 250px;
+    width: auto;
+    height: auto;
+}
+
+.match-noretry {
+    position: fixed;
+    left: 50%;
+    top: 250px;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%);
 }
 
 .match-image {
@@ -371,6 +424,30 @@ pre {
     overflow: hidden;
     height: auto;
     font-family: 'Fjalla One', "M PLUS Rounded 1c", sans-serif;
+}
+
+.match-highest1 {
+    color: yellow;
+    position: fixed;
+    font-size: 60px;
+    left: 25%;
+    top: 650px;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%);
+    font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
+}
+
+.match-highest2 {
+    color: yellow;
+    position: fixed;
+    font-size: 60px;
+    left: 75%;
+    top: 650px;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%);
+    font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
 }
 
 .coordinator {

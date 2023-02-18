@@ -274,7 +274,7 @@ pre {
 .match-player1 {
     position: fixed;
     left: 0px;
-    top: 100px;
+    top: 105px;
     width: auto;
     height: auto;
     font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
@@ -291,7 +291,7 @@ pre {
 .match-player2 {
     position: fixed;
     right: 0px;
-    top: 100px;
+    top: 105px;
     width: auto;
     height: auto;
     font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;

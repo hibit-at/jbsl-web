@@ -264,9 +264,10 @@ pre {
 }
 
 .match-title {
+    font-size : 60px;
     position: fixed;
     left: 50%;
-    top: 120px;
+    bottom: 825px;
     transform: translateX(-50%);
     font-family: 'Anton', sans-serif;
 }

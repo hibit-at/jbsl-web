@@ -264,7 +264,7 @@ pre {
 }
 
 .match-title {
-    font-size : 60px;
+    font-size: 60px;
     position: fixed;
     left: 50%;
     bottom: 840px;
@@ -469,4 +469,16 @@ pre {
     50% {
         opacity: 0;
     }
+}
+
+.indent>h4 {
+    font-style: italic;
+}
+
+.indent>p {
+    margin-left: 40px;
+}
+
+.indent>p>a {
+    color: #ff8628;
 }

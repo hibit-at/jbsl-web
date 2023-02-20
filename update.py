@@ -10,19 +10,20 @@ def update_process():
     for player in Player.objects.filter(isActivated=True):
         top_score_registration(player)
         print(f'{player} updated!')
-        
-        print(player.sid)
-        url = f'https://stage.api.beatleader.net/player/{player.sid}?stats=true'
-        res = requests.get(url)
 
-        if res.status_code == 200:
+        '''beat leader new function is down at now'''        
+        # print(player.sid)
+        # url = f'https://stage.api.beatleader.net/player/{player.sid}?stats=true'
+        # res = requests.get(url)
 
-            res = res.json()
-            print(res)
-            player.accPP = res['accPp']
-            player.techPP = res['techPp']
-            player.passPP = res['passPp']
-            player.save()
+        # if res.status_code == 200:
+
+        #     res = res.json()
+        #     print(res)
+        #     player.accPP = res['accPp']
+        #     player.techPP = res['techPp']
+        #     player.passPP = res['passPp']
+        #     player.save()
     
     # initialize
 

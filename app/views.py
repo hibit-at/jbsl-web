@@ -452,7 +452,8 @@ def top_score_registration(player):
         res = res.json()
         if res['scoreStats']['topHMD'] in hmd_dict:
             hmd = hmd_dict[res['scoreStats']['topHMD']]
-    player.hmd = hmd
+            if hmd != 'Unknown':
+                player.hmd = hmd
 
     player.save()
     return

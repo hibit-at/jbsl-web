@@ -63,8 +63,10 @@ hmd_dict = {
     8: 'Windows Mixed Reality',
     16: 'Rift S',
     32: 'Oculus Quest',
+    61: 'Quest Pro',
     64: 'Valve Index',
     128: 'Vive Cosmos',
+    256: 'Quest 2',
 }
 
 league_colors = [
@@ -442,6 +444,16 @@ def top_score_registration(player):
     for t in top10[1:4]:
         border_pp += t.rawPP
     player.borderPP = border_pp
+
+    # beatleader hmd
+    url = f'https://api.beatleader.xyz/player/{player.sid}?stats=true'
+    res = requests.get(url)
+    if res.status_code == 200:
+        res = res.json()
+        if res['scoreStats']['topHMD'] in hmd_dict:
+            hmd = hmd_dict[res['scoreStats']['topHMD']]
+    player.hmd = hmd
+
     player.save()
     return
 

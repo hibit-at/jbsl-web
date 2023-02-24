@@ -255,9 +255,14 @@ def userpage(request, sid=0):
     techMax = Player.objects.order_by('-techPP')[0].techPP
     passMax = Player.objects.order_by('-passPP')[0].passPP
 
-    accIndex = player.accPP/accMax*100
-    techIndex = player.techPP/techMax*100
-    passIndex = player.passPP/passMax*100
+    accIndex = 0
+    techIndex = 0
+    passIndex = 0
+
+    if accMax + techMax + passMax > 0:
+        accIndex = player.accPP/accMax*100
+        techIndex = player.techPP/techMax*100
+        passIndex = player.passPP/passMax*100
 
     params['acc'] = accIndex
     params['tech'] = techIndex

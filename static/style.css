@@ -311,24 +311,24 @@ pre {
 
 .match-result1_1 {
     position: fixed;
-    left: 10px;
-    top: 0px;
+    left: 15px;
+    top: 15px;
     width: auto;
     height: auto;
 }
 
 .match-result1_2 {
     position: fixed;
-    left: 110px;
-    top: 5px;
+    left: 145px;
+    top: 25px;
     width: auto;
     height: auto;
 }
 
 .match-result1_3 {
     position: fixed;
-    left: 210px;
-    top: 10px;
+    left: 260px;
+    top: 35px;
     width: auto;
     height: auto;
 }
@@ -341,24 +341,24 @@ pre {
 
 .match-result2_1 {
     position: fixed;
-    right: 10px;
-    top: 0px;
+    right: 20px;
+    top: 15px;
     width: auto;
     height: auto;
 }
 
 .match-result2_2 {
     position: fixed;
-    right: 110px;
-    top: 5px;
+    right: 150px;
+    top: 25px;
     width: auto;
     height: auto;
 }
 
 .match-result2_3 {
     position: fixed;
-    right: 210px;
-    top: 10px;
+    right: 260px;
+    top: 35px;
     width: auto;
     height: auto;
 }
@@ -431,11 +431,10 @@ pre {
     color: yellow;
     position: fixed;
     font-size: 60px;
-    left: 25%;
-    top: 650px;
+    left: 350px;
+    top: 10px;
     width: auto;
     height: auto;
-    transform: translateX(-50%);
     font-family: 'Anton', "M PLUS Rounded 1c", sans-serif;
 }
 

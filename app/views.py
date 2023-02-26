@@ -278,10 +278,12 @@ def userpage(request, sid=0):
         tech_col = 0
     else:
         pass_col = int(passIndex*255/max_color)
+        acc_col = accIndex/max_color
+        acc_col = acc_col * acc_col * acc_col
         acc_col = int(accIndex*255/max_color)
         tech_col = int(techIndex*255/max_color)
 
-    params['style_color'] = f'rgba({pass_col},{acc_col/2},{tech_col},.8)'
+    params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''
 
     if techIndex > accIndex and techIndex > passIndex:

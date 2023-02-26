@@ -255,6 +255,8 @@ def userpage(request, sid=0):
     techMax = Player.objects.order_by('-techPP')[0].techPP
     passMax = Player.objects.order_by('-passPP')[0].passPP
 
+    print(accMax,techMax,passMax)
+
     accIndex = 0
     techIndex = 0
     passIndex = 0
@@ -283,19 +285,19 @@ def userpage(request, sid=0):
     player_type = ''
 
     if techIndex > accIndex and techIndex > passIndex:
-        player_type = f'{player.name} さんは　かなりテック型　です'
+        player_type = f'かなりテック型'
     elif techIndex > accIndex*0.9 and techIndex > passIndex*0.9:
-        player_type = f'{player.name} さんは　テック型　です'
+        player_type = f'テック型'
     elif accIndex > techIndex*1.2 and accIndex > passIndex*1.2:
-        player_type = f'{player.name} さんは　かなり精度型　です'
+        player_type = f'かなり精度型'
     elif accIndex > techIndex*1.1 and accIndex > passIndex*1.1:
-        player_type = f'{player.name} さんは　精度型　です'
+        player_type = f'精度型'
     elif passIndex > accIndex*1.2 and passIndex > techIndex*1.2:
-        player_type = f'{player.name} さんは　かなりクリアラー型　です'
+        player_type = f'かなりクリアラー型'
     elif passIndex > accIndex*1.1 and passIndex > techIndex*1.1:
-        player_type = f'{player.name} さんは　クリアラー型　です'
+        player_type = f'クリアラー型'
     else:
-        player_type = f'{player.name} さんは　バランス型　です'
+        player_type = f'バランス型'
 
     params['player_type'] = player_type
 

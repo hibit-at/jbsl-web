@@ -14,10 +14,10 @@
         <img class="thumb" src={{ player.imageURL }} />
     </p>
     {% if acc > 0 %}
-    <div style="width:250px;height:250px;">
-        <canvas id="myRadarChart" width="100" height="100"></canvas>
-    </div>
-    {{player_type}}
+        <div style="width:250px;height:250px;">
+            <canvas id="myRadarChart" width="100" height="100"></canvas>
+        </div>
+        {{ player}} さんは <span style="color:{{style_color}};font-weight:bold">{{player_type}}</span> です。
     {% endif %}
     {% if user.player == player %}
         <p>
@@ -270,8 +270,8 @@
         label: 'BeatLeader PP Ratio in JP',
         //グラフのデータ
         data: [{{acc}}, {{tech}}, {{pass}}],
-        backgroundColor : 'rgba(255,128,0,.5)'
-        {% comment %} backgroundColor : {{ style_color }} {% endcomment %}
+        {% comment %} backgroundColor : 'rgba(255,128,0,.5)' {% endcomment %}
+        backgroundColor : '{{ style_color }}',
         }],
     },
     //オプションの設定

@@ -10,7 +10,6 @@ import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-
 from PIL import Image
 import base64
 
@@ -110,6 +109,14 @@ def slope(n):
     return -(n+2)
 
 
+def validation(s : str):
+    ans = ''
+    for c in s:
+        if b'\xc2\x80' <= c.encode('utf-8') and c.encode('utf-8') <= b'\xd4\xbf':
+            continue
+        ans += c
+    return ans
+
 def index(request):
     params = {}
     user = request.user
@@ -186,7 +193,7 @@ def userpage(request, sid=0):
             if imageURL.startswith('https://pbs.twimg.com/profile_images'):
                 player.imageURL = imageURL
         if 'message' in post:
-            player.message = post['message'][:50]
+            player.message = validation(post['message'][:50])
         if 'twitter' in post:
             player.twitter = post['twitter']
         if 'twitch' in post:
@@ -1621,7 +1628,7 @@ def score_comment(request):
         print(post)
         score = Score.objects.get(pk=post['score'])
         if 'comment' in post:
-            score.comment = post['comment']
+            score.comment = validation(post['comment'])
             score.save()
             redirect_url = reverse('app:leaderboard', args=[score.league.pk])
             print(redirect_url)
@@ -1643,16 +1650,13 @@ def league_comment(request):
     if request.method == "POST":
         post = request.POST
         print(post)
-        print('hoge')
         league = League.objects.get(pk=post['league'])
         player = Player.objects.get(pk=post['player'])
         params['league'] = league
         params['player'] = player
-        print(league)
-        print(player)
         if 'comment' in post:
             comment = post['comment'][:50]
-            defaults = {'message': comment}
+            defaults = {'message': validation(comment)}
             Participant.objects.update_or_create(
                 league=league,
                 player=user.player,

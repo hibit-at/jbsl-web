@@ -38,6 +38,7 @@
     </p>
     <table class="table table-striped table-borderless">
         <thead>
+            <th>Rank</th>
             <th>Player</th>
             <th>Social</th>
             <th>HMD</th>
@@ -46,6 +47,9 @@
         </thead>
         {% for player in active_players %}
             <tr>
+                <td>
+                    # {{ forloop.counter }}
+                </td>
                 <td>
                     <a href={% url 'app:userpage' sid=player.sid %} style="color:black">
                         <img class="icon" src={{ player.imageURL }} />

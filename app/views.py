@@ -2184,6 +2184,12 @@ def api_dga(request):
     from .models import DGA
     import json
     dgas = DGA.objects.all()
+    if 'sort' in request.GET:
+        key = request.GET['sort']
+        dgas = dgas.order_by('-' + key)
+    if 'limit' in request.GET:
+        limit = int(request.GET['limit'])
+        dgas = dgas[:limit]
     post_json = json.dumps(list(dgas.values()), ensure_ascii=False)
     return HttpResponse(post_json, content_type="application/json")
 

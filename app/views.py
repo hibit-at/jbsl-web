@@ -557,7 +557,11 @@ def add_playlist(playlist, json_data):
             url = f'https://api.beatsaver.com/maps/id/{key}'
             res = requests.get(url).json()
             version = res['versions'][0]
-            difficulty = version['diffs'][-1]
+            dif_idx = -1
+            difficulty = version['diffs'][dif_idx]
+            while difficulty['characteristic'] == 'Lightshow':
+                dif_idx -= 1
+                difficulty = version['diffs'][dif_idx]
             diff = difficulty['difficulty']
             char = difficulty['characteristic']
             gameMode = char_dict_inv[char]

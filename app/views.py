@@ -602,7 +602,7 @@ def create_playlist(request):
             image = 'data:image/png;base64,' + image
             description = ''
             if 'playlistDescription' in json_data:
-                description = json_data['playlistDescription']
+                description = json_data['playlistDescription'][:200]
             editor = request.user.player
             isEditable = False
             if 'editable' in request.POST:

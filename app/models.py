@@ -207,3 +207,15 @@ class Match(models.Model):
     editor = models.ManyToManyField(Player)
     playlist = models.ForeignKey(Playlist,on_delete=models.SET_NULL, null=True)
     league = models.ForeignKey(League,on_delete=models.SET_NULL, null=True)
+
+
+class DGA(models.Model):
+    beatleader = models.CharField(default='', max_length=100, blank=True)
+    dance = models.FloatField()
+    gorilla = models.FloatField()
+    song_mapper = models.CharField(max_length=1000)
+    player_name = models.CharField(max_length=100, default='')
+    sid = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'{self.player_name} {self.song_mapper}'

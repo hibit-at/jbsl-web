@@ -5,13 +5,16 @@ import json
 from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match
+from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 import base64
+import os
+import sys
 
 
 diff_label = {
@@ -109,13 +112,14 @@ def slope(n):
     return -(n+2)
 
 
-def validation(s : str):
+def validation(s: str):
     ans = ''
     for c in s:
         if b'\xc2\x80' <= c.encode('utf-8') and c.encode('utf-8') <= b'\xd4\xbf':
             continue
         ans += c
     return ans
+
 
 def index(request):
     params = {}
@@ -262,7 +266,7 @@ def userpage(request, sid=0):
     techMax = Player.objects.order_by('-techPP')[0].techPP
     passMax = Player.objects.order_by('-passPP')[0].passPP
 
-    print(accMax,techMax,passMax)
+    print(accMax, techMax, passMax)
 
     accIndex = 0
     techIndex = 0
@@ -2174,3 +2178,46 @@ def api_match(request, pk):
 #     res = JsonResponse(requests.get(url).json())
 #     res['Access-Control-Allow-Origin'] = '*'
 #     return res
+
+
+def api_dga(request):
+    from .models import DGA
+    import json
+    dgas = DGA.objects.all()
+    post_json = json.dumps(list(dgas.values()), ensure_ascii=False)
+    return HttpResponse(post_json, content_type="application/json")
+
+
+@csrf_exempt
+def api_dga_post(request):
+    if request.method == 'GET':
+        post_json = {'message': 'アクセス拒否します'}
+        post_json = json.dumps(post_json, ensure_ascii=False)
+        return HttpResponse(post_json, content_type="application/json")
+    post = request.POST
+    token = post['token']
+    auth = ''
+    if os.path.exists('local.py'):
+        from local import DGA_TOKEN
+        auth = DGA_TOKEN
+    else:
+        auth = os.environ['DGA_TOKEN']
+    if token != auth:
+        post_json = {'message': 'トークン認証に失敗しました'}
+        post_json = json.dumps(post_json, ensure_ascii=False)
+        return HttpResponse(post_json, content_type="application/json")
+    post_json = {'message': 'スコアを登録完了しました'}
+    post_json = json.dumps(post_json, ensure_ascii=False)
+    defaults = {
+        'dance': float(post['dance']),
+        'gorilla': float(post['gorilla']),
+        'song_mapper': post['song_mapper'],
+        'player_name': post['player_name'],
+        'sid': post['sid'],
+    }
+    print(defaults)
+    DGA.objects.update_or_create(
+        beatleader=post['beatleader'],
+        defaults=defaults
+    )
+    return HttpResponse(post_json, content_type="application/json")

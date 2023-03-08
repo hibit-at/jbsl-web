@@ -1709,6 +1709,7 @@ def league_edit(request, pk):
             league.max_valid = post['valid']
             league.limit = post['limit']
             league.color = post['color']
+            league.border_line = post['border-line']
             league.isPublic = 'public' in post
             league.save()
             if not 'back' in post:

@@ -74,10 +74,10 @@
                 <input type="range"
                        min="0"
                        max="20"
-                       value="{{ league.method }}"
+                       value="{{ league.max_valid }}"
                        style="width:200px"
                        name="valid"/>
-                <span class="indicate-valid">{{ league.method }}</span>
+                <span class="indicate-valid">{{ league.max_valid }}</span>
             </p>
             <p>
                 <label>有効 PPの上限 :</label>
@@ -89,6 +89,16 @@
                        step="10"
                        name="limit">
                 <span class="indicate-limit">{{ league.limit }}</span>
+            </p>
+            <p>
+                <label>上位ボーダライン :</label>
+                    <input type="range"
+                        min = "1"
+                        max = "{{ league.player.all|length }}"
+                        value = "{{ league.border_line }}"
+                        step = "1"
+                        name="border-line" />
+                    <span class="indicate-border"> {{league.border_line}}</span>
             </p>
             <p>
                 <button class="btn" type="submit">変更のみ</button>
@@ -134,11 +144,13 @@
             var range = e.target
             $(".indicate-valid").text(range.value)
         })
-    </script>
-    <script>
         $("input[name='limit']").on("input", function (e) {
             var range = e.target
             $(".indicate-limit").text(range.value)
+        })
+        $("input[name='border-line']").on("input", function (e) {
+            var range = e.target
+            $(".indicate-border").text(range.value)
         })
     </script>
 {% endblock content %}

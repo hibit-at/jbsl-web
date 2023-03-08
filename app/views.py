@@ -2212,8 +2212,6 @@ def api_dga_post(request):
         post_json = {'message': 'トークン認証に失敗しました'}
         post_json = json.dumps(post_json, ensure_ascii=False)
         return HttpResponse(post_json, content_type="application/json")
-    post_json = {'message': 'スコアを登録完了しました'}
-    post_json = json.dumps(post_json, ensure_ascii=False)
     defaults = {
         'dance': float(post['dance']),
         'gorilla': float(post['gorilla']),
@@ -2222,8 +2220,15 @@ def api_dga_post(request):
         'sid': post['sid'],
     }
     print(defaults)
-    DGA.objects.update_or_create(
+    dga, check = DGA.objects.update_or_create(
         beatleader=post['beatleader'],
         defaults=defaults
     )
+    print(check)
+    if not check:
+        post_json = {'message': '既にスコアが存在します'}
+        post_json = json.dumps(post_json, ensure_ascii=False)
+        return HttpResponse(post_json, content_type="application/json")
+    post_json = {'message': 'スコアを登録完了しました'}
+    post_json = json.dumps(post_json, ensure_ascii=False)
     return HttpResponse(post_json, content_type="application/json")

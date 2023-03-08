@@ -2185,6 +2185,9 @@ def api_dga(request):
     from .models import DGA
     import json
     dgas = DGA.objects.all()
+    if 'sid' in request.GET:
+        sid = request.GET['sid']
+        dgas = dgas.filter(sid=sid)
     if 'sort' in request.GET:
         key = request.GET['sort']
         dgas = dgas.order_by('-' + key)

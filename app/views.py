@@ -2194,7 +2194,7 @@ def api_dga(request):
         dgas = dgas.filter(sid=sid)
     if 'sort' in request.GET:
         key = request.GET['sort']
-        dgas = dgas.order_by('-' + key)
+        dgas = dgas.order_by(key)
     if 'limit' in request.GET:
         limit = int(request.GET['limit'])
         dgas = dgas[:limit]

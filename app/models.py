@@ -29,7 +29,7 @@ class Player(models.Model):
     isShadow = models.BooleanField(default=False)
     yurufuwa = models.IntegerField(default=0)
     mapper = models.IntegerField(default=0)
-    mapper_name = models.CharField(default='',max_length=100)
+    mapper_name = models.CharField(default='',max_length=100,blank=True)
     accPP = models.FloatField(default=0)
     techPP = models.FloatField(default=0)
     passPP = models.FloatField(default=0)

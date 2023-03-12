@@ -272,6 +272,14 @@ pre {
     font-family: 'Anton', sans-serif;
 }
 
+.match-resetbutton {
+    font-size: 60px;
+    position: fixed;
+    left: 50%;
+    bottom: 800px;
+    transform: translateX(-50%);
+}
+
 .match-player1 {
     position: fixed;
     left: 0px;
@@ -327,8 +335,8 @@ pre {
 
 .match-result1_3 {
     position: fixed;
-    left: 260px;
-    top: 35px;
+    left: 258px;
+    top: 37px;
     width: auto;
     height: auto;
 }
@@ -443,7 +451,7 @@ pre {
     position: fixed;
     font-size: 60px;
     left: 75%;
-    top: 650px;
+    top: 10px;
     width: auto;
     height: auto;
     transform: translateX(-50%);
@@ -459,6 +467,7 @@ pre {
     height: auto;
     font-size: 20px;
 }
+
 
 @keyframes flash {
     0%,

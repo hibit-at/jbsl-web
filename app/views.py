@@ -297,9 +297,9 @@ def userpage(request, sid=0):
     params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''
 
-    if techIndex > accIndex and techIndex > passIndex:
+    if techIndex*1.2 > accIndex and techIndex > passIndex:
         player_type = f'かなりテック型'
-    elif techIndex > accIndex*0.9 and techIndex > passIndex*0.9:
+    elif techIndex > accIndex*1.1 and techIndex > passIndex*0.9:
         player_type = f'テック型'
     elif accIndex > techIndex*1.2 and accIndex > passIndex*1.2:
         player_type = f'かなり精度型'
@@ -2074,6 +2074,13 @@ def match(request, pk=1):
                     bombs = r['bombs']
                     match.map_info = f'BPM:{bpm:.1f} NOTES:{notes} BOMBS:{bombs} NPS:{nps:.1f} NJS:{njs:.1f}'
             match.save()
+        if 'reset' in post:
+            match.result1 = 0
+            match.result2 = 0
+            match.retry1 = 0
+            match.retry2 = 0
+            match.state = 0
+            match.save()
         if 'player1' in post:
             sid1 = post['player1']
             sid2 = post['player2']
@@ -2107,6 +2114,15 @@ def match(request, pk=1):
                 match.player1 = league.player.all()[0]
                 match.player2 = league.player.all()[1]
                 match.save()
+
+        # state_dict = {
+        #     -2: 'RETRY PLAYER1 ADVANTAGE',
+        #     -1: 'PLAYER1 WIN SUSPEND',
+        #     0: 'STAND BY',
+        #     1: 'PLAYER2 WIN SUSPEND',
+        #     2: 'RETRY PLAYER2 ADVANTAGE',
+        # }
+
         if 'player1_win' in post:
             if post['highest1'] != '':
                 match.highest_acc = float(post['highest1'])
@@ -2174,6 +2190,8 @@ def api_match(request, pk):
     ans['map-info3'] = match.now_playing.diff
     ans['map-info3-color'] = match.now_playing.color
     ans['map-info4'] = match.map_info
+    ans['state'] = match.state
+    ans['highest'] = f'{match.highest_acc:.1f}'
 
     return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))
 
@@ -2205,7 +2223,7 @@ def api_dga(request):
 @csrf_exempt
 def api_dga_post(request):
     if request.method == 'GET':
-        post_json = {'message': 'アクセス拒否します'}
+        post_json = {'message': 'レスポンス 200 で通信成功したと思った？ 残念！ GET じゃこの API は通りません～～～'}
         post_json = json.dumps(post_json, ensure_ascii=False)
         return HttpResponse(post_json, content_type="application/json")
     post = request.POST

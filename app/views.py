@@ -297,9 +297,9 @@ def userpage(request, sid=0):
     params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''
 
-    if techIndex*1.2 > accIndex and techIndex > passIndex:
+    if techIndex > accIndex*1.2 and techIndex > passIndex*1.2:
         player_type = f'かなりテック型'
-    elif techIndex > accIndex*1.1 and techIndex > passIndex*0.9:
+    elif techIndex > accIndex*1.1 and techIndex > passIndex*1.1:
         player_type = f'テック型'
     elif accIndex > techIndex*1.2 and accIndex > passIndex*1.2:
         player_type = f'かなり精度型'

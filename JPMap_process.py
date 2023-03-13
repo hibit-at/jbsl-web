@@ -405,28 +405,7 @@ def latest():
         hash_count = defaultdict(int)
         mapper_count = 0
         diff_list = ['ExpertPlus','Expert','Hard','Normal','Easy']
-        from django.db.models.functions import Replace
-        from django.db.models import F,Value
-        jmaps = JPMap.objects.filter(uploader=player)
-        jmaps = jmaps.annotate(
-            diff_num=Replace(
-                Replace(
-                    Replace(
-                        Replace(
-                            Replace(
-                                F('diff'),
-                                Value('Easy'),Value(0)
-                            ),
-                            Value('Normal'),Value(1)
-                        ),
-                        Value('Hard'),Value(2)
-                    ),
-                    Value('ExpertPlus'),Value(4)
-                ),
-                Value('Expert'),Value(3)
-            )
-        )
-        for jmap in jmaps.order_by('-createdAt','-char','-diff_num'):
+        for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt','-char','-nps'):
             if mapper_count == 1:
                 break
             print(jmap)

@@ -145,13 +145,13 @@
         <form method="post">
             {% csrf_token %}
             <div class="match-winbutton1">
-                <input value name="highest1" placeholder="winner's acc"><button class="btn" name="player1_win">{{ match.player1 }} WIN</button>
+                <input value name="highest1" placeholder="winner's acc" id="highest1"><button class="btn" name="player1_win" id="highest1_button"  disabled>{{ match.player1 }} WIN</button>
             </div>
             <div class="match-resetbutton">
                 <button class="btn" name="reset">RESET</button>
             </div>
             <div class="match-winbutton2">
-                <input value name="highest2" placeholder="winner's acc"><button class="btn" name="player2_win">{{ match.player2 }} WIN</button>
+                <input value name="highest2" placeholder="winner's acc" id="highest2"><button class="btn" name="player2_win" id="highest2_button" disabled>{{ match.player2 }} WIN</button>
             </div>
         </form>
     {% else %}
@@ -259,7 +259,7 @@
             document.getElementById("bomb1").src = "{% static 'bomb_after.png' %}";
         }
 
-        // star1
+        // star1 --->
         if(data['result1'] >= 1){
             if(data['result1'] == 1){
             document.getElementById("star1_1_t").src = "{% static 'star.png' %}"; 
@@ -290,7 +290,7 @@
             document.getElementById("star1_3_t").src = "{% static 'vacant.png' %}";
             document.getElementById("star1_3").src = "{% static 'vacant.png' %}";
         }
-        //star1
+        // <--- star1
 
         document.getElementById("player2").innerHTML = data['player2'];
         document.getElementById("player2-icon").src = data['player2-imageURL'];
@@ -301,7 +301,7 @@
         }
 
 
-        // star2
+        // star2--->
         if(data['result2'] >= 1){
             if(data['result2'] == 1){
                 document.getElementById("star2_1_t").src = "{% static 'star.png' %}"; 
@@ -320,6 +320,7 @@
             }
         }else{
             document.getElementById("star2_2").src = "{% static 'vacant.png' %}";
+            document.getElementById("star2_2_t").src = "{% static 'vacant.png' %}";
         }
         if(data['result2'] >= 5){
             if(data['result2'] == 5){
@@ -329,8 +330,9 @@
             }
         }else{
             document.getElementById("star2_3").src = "{% static 'vacant.png' %}";
+            document.getElementById("star2_3_t").src = "{% static 'vacant.png' %}";
         }
-        //star2
+        // <---star2
 
         if(data['state'] < 0){
             document.getElementById("match-highest1").innerHTML = "ADV." + data['highest'] + "%";
@@ -358,4 +360,25 @@
         then(response => response.json()).
         then(data => update(data));
     }, 500);
+
+    const win_input1 = document.getElementById("highest1");
+    const win_button1 = document.getElementById("highest1_button");
+    const win_input2 = document.getElementById("highest2");
+    const win_button2 = document.getElementById("highest2_button");
+    
+    win_input1.addEventListener('input', () => {
+    if (win_input1.value > 0 && win_input1.value <= 100) {
+        win_button1.disabled = false;
+    } else {
+        win_button1.disabled = true;
+    }
+    });
+
+    win_input2.addEventListener('input', () => {
+    if (win_input2.value > 0 && win_input2.value <= 100) {
+        win_button2.disabled = false;
+    } else {
+        win_button2.disabled = true;
+    }
+    });
 </script>

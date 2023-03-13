@@ -67,7 +67,7 @@
     <div class="match-bomb1">
         <img src="" height=150 width=150 id="bomb1">
     </div>
-    <div class="match-highest1">
+    <div class="match-highest1" id="match-highest1">
         ADV. {{ match.highest_acc }} %
     </div>
     <div class="match-player2">
@@ -113,6 +113,9 @@
     <div class="match-bomb2">
         <img src="" height=150 width=150 id="bomb2">
     </div>
+    <div class="match-highest2" id="match-highest2">
+        ADV. {{ match.highest_acc }} %
+    </div>
     <div class="match-image">
         <img src=""
              id="imageURL"
@@ -143,6 +146,9 @@
             {% csrf_token %}
             <div class="match-winbutton1">
                 <input value name="highest1" placeholder="winner's acc"><button class="btn" name="player1_win">{{ match.player1 }} WIN</button>
+            </div>
+            <div class="match-resetbutton">
+                <button class="btn" name="reset">RESET</button>
             </div>
             <div class="match-winbutton2">
                 <input value name="highest2" placeholder="winner's acc"><button class="btn" name="player2_win">{{ match.player2 }} WIN</button>
@@ -325,6 +331,17 @@
             document.getElementById("star2_3").src = "{% static 'vacant.png' %}";
         }
         //star2
+
+        if(data['state'] < 0){
+            document.getElementById("match-highest1").innerHTML = "ADV." + data['highest'] + "%";
+        }else{
+            document.getElementById("match-highest1").innerHTML = "";
+        }
+        if(data['state'] > 0){
+            document.getElementById("match-highest2").innerHTML = "ADV." + data['highest'] + "%";
+        }else{
+            document.getElementById("match-highest2").innerHTML = "";
+        }
 
         document.getElementById("imageURL").src = data['imageURL'];
         document.getElementById("map-info1").innerHTML = data['map-info1'];

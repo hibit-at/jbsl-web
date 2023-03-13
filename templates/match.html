@@ -180,7 +180,7 @@
             ブラウザソースでは、この部分は表示されません
         </p>
         <p>
-            現在の状態 : {{ state }}
+            現在の状態 : {{ match.state }} {{ state }}
         </p>
         <p>
             PLAYER1_SCORE : {{ match.result1 }} / 6 PLAYER2_SCORE : {{ match.result2 }} / 6
@@ -368,17 +368,32 @@
     
     win_input1.addEventListener('input', () => {
     if (win_input1.value > 0 && win_input1.value <= 100) {
-        win_button1.disabled = false;
+        if(win_input1.value > win_input2.value){
+            win_button1.disabled = false;
+            win_button2.disabled = true;
+        }else{
+            win_button1.disabled = true;
+            win_button2.disabled = false;
+
+        }
     } else {
         win_button1.disabled = true;
     }
+
     });
 
     win_input2.addEventListener('input', () => {
     if (win_input2.value > 0 && win_input2.value <= 100) {
-        win_button2.disabled = false;
+        if(win_input2.value > win_input1.value){
+            win_button1.disabled = true;
+            win_button2.disabled = false;
+        }else{
+            win_button1.disabled = false;
+            win_button2.disabled = true;
+        }
     } else {
         win_button2.disabled = true;
     }
+
     });
 </script>

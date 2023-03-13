@@ -2127,10 +2127,11 @@ def match(request, pk=1):
             if post['highest1'] != '':
                 match.highest_acc = float(post['highest1'])
             match.result1 += 1
-            match.result2 -= match.result2 % 2
-            if match.retry2:
+            match.result2 -= match.result2 % 2 # リトライ状態を戻す、3だったら2に、5だったら4に
+            if match.retry2: # リトライ「を使った後」である時
                 match.result1 += 1
                 match.result1 -= match.result1 % 2
+                match.state = 0
             else:
                 match.state = -1
             match.save()
@@ -2142,6 +2143,7 @@ def match(request, pk=1):
             if match.retry1:
                 match.result2 += 1
                 match.result2 -= match.result2 % 2
+                match.state = 0
             else:
                 match.state = 1
             match.save()

@@ -7,33 +7,34 @@
         Players
     </h3>
     <p>
+        Sort by
         {% if sort != 'borderPP' %}
             <a href="{% url 'app:players' %}">
-                <button class="btn">有効PP</button>
+                <button class="btn active">有効PP</button>
             </a>
         {% else %}
-            Sort by 有効PP
+        <button class="btn" disabled>有効PP</button>
         {% endif %}
         {% if sort != 'techPP' %}
             <a href="{% url 'app:players' %}?sort=techPP">
-                <button class="btn">TechPP</button>
+                <button class="btn active">TechPP</button>
             </a>
         {% else %}
-            Sort by TechPP
+        <button class="btn" disabled>TechPP</button>
         {% endif %}
         {% if sort != 'passPP' %}
             <a href="{% url 'app:players' %}?sort=passPP">
-                <button class="btn">PassPP</button>
+                <button class="btn active">PassPP</button>
             </a>
         {% else %}
-            Sort by PassPP
+        <button class="btn" disabled>PassPP</button>
         {% endif %}
         {% if sort != 'yurufuwa' %}
             <a href="{% url 'app:players' %}?sort=yurufuwa">
-                <button class="btn">ゆるふわポイント</button>
+                <button class="btn active">ゆるふわポイント</button>
             </a>
         {% else %}
-            Sort by ゆるふわポイント
+        <button class="btn" disabled>ゆるふわポイント</button>
         {% endif %}
     </p>
     <table class="table table-striped table-borderless">

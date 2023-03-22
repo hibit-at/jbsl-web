@@ -97,6 +97,7 @@
         <th>Diff</th>
         <th>Edit</th>
     </thead>
+    <tbody id="sortable">
     {% for song in playlist.sorted_songs %}
         <tr>
             <td>
@@ -126,6 +127,7 @@
             </td>
         </tr>
     {% endfor %}
+    </tbody>
 </table>
 {% if isEditor and playlist.isEditable %}
     <h3>エディター用：譜面追加</h3>
@@ -254,7 +256,6 @@
             window.alert('固定化を取り消しました。'); // 警告ダイアログを表示
             return false; // 送信を中止
         }
-    
     }
 </script>
 {% endblock content %}

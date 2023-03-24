@@ -898,6 +898,10 @@ def playlist(request, pk):
             diff_num = diff_label_inv[dif]
             print(hash, char, dif)
             lid = search_lid(hash, gameMode, diff_num)
+            sort_index = playlist.songs.all().count()
+            if post['sort_index'] != '':
+                sort_index = float(post['sort_index'])
+            print(sort_index)
             if lid == None:
                 print('no lid')
                 params['errorMessage'] = 'スコアセイバーの ID が見つかりません'
@@ -909,7 +913,7 @@ def playlist(request, pk):
                     SongInfo.objects.update_or_create(
                         song=song,
                         playlist=playlist,
-                        defaults={'order': playlist.songs.all().count()},
+                        defaults={'order': sort_index},
                     )
                     playlist.recommend.remove(song)
                 return redirect('app:playlist', pk=pk)

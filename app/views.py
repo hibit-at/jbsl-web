@@ -807,13 +807,16 @@ def playlist(request, pk):
             gameMode = res['difficulty']['gameMode']
             char = char_dict[gameMode]
             song = create_song_by_hash(hash, diff_num, char, lid)
+            sort_index = playlist.songs.all().count()
+            if post['sort_index'] != '':
+                sort_index = float(post['sort_index'])
             if song is not None:
                 playlist.songs.add(song)
                 # if not SongInfo.objects.filter(song=song,playlist=playlist).exists():
                 SongInfo.objects.update_or_create(
                     song=song,
                     playlist=playlist,
-                    defaults={'order': playlist.songs.all().count()},
+                    defaults={'order': sort_index},
                 )
                 playlist.recommend.remove(song)
             return redirect('app:playlist', pk=pk)

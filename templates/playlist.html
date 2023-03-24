@@ -137,9 +137,12 @@
             譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
         </p>
         <input type="text" size="100px" name="add_song"/>
+        <input type="text" size="10px" name="sort_index" />
         <button class="btn" type="submit">追加</button>
+        ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
     </form>
 {% endif %}
+
 {% if playlist.recommend.all|length > 0 and playlist.isEditable %}
     <hr style="height:5px; background-color:mediumseagreen;">
     <h3>Recommend</h3>

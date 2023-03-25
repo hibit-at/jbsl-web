@@ -44,4 +44,5 @@ urlpatterns = [
 #     path('profile_overlay/api/<int:sid>', views.api_profile_overlay, name='api_profile_overlay'),
     path('api/dga', views.api_dga, name='api_dga'),
     path('api/dga/post',views.api_dga_post, name='api_dga_post'),
+    path('api/twitch/', views.api_twitch, name='api_twitch'),
 ]

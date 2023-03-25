@@ -2267,3 +2267,9 @@ def api_dga_post(request):
     post_json = {'message': 'スコアを登録完了しました'}
     post_json = json.dumps(post_json, ensure_ascii=False)
     return HttpResponse(post_json, content_type="application/json")
+
+def api_twitch(request):
+    from django.http import JsonResponse
+    players = Player.objects.filter(twitch__gt='').values('twitch')
+    twitch_usernames = [player['twitch'] for player in players]
+    return JsonResponse({'twitch_usernames': twitch_usernames})

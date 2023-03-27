@@ -5,3 +5,5 @@ local.py
 sudosebug.bat
 discord_manual_message.py
 dataclip*
+myenv
+db copy.sqlite3

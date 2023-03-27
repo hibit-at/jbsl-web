@@ -127,6 +127,8 @@ def index(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
+        if not Player.objects.filter(user=user).exists():
+            return redirect('app:mypage')
         player = user.player
         if player.isActivated:
             all_invitations = player.invite.all()

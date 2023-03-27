@@ -159,3 +159,5 @@ SITE_ID = 2
 ACCOUNT_ADAPTER = 'jbsl3.users.adapter.MyAccountAdapter'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

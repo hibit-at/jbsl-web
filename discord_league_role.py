@@ -1,9 +1,9 @@
 from datetime import timedelta
 import os
 import django
+import asyncio
 
-
-def league_role_total():
+async def league_role_total():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
@@ -83,8 +83,8 @@ def league_role_total():
 
         await bot.close()
 
-    bot.run(token)
+    await bot.start(token)
 
 
 if __name__ == '__main__':
-    league_role_total()
+    asyncio.run(league_role_total())

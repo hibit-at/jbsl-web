@@ -1,7 +1,6 @@
 import os
 import django
 import sys
-import asyncio
 
 def discord_check_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
@@ -38,4 +37,4 @@ def discord_check_process():
     bot.run(token)
 
 if __name__ == '__main__':
-    asyncio.run(discord_check_process())
+    discord_check_process()

@@ -18,6 +18,7 @@ async def league_role_total():
     intents = discord.Intents.all()
     intents.members = True
     bot = commands.Bot(command_prefix='/', intents=intents)
+    from app.models import League
 
 
     @bot.event
@@ -33,7 +34,6 @@ async def league_role_total():
         print(channel_names)
         print(role_names)
 
-        from app.models import League
         for league in League.objects.filter(isLive=True):
             valid_name = league.name.lower().replace(' ', '-')
             valid_name = valid_name.replace('[','')

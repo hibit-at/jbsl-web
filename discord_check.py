@@ -3,7 +3,7 @@ import django
 import sys
 import asyncio
 
-async def discord_check_process():
+def discord_check_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
@@ -35,7 +35,7 @@ async def discord_check_process():
                 player.save()
         await bot.close()
 
-    await bot.start(token)
+    bot.run(token)
 
 if __name__ == '__main__':
     asyncio.run(discord_check_process())

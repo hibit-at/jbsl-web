@@ -34,6 +34,8 @@ async def league_role_total():
         print(channel_names)
         print(role_names)
 
+        await bot.close()
+
         for league in League.objects.filter(isLive=True):
             valid_name = league.name.lower().replace(' ', '-')
             valid_name = valid_name.replace('[','')

@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-    {% if user.player.isActivated and not user.player.inDiscord %}
+    {% comment %} {% if user.player.isActivated and not user.player.inDiscord %}
         <div style="text-align:center">
             <h3>! Discord サーバー参加へのお願い !</h3>
             <p>
@@ -15,7 +15,7 @@
                 <span class="dl_link"><a href="https://discord.gg/CqQ6ZD8KRn">参加</a></span>
             </p>
         </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
     {% for league in invitations %}
         <div style="text-align:center">
             <h3>

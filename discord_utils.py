@@ -1,5 +1,6 @@
 import os
 import django
+import asyncio
 
 
 def discord_message_process_with_channel(message_text, channel_name):
@@ -117,7 +118,7 @@ def league_role_total():
     bot.run(token)
 
 
-def league_create(league_name):
+async def league_create(league_name):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     import discord
@@ -146,9 +147,12 @@ def league_create(league_name):
                 exist = True
         if not exist:
             await category.create_text_channel(league_name)
-        await bot.close()
+        # await bot.close()
 
-    bot.run(token)
+    try:
+        await asyncio.wait_for(bot.start(token), timeout=5)
+    except asyncio.TimeoutError:
+        print('タイムアウトしました。')
 
 
 def role_erase():
@@ -248,5 +252,3 @@ def role_add(ID, role_name):
 
 if __name__ == '__main__':
     print('utils manual test')
-    # league_create('秘密の部屋')
-    # league_role_total()

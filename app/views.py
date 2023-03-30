@@ -2291,14 +2291,9 @@ def player_matrix(request):
     players = Player.objects.annotate(
         relative_passPP= 1200 - F('passPP') / max_pass_pp * 1000,
         relative_techPP= 200 + F('techPP') / max_tech_pp * 1000,
-        is_matching_user=Case(
-            When(user__player__sid=F('sid'), then=True),
-            default=False,
-            output_field=BooleanField()
-        )
     )
     print(max_pass_pp)
-    players = players.order_by('accPP','is_matching_user')
+    players = players.order_by('accPP')
     for player in players:
         print(player.relative_passPP)
         print(player.relative_techPP)

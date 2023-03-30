@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-{% for player in players %}
-<a href="{% url 'app:userpage' sid=player.sid %}">
-<img src="{{ player.imageURL }}" class="icon" style="position: absolute; left: {{ player.relative_techPP }}px; top: {{ player.relative_passPP }}px;">
-</a>
+    {% for player in players %}
+        {% if player == user.player %}
+            <a href="{% url 'app:userpage' sid=player.sid %}">
+                <img src="{{ player.imageURL }}"
+                    class="icon"
+                    style="position: absolute;
+                            left: {{ player.relative_techPP }}px;
+                            top: {{ player.relative_passPP }}px;
+                            z-index: 1;">
+            </a>
+        {% else %}
+            <a href="{% url 'app:userpage' sid=player.sid %}">
+                <img src="{{ player.imageURL }}"
+                    class="icon"
+                    style="position: absolute;
+                            left: {{ player.relative_techPP }}px;
+                            top: {{ player.relative_passPP }}px;
+                            z-index: 0;">
+            </a>
+        {% endif %}
 {% endfor %}
-{% if highlight != None %}
-<img src="{{ highlight.imageURL }}" class="icon" style="position: absolute; left: {{ player.relative_techPP }}px; top: {{ player.relative_passPP }}px;">
-{% endif %}
-<div style="height:1300px"></div>
+    <div style="height:1300px"></div>
 {% endblock content %}

@@ -1,5 +1,7 @@
+
 {% extends "base.html" %}
 {% block content %}
+    {% load static %}
     {% for player in players %}
         {% if player.sid != '' %}
             <a href="{% url 'app:userpage' sid=player.sid %}">
@@ -13,5 +15,5 @@
                         border: {% if player == user.player %}3px solid orange{% else %}none{% endif %};">
             {% if player.sid != '' %}</a>{% endif %}
         {% endfor %}
-        <div style="height:1300px"></div>
+        <div style="height:1300px;margin-left:200px"><img src="{% static 'matrix_background.png' %}" /></div>
     {% endblock content %}

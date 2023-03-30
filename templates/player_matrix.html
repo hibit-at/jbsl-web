@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
     {% for player in players %}
-        <a href="{% url 'app:userpage' sid=player.sid %}">
+        {% if player.sid != '' %}
+            <a href="{% url 'app:userpage' sid=player.sid %}">
+            {% endif %}
             <img src="{{ player.imageURL }}"
                  class="icon"
                  style="position: absolute;
@@ -9,7 +11,7 @@
                         top: {{ player.relative_passPP }}px;
                         z-index: {% if player == user.player %}1{% else %}0{% endif %};
                         border: {% if player == user.player %}3px solid orange{% else %}none{% endif %};">
-        </a>
-    {% endfor %}
-    <div style="height:1300px"></div>
-{% endblock content %}
+            {% if player.sid != '' %}</a>{% endif %}
+        {% endfor %}
+        <div style="height:1300px"></div>
+    {% endblock content %}

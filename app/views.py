@@ -2283,7 +2283,7 @@ def player_matrix(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
-    players = Player.objects.all()
+    players = Player.objects.filter(isActivated=True)
     from django.db.models import Max,F
     max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']

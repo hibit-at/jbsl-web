@@ -2284,19 +2284,25 @@ def player_matrix(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     players = Player.objects.filter(isActivated=True,passPP__gt=0,techPP__gt=0)
-    from django.db.models import Max,F
+    from django.db.models import Max,F,BooleanField,Case,When
     max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
 
-    players = players.annotate(
-        relative_passPP=1200 - F('passPP') / max_pass_pp * 1000,
-        relative_techPP=200 + F('techPP') / max_tech_pp * 1000
+    players = Player.objects.annotate(
+        relative_passPP= 1200 - F('passPP') / max_pass_pp * 1000,
+        relative_techPP= 200 + F('techPP') / max_tech_pp * 1000,
+        is_matching_user=Case(
+            When(user__player=F('sid'), then=True),
+            default=False,
+            output_field=BooleanField()
+        )
     )
     print(max_pass_pp)
+    players = players.order_by('accPP','is_matching_user')
     for player in players:
         print(player.relative_passPP)
         print(player.relative_techPP)
-    players = players.order_by('accPP')
+        print(player)
     params['players'] = players
     
     return render(request, 'player_matrix.html',params)

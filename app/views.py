@@ -2292,7 +2292,7 @@ def player_matrix(request):
         relative_passPP= 1200 - F('passPP') / max_pass_pp * 1000,
         relative_techPP= 200 + F('techPP') / max_tech_pp * 1000,
         is_matching_user=Case(
-            When(user__player=F('sid'), then=True),
+            When(user__player__sid=F('sid'), then=True),
             default=False,
             output_field=BooleanField()
         )

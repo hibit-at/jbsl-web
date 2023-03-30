@@ -2275,3 +2275,27 @@ def api_twitch(request):
     players = Player.objects.filter(twitch__gt='').values('twitch')
     twitch_usernames = [player['twitch'] for player in players]
     return JsonResponse({'twitch_usernames': twitch_usernames})
+
+
+def player_matrix(request):
+    params = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        params['social'] = social
+    players = Player.objects.all()
+    from django.db.models import Max,F
+    max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
+    max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
+
+    players = players.annotate(
+        relative_passPP=1200 - F('passPP') / max_pass_pp * 1000,
+        relative_techPP=F('techPP') / max_tech_pp * 1000
+    )
+    print(max_pass_pp)
+    for player in players:
+        print(player.relative_passPP)
+        print(player.relative_techPP)
+    params['players'] = players
+    
+    return render(request, 'player_matrix.html',params)

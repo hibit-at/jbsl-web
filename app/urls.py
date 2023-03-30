@@ -45,4 +45,5 @@ urlpatterns = [
     path('api/dga', views.api_dga, name='api_dga'),
     path('api/dga/post',views.api_dga_post, name='api_dga_post'),
     path('api/twitch/', views.api_twitch, name='api_twitch'),
+    path('player_matrix/',views.player_matrix,name='player_matrix'),
 ]

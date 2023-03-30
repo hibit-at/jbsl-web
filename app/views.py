@@ -2296,6 +2296,7 @@ def player_matrix(request):
     for player in players:
         print(player.relative_passPP)
         print(player.relative_techPP)
+    players = players.order_by('accPP')
     params['players'] = players
     
     return render(request, 'player_matrix.html',params)

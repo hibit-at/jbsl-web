@@ -1,25 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
     {% for player in players %}
-        {% if player == user.player %}
-            {% comment %} <a href="{% url 'app:userpage' sid=player.sid %}"> {% endcomment %}
-                <img src="{{ player.imageURL }}"
-                    class="icon"
-                    style="position: absolute;
-                            left: {{ player.relative_techPP }}px;
-                            top: {{ player.relative_passPP }}px;
-                            z-index: 1;">
-            {% comment %} </a> {% endcomment %}
-        {% else %}
-            {% comment %} <a href="{% url 'app:userpage' sid=player.sid %}"> {% endcomment %}
-                <img src="{{ player.imageURL }}"
-                    class="icon"
-                    style="position: absolute;
-                            left: {{ player.relative_techPP }}px;
-                            top: {{ player.relative_passPP }}px;
-                            z-index: 0;">
-            {% comment %} </a> {% endcomment %}
-        {% endif %}
-{% endfor %}
+        <a href="{% url 'app:userpage' sid=player.sid %}">
+            <img src="{{ player.imageURL }}"
+                 class="icon"
+                 style="position: absolute;
+                        left: {{ player.relative_techPP }}px;
+                        top: {{ player.relative_passPP }}px;
+                        z-index: {% if player == user.player %}1{% else %}0{% endif %};
+                        border: {% if player == user.player %}3px solid orange{% else %}none{% endif %};">
+        </a>
+    {% endfor %}
     <div style="height:1300px"></div>
 {% endblock content %}

@@ -2288,13 +2288,19 @@ def player_matrix(request):
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
     players = Player.objects.filter(isActivated=True,passPP__gt=0,techPP__gt=0)
-    from django.db.models import Max,F,BooleanField,Case,When
+    from django.db.models import Max,F, ExpressionWrapper, FloatField
     max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
 
     players = Player.objects.annotate(
-        relative_passPP= 1200 - ((F('passPP') / max_pass_pp * 1000 - offset_y)*scale + 600),
-        relative_techPP= 200 + (F('techPP') / max_tech_pp * 1000 - offset_x)*scale + 600,
+        relative_passPP=ExpressionWrapper(
+            1200 - ((F('passPP') / max_pass_pp * 1000 - offset_y) * scale + 600),
+            output_field=FloatField()
+        ),
+        relative_techPP=ExpressionWrapper(
+            200 + (F('techPP') / max_tech_pp * 1000 - offset_x) * scale + 600,
+            output_field=FloatField()
+        ),
     )
 
     players = players.filter(

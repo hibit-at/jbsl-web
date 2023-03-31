@@ -30,9 +30,9 @@
 
             // クエリパラメータを設定
             const params = new URLSearchParams({
-                offset_x: x + {{now_offset_x }} - 600,
-                offset_y: y + {{now_offset_y}} - 600,
-                scale: {{now_scale}} * 1.5,
+                offset_x: (x - 600)/{{now_scale}} + {{now_offset_x}},
+                offset_y: (y - 600)/{{now_scale}} + {{now_offset_y}},
+                scale: {{now_scale}} * 2,
             });
 
             // Django の URL メソッドを使ってジャンプ

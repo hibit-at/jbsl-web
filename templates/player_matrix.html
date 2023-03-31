@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
+    <div id="container" style="height:1300px;margin-left:50px;margin-top:150px;user-select : none"><img src="{% static 'matrix_background.png' %}" style="border-radius:20px"/></div>
     {% for player in players %}
         {% if player.sid != '' %}
             <a href="{% url 'app:userpage' sid=player.sid %}">
@@ -15,5 +16,30 @@
                         border: {% if player == user.player %}3px solid orange{% else %}none{% endif %};">
             {% if player.sid != '' %}</a>{% endif %}
         {% endfor %}
-        <div style="height:1300px;margin-left:50px;margin-top:150px;pointer-events: none;user-select : none"><img src="{% static 'matrix_background.png' %}" style="border-radius:20px"/></div>
+    <a href="{% url 'app:player_matrix' %}"><button class="btn">View Reset</button></a>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('container');
+    
+        container.addEventListener('click', function (event) {
+            const containerRect = container.getBoundingClientRect();
+            const x = event.clientX - containerRect.left;
+            var y = event.clientY - containerRect.top;
+            y = 1200 - y;
+            console.log(`クリックされた座標: x: ${x}, y: ${y}`);
+
+            // クエリパラメータを設定
+            const params = new URLSearchParams({
+                offset_x: x + {{now_offset_x }} - 600,
+                offset_y: y + {{now_offset_y}} - 600,
+                scale: {{now_scale}} * 1.5,
+            });
+
+            // Django の URL メソッドを使ってジャンプ
+            const url = `{% url 'app:player_matrix' %}?${params.toString()}`;
+            window.location.href = url;
+            
+        });
+    });
+</script>
     {% endblock content %}

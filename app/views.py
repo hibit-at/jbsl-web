@@ -2280,6 +2280,10 @@ def api_twitch(request):
 def player_matrix(request):
     params = {}
     user = request.user
+    offset_x = request.GET.get('offset_x', 600)
+    offset_y = request.GET.get('offset_y', 600)
+    scale = request.GET.get('scale', 1)
+    print(offset_x,offset_y)
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         params['social'] = social
@@ -2289,15 +2293,22 @@ def player_matrix(request):
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
 
     players = Player.objects.annotate(
-        relative_passPP= 1200 - F('passPP') / max_pass_pp * 1000,
-        relative_techPP= 200 + F('techPP') / max_tech_pp * 1000,
+        relative_passPP= 1200 - ((F('passPP') / max_pass_pp * 1000 - offset_y)*scale + 600),
+        relative_techPP= 200 + (F('techPP') / max_tech_pp * 1000 - offset_x)*scale + 600,
     )
-    print(max_pass_pp)
+
+    players = players.filter(
+        relative_passPP__gte=200,
+        relative_passPP__lte=1200,
+        relative_techPP__gte=200,
+        relative_techPP__lte=1200,
+    )
+
+
     players = players.order_by('accPP')
-    for player in players:
-        print(player.relative_passPP)
-        print(player.relative_techPP)
-        print(player)
     params['players'] = players
+    params['now_offset_x'] = offset_x
+    params['now_offset_y'] = offset_y
+    params['now_scale'] = scale
     
     return render(request, 'player_matrix.html',params)

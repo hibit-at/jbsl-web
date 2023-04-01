@@ -31,6 +31,28 @@ def score_to_acc(score, notes):
     return score/max_score*100
 
 
+def league_end_process(league, end, time_count):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    from app.models import Headline
+    discord_message = f'{league} リーグが終了しました！'
+    league.isLive = False
+    playlist = league.playlist
+    playlist.isEditable = False
+    playlist.save()
+    league.save()
+
+    Headline.objects.create(player=None, time=end + timedelta(seconds=time_count), text=discord_message)
+    time_count -= 1
+    for i, winner in enumerate([league.first, league.second, league.third], start=1):
+        if winner is not None:
+            Headline.objects.create(player=winner, time=end + timedelta(seconds=time_count), text=f'{winner} さんが {i} 位！')
+            discord_message += f'\n#{i} {winner} さん'
+            time_count -= 1
+
+    discord_message_process(discord_message)
+
+
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -40,47 +62,9 @@ def league_update_process():
     for league in League.objects.filter(isLive=True):
         end = league.end
         now = datetime.now(timezone.utc)
-        print(end, now)
         if now > end:
-            print('end')
-            discord_message = ''
-            league.isLive = False
-            playlist = league.playlist
-            playlist.isEditable = False
-            playlist.save()
-            league.save()
-            Headline.objects.create(
-                player=None,
-                time=end + timedelta(seconds=time_count),
-                text=f'{league} リーグが終了しました！'
-            )
-            discord_message += f'{league} リーグが終了しました！'
-            time_count -= 1
-            if league.first != None:
-                Headline.objects.create(
-                    player=league.first,
-                    time=end + timedelta(seconds=time_count),
-                    text=f'{league.first} さんが 1 位！',
-                )
-                discord_message += f'\n#1 {league.first} さん'
-                time_count -= 1
-            if league.second != None:
-                Headline.objects.create(
-                    player=league.second,
-                    time=end + timedelta(seconds=time_count),
-                    text=f'{league.second} さんが 2 位！',
-                )
-                discord_message += f'\n#2 {league.second} さん'
-                time_count -= 1
-            if league.third != None:
-                Headline.objects.create(
-                    player=league.third,
-                    time=end + timedelta(seconds=time_count),
-                    text=f'{league.third} さんが 3 位！',
-                )
-                discord_message += f'\n#3 {league.third} さん'
-                time_count -= 1
-            discord_message_process(discord_message)
+            print('end!')
+            league_end_process(league, end, time_count)
             continue
         for player in league.player.all():
             print(player)

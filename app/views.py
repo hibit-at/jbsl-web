@@ -201,6 +201,25 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def process_mapper(post, player : Player, context):
+    mapper_id = post['mapper']
+    if mapper_id == '':
+        player.mapper = 0
+        player.mapper_name = ''
+    elif Player.objects.filter(mapper=mapper_id).exists():
+        context['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
+    else:
+        url = f'https://api.beatsaver.com/users/id/{mapper_id}'
+        mapper_name = requests.get(url).json()['name']
+        player.mapper = int(mapper_id)
+        player.mapper_name = mapper_name
+        player.save()
+        import sys
+        sys.path.append('../')
+        import JPMap_process
+        JPMap_process.collect_by_player(player)
+
+
 def userpage(request, sid=0):
     context = {}
     user = request.user
@@ -214,18 +233,10 @@ def userpage(request, sid=0):
     if request.method == 'POST':
         post = request.POST
         print(post)
-        if 'imageURL' in post:
-            imageURL = post['imageURL']
-            if imageURL.startswith('https://pbs.twimg.com/profile_images'):
-                player.imageURL = imageURL
-        if 'message' in post:
-            player.message = validation(post['message'][:50])
-        if 'twitter' in post:
-            player.twitter = post['twitter']
-        if 'twitch' in post:
-            player.twitch = post['twitch']
-        if 'booth' in post:
-            player.booth = post['booth']
+        player.message = validation(post['message'][:50]) if 'message' in post else player.message
+        player.twitter = post.get('twitter', player.twitter)
+        player.twitch = post.get('twitch', player.twitch)
+        player.booth = post.get('booth', player.booth)
         if 'rival' in post:
             rival_sid = post['rival']
             rival = Player.objects.get(sid=rival_sid)
@@ -240,49 +251,24 @@ def userpage(request, sid=0):
         if 'icon_discord' in post:
             if social.extra_data['avatar'] != None:
                 player.imageURL = f'https://cdn.discordapp.com/avatars/{social.uid}/{social.extra_data["avatar"]}'
-        if 'color' in post:
-            userColor = post['color']
-            player.userColor = userColor
-        if 'bg' in post:
-            bgColor = post['bg']
-            player.bgColor = bgColor
-        if 'shadow' in post:
-            player.isShadow = True
-        else:
-            player.isShadow = False
-        if 'mapper' in post:
-            if post['mapper'] == '':
-                player.mapper = 0
-                player.mapper_name = ''
-            else:
-                mapper_id = post['mapper']
-                if Player.objects.filter(mapper=mapper_id).exists():
-                    context['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
-                else:
-                    url = f'https://api.beatsaver.com/users/id/{mapper_id}'
-                    mapper_name = requests.get(url).json()['name']
-                    player.mapper = int(mapper_id)
-                    player.mapper_name = mapper_name
-                    player.save()
-                    import sys
-                    sys.path.append('../')
-                    import JPMap_process
-                    JPMap_process.collect_by_player(player)
-                    print('collect player latest maps')
-                    JPMap_process.weekly()
-                    JPMap_process.biweekly()
-                    JPMap_process.latest()
-        player.save()
-    eyebeam = Player.objects.filter(rival=player).count()
-    print(eyebeam)
-    context['eyebeam'] = eyebeam
-    top10 = Score.objects.filter(
-        player=player, league__name='Top10').order_by('-rawPP')
-    context['top10'] = top10
+        player.userColor = post.get('color', player.userColor)
+        player.bgColor = post.get('bg', player.bgColor)
+        player.isShadow = 'shadow' in post
 
-    badges = Badge.objects.filter(player=player)
-    print(badges)
-    context['badges'] = badges
+        if 'mapper' in post:
+            process_mapper(post, player, context)
+
+        player.save()
+
+    eyebeam_count = Player.objects.filter(rival=player).count()
+    top10_scores = Score.objects.filter(player=player, league__name='Top10').order_by('-rawPP')
+    player_badges = Badge.objects.filter(player=player)
+
+    context.update({
+        'eyebeam': eyebeam_count,
+        'top10': top10_scores,
+        'badges': player_badges,
+    })
 
     players = Player.objects.aggregate(
         Max('accPP'), Max('techPP'), Max('passPP')
@@ -313,24 +299,25 @@ def userpage(request, sid=0):
         tech_col = int(techIndex*255/max_color)
 
     context['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
-    player_type = ''
 
-    if techIndex > accIndex*1.2 and techIndex > passIndex*1.2:
-        player_type = f'かなりテック型'
-    elif techIndex > accIndex*1.1 and techIndex > passIndex*1.1:
-        player_type = f'テック型'
-    elif accIndex > techIndex*1.2 and accIndex > passIndex*1.2:
-        player_type = f'かなり精度型'
-    elif accIndex > techIndex*1.1 and accIndex > passIndex*1.1:
-        player_type = f'精度型'
-    elif passIndex > accIndex*1.2 and passIndex > techIndex*1.2:
-        player_type = f'かなりクリアラー型'
-    elif passIndex > accIndex*1.1 and passIndex > techIndex*1.1:
-        player_type = f'クリアラー型'
-    else:
-        player_type = f'バランス型'
+    def get_player_type(tech_index, acc_index, pass_index):
+        player_type = 'バランス型'
 
-    context['player_type'] = player_type
+        comparisons = [
+            (tech_index, acc_index, pass_index, 'テック型', 'かなりテック型'),
+            (acc_index, tech_index, pass_index, '精度型', 'かなり精度型'),
+            (pass_index, acc_index, tech_index, 'クリアラー型', 'かなりクリアラー型'),
+        ]
+
+        for index, other_index1, other_index2, label, strong_label in comparisons:
+            if index > other_index1 * 1.2 and index > other_index2 * 1.2:
+                player_type = strong_label
+            elif index > other_index1 * 1.1 and index > other_index2 * 1.1:
+                player_type = label
+
+        return player_type
+    
+    context['player_type'] = get_player_type(techIndex, accIndex, passIndex)
 
     return render(request, 'userpage.html', context)
 

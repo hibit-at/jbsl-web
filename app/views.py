@@ -1832,7 +1832,7 @@ def pos_acc_update(pk):
                 league=league, player=player)
         print(participant)
         query = Score.objects.filter(
-            league=league, player=player).order_by('-pos')
+            league=league, player=player).order_by('-pos','-acc')
         for i, score in enumerate(query):
             score.valid = (i < count_range)
             score.save()
@@ -1902,7 +1902,7 @@ def short_leaderboard(request, pk=0):
 
     for song in songs:
         query = Score.objects.filter(
-            song=song, league=league, player__league=league).order_by('-score')[0]
+            song=song, league=league, player__league=league).order_by('-score').first()
         setattr(song, 'scores', query)
 
         if user.is_authenticated:

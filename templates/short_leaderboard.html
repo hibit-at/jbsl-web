@@ -40,11 +40,6 @@
                         順位点
                     </th>
                     <th width="100px">
-                        有効重
-                        <br />
-                        付精度
-                    </th>
-                    <th width="100px">
                         順位点
                         <br />
                         比率
@@ -77,11 +72,6 @@
                             <td>
                                 <span {% if participant.tooltip_pos %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_pos }}" {% endif %}>
                                     {{ participant.count_pos|intcomma }}
-                                </span>
-                            </td>
-                            <td>
-                                <span {% if participant.tooltip_weight_acc %} data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{{ participant.tooltip_weight_acc }}" {% endif %}>
-                                    {{ participant.count_weight_acc|floatformat:2|intcomma }}
                                 </span>
                             </td>
                             <td>
@@ -152,18 +142,6 @@
                                     {% endwith %}
                                 {% endif %}
                             </p>
-                            {% comment %} <div style="display:flex">
-                                <p>
-                                    {% if song.scores.1 %}
-                                        {% with song.scores.1 as score %}<img src="{{ score.player.imageURL }}" class="icon">{% endwith %}
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {% if song.scores.2 %}
-                                        {% with song.scores.2 as score %}<img src="{{ score.player.imageURL }}" class="icon">{% endwith %}
-                                    {% endif %}
-                                </p>
-                            </div> {% endcomment %}
                         </div>
                     </div>
                     {% if song.additional_score %}

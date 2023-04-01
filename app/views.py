@@ -16,6 +16,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone as django_timezone
 
 from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA, User
 
@@ -376,32 +377,31 @@ def create_song_by_hash(hash, diff_num, char, lid):
     return Song.objects.get(lid=lid)
 
 
+def create_headline(player, title, diff, old_acc=None, new_acc=None):
+    if old_acc is not None:
+        text = f'{player} さんが {title} ({diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
+    else:
+        text = f'{player} さんが {title} ({diff}) のスコアを更新！ {new_acc:.2f} %'
+
+    return Headline.objects.create(
+        player=player,
+        time=django_timezone.now(),
+        text=text,
+    )
+
+
 def score_to_headline(new_score, song, player, league):
-    title = song.title
-    tail = ''
-    if len(title) > 30:
-        tail = '...'
-    title = title[:30] + tail
-    if Score.objects.filter(player=player, song=song, league=league).exists():
-        old_score = Score.objects.get(player=player, song=song, league=league)
+    title = song.title[:30] + '...' if len(song.title) > 30 else song.title
+    new_acc = score_to_acc(new_score, song.notes)
+
+    old_score = Score.objects.filter(player=player, song=song, league=league).first()
+
+    if old_score is not None:
         if new_score > old_score.score:
             old_acc = old_score.acc
-            # new_acc = new_score/(115*8*int(song.notes)-7245)*100
-            new_acc = score_to_acc(new_score, song.notes)
-            return Headline.objects.create(
-                player=player,
-                time=datetime.now(),
-                text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
-            )
+            return create_headline(player, title, song.diff, old_acc, new_acc)
     else:
-        # new_acc = new_score/(115*8*int(song.notes)-7245)*100
-        new_acc = score_to_acc(new_score, song.notes)
-        return Headline.objects.create(
-            player=player,
-            time=datetime.now(),
-            text=f'{player} さんが {title} ({song.diff}) のスコアを更新！ {new_acc:.2f} %'
-        )
-
+        return create_headline(player, title, song.diff, None, new_acc)
 
 def top_score_registration(player):
     sid = player.sid

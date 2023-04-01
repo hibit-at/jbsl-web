@@ -92,11 +92,10 @@ def update_score(player, song, league, res):
             'miss': miss,
         }
 
-        if Score.objects.filter(player=player, song=song, league=league).exists():
-            old_score = Score.objects.get(player=player, song=song, league=league)
-            if score <= old_score.score:
-                print('already updated score')
-                break
+        old_score = Score.objects.filter(player=player, song=song, league=league).first()
+        if old_score and score <= old_score.score:
+            print('already updated score')
+            break
         
         beatleader = get_beatleader_data(player, song)
         if beatleader:

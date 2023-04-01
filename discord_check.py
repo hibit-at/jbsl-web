@@ -57,6 +57,8 @@ def discord_check_process():
                     player.inDiscord = True
                     player.save()
     
+    print('who is not in?')
+
     for player in Player.objects.all():
         user : User = player.user
         social = user.socialaccount_set.first()

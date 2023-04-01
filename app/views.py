@@ -2029,15 +2029,15 @@ def archive(request):
         context['social'] = social
     return render(request, 'archive.html', context)
 
+state_dict = {
+    -2: 'RETRY PLAYER1 ADVANTAGE',
+    -1: 'PLAYER1 WIN SUSPEND',
+    0: 'STAND BY',
+    1: 'PLAYER2 WIN SUSPEND',
+    2: 'RETRY PLAYER2 ADVANTAGE',
+}
 
 def match(request, pk=1):
-    state_dict = {
-        -2: 'RETRY PLAYER1 ADVANTAGE',
-        -1: 'PLAYER1 WIN SUSPEND',
-        0: 'STAND BY',
-        1: 'PLAYER2 WIN SUSPEND',
-        2: 'RETRY PLAYER2 ADVANTAGE',
-    }
 
     match = Match.objects.get(pk=pk)
     playlists = Playlist.objects.all().order_by('-pk')
@@ -2114,14 +2114,6 @@ def match(request, pk=1):
                 match.player1 = league.player.all()[0]
                 match.player2 = league.player.all()[1]
                 match.save()
-
-        # state_dict = {
-        #     -2: 'RETRY PLAYER1 ADVANTAGE',
-        #     -1: 'PLAYER1 WIN SUSPEND',
-        #     0: 'STAND BY',
-        #     1: 'PLAYER2 WIN SUSPEND',
-        #     2: 'RETRY PLAYER2 ADVANTAGE',
-        # }
 
         if 'player1_win' in post:
             if post['highest1'] != '':
@@ -2286,7 +2278,7 @@ def player_matrix(request):
     max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
 
-    players = Player.objects.annotate(
+    players = players.annotate(
         relative_passPP=ExpressionWrapper(
             1200 - ((F('passPP') / max_pass_pp * 1000 - offset_y) * scale + 600),
             output_field=FloatField()

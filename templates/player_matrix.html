@@ -4,9 +4,7 @@
     {% load static %}
     <div id="container" style="height:1300px;margin-left:50px;margin-top:150px;user-select : none"><img src="{% static 'matrix_background.png' %}" style="border-radius:20px"/></div>
     {% for player in players %}
-        {% if player.sid != '' %}
             <a href="{% url 'app:userpage' sid=player.sid %}">
-            {% endif %}
             <img src="{{ player.imageURL }}"
                  class="icon"
                  style="position: absolute;
@@ -14,7 +12,7 @@
                         top: {{ player.relative_passPP }}px;
                         z-index: {% if player == user.player %}1{% else %}0{% endif %};
                         border: {% if player == user.player %}3px solid orange{% else %}none{% endif %};">
-            {% if player.sid != '' %}</a>{% endif %}
+            </a>
         {% endfor %}
     <a href="{% url 'app:player_matrix' %}"><button class="btn">View Reset</button></a>
 <script>

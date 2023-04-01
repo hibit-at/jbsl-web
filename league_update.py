@@ -52,6 +52,88 @@ def league_end_process(league, end, time_count):
 
     discord_message_process(discord_message)
 
+def get_score_data(player, song):
+    name_encode = urllib.parse.quote(player.name)
+    url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={name_encode}'
+    res = requests.get(url).json()
+    return res
+
+def get_beatleader_data(player, song):
+    sid = player.sid
+    hash = song.hash
+    diff = song.diff
+    mode = song.char
+    url = f'https://api.beatleader.xyz/score/{sid}/{hash}/{diff}/{mode}'
+    res = requests.get(url)
+    if res.status_code == 200:
+        beatleader = res.json()['id']
+        return beatleader
+    return None
+
+def update_score(player, song, league, res):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    from app.models import Score
+    from app.views import score_to_headline
+    notes = song.notes
+    for scoreData in res['scores']:
+        hitname = scoreData['leaderboardPlayerInfo']['name']
+        if player.name != hitname:
+            print('wrong name!')
+            continue
+        
+        score = scoreData['modifiedScore']
+        rawPP = scoreData['pp']
+        miss = scoreData['badCuts'] + scoreData['missedNotes']
+        defaults = {
+            'score': score,
+            'acc': score_to_acc(score, int(notes)),
+            'rawPP': rawPP,
+            'miss': miss,
+        }
+
+        if Score.objects.filter(player=player, song=song, league=league).exists():
+            old_score = Score.objects.get(player=player, song=song, league=league)
+            if score <= old_score.score:
+                print('already updated score')
+                break
+        
+        beatleader = get_beatleader_data(player, song)
+        if beatleader:
+            defaults['beatleader'] = beatleader
+
+        new_headline = None
+        if league in player.league.all():
+            new_headline = score_to_headline(score, song, player, league)
+        
+        new_score, check = Score.objects.update_or_create(
+            player=player,
+            song=song,
+            league=league,
+            defaults=defaults,
+        )
+        if new_headline:
+            print("headline attached", new_headline)
+            new_headline.score = new_score
+            new_headline.save()
+        print('score updated!')
+        break
+
+def create_headline(player, league, position):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+    from app.models import Headline
+    Headline.objects.create(
+        player=player,
+        time=datetime.now(),
+        text=f'{player} さんが {league} リーグで {position} 位になりました！'
+    )
+
+def process_grand_slam(player, league):
+    if player.theoretical == 100:
+        valid_name = league.name.lower().replace(' ', '-').translate(str.maketrans("", "", "[]'.")) 
+        discord_message_process_with_channel(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！', valid_name)
+
 
 def league_update_process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
@@ -70,102 +152,23 @@ def league_update_process():
             print(player)
             for song in league.playlist.songs.all():
                 print(song, song.lid)
-                name_encode = urllib.parse.quote(player.name)
-                url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={name_encode}'
-                res = requests.get(url).json()
+                res = get_score_data(player, song)
                 if 'errorMessage' in res:
                     print('no score')
                     continue
-                print(res)
-                notes = song.notes
-                for scoreData in res['scores']:
-                    hitname = scoreData['leaderboardPlayerInfo']['name']
-                    if player.name != hitname:
-                        print('wrong name!')
-                        continue
-                    score = scoreData['modifiedScore']
-                    rawPP = scoreData['pp']
-                    miss = scoreData['badCuts'] + scoreData['missedNotes']
-                    defaults = {
-                        'score': score,
-                        # 'acc': score/(115*8*int(notes)-7245)*100,
-                        'acc': score_to_acc(score, int(notes)),
-                        'rawPP': rawPP,
-                        'miss': miss,
-                    }
-
-
-                    if Score.objects.filter(player=player, song=song, league=league).exists():
-                        old_score = Score.objects.get(player=player, song=song, league=league)
-                        if score <= old_score.score:
-                            print('already updated score')
-                            break
-
-                    # BeatLeader Get
-                    sid = player.sid
-                    hash = song.hash
-                    diff = song.diff
-                    mode = song.char
-                    print(sid,hash,diff,mode)
-                    url = f'https://api.beatleader.xyz/score/{sid}/{hash}/{diff}/{mode}'
-                    print(url)
-                    res = requests.get(url)
-                    print(res.status_code)
-                    if res.status_code == 200:
-                        beatleader = res.json()['id']
-                        print(beatleader)
-                        defaults['beatleader'] = beatleader
-
-                    new_headline = None
-                    if league in player.league.all():
-                        new_headline = score_to_headline(score, song, player, league)
-                    if new_headline != None:
-                        print("headline attached", new_headline)
-                    new_score, check = Score.objects.update_or_create(
-                        player=player,
-                        song=song,
-                        league=league,
-                        defaults=defaults,
-                    )
-                    if new_headline != None:
-                        print(new_score)
-                        new_headline.score = new_score
-                        new_headline.save()
-                    print('score updated!')
-                    break
+                update_score(player, song, league, res)
         print(league)
         players, songs = calculate_scoredrank_LBs(league)
         for i, player in enumerate(players[:3]):
-            if i == 0:
-                if league.first != player:
-                    Headline.objects.create(
-                        player=player,
-                        time=datetime.now(),
-                        text=f'{player} さんが {league} リーグで 1 位になりました！'
-                    )
-                    if player.theoretical == 100:
-                        valid_name = league.name.lower().replace(' ', '-')
-                        valid_name = valid_name.replace('[','')
-                        valid_name = valid_name.replace(']','')
-                        valid_name = valid_name.replace('\'','')
-                        valid_name = valid_name.replace('.','')
-                        discord_message_process_with_channel(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！',   valid_name)
+            if i == 0 and league.first != player:
+                create_headline(player, league, i + 1)
+                process_grand_slam(player, league)
                 league.first = player
-            if i == 1:
-                if league.second != player:
-                    Headline.objects.create(
-                        player=player,
-                        time=datetime.now(),
-                        text=f'{player} さんが {league} リーグで 2 位になりました！'
-                    )
+            elif i == 1 and league.second != player:
+                create_headline(player, league, i + 1)
                 league.second = player
-            if i == 2:
-                if league.third != player:
-                    Headline.objects.create(
-                        player=player,
-                        time=datetime.now(),
-                        text=f'{player} さんが {league} リーグで 3 位になりました！'
-                    )
+            elif i == 2 and league.third != player:
+                create_headline(player, league, i + 1)
                 league.third = player
         league.save()
 

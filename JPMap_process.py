@@ -3,9 +3,11 @@ import django
 import sys
 import requests
 from calendar import monthrange
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
+from django.utils import timezone as django_timezone
 import base64
 
 
@@ -143,7 +145,11 @@ def monthly():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Player
-    now = datetime.now()
+    import pytz
+    from django.conf import settings
+    current_tz = pytz.timezone(settings.TIME_ZONE)
+    now = datetime.now(current_tz)
+    print(now)
     pre = now - timedelta(days=26)
     start = pre.replace(day=1, hour=0, minute=0)
     start_end = get_last_date(start)
@@ -158,7 +164,8 @@ def monthly():
         song_hashes[division][song.hash] = 1
 
     superuser = Player.objects.get(sid=76561198405857645)
-    last = get_last_date(datetime.now())
+    last = get_last_date(now)
+    print(last)
 
     for i in range(1, 4):
         create_league(songs[i], start, last, i, superuser)
@@ -205,7 +212,7 @@ def create_playlist(title, days):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Playlist
-    now = datetime.now()
+    now = django_timezone.now()
     start = now - timedelta(days=days)
 
     filtered_songs = get_filtered_songs(start)
@@ -228,47 +235,35 @@ def latest():
     from app.views import search_lid, create_song_by_hash, diff_label_inv, char_dict_inv
     playlist = Playlist.objects.get(title='JP Latest')
 
-    for song in playlist.songs.all():
-        playlist.songs.remove(song)
+    playlist.songs.clear()
 
     song_order = 0
 
     for player in Player.objects.filter(mapper__gt=0).order_by('mapper_name'):
         print(player.mapper_name)
-        from collections import defaultdict
-        hash_count = defaultdict(int)
-        mapper_count = 0
-        diff_list = ['ExpertPlus', 'Expert', 'Hard', 'Normal', 'Easy']
+        
         for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt', '-char', '-nps'):
-            if mapper_count == 1:
-                break
             print(jmap)
-            hash = jmap.hash
-            if hash_count[hash] > 0:
-                continue
             dif_num = diff_label_inv[jmap.diff]
             if jmap.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[jmap.char]
-            if not Song.objects.filter(hash=jmap.hash, diff=jmap.diff, char=jmap.char).exists():
+            song = Song.objects.filter(hash=jmap.hash, diff=jmap.diff, char=jmap.char).first()
+            if song == None:
                 lid = search_lid(jmap.hash, gameMode, dif_num)
-                if lid == None:
+                if lid is None:
                     print('no lid detected')
                     continue
-            else:
-                lid = Song.objects.get(
-                    hash=jmap.hash, diff=jmap.diff, char=jmap.char).lid
-            new_song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
-            hash_count[hash] = 1
-            playlist.songs.add(new_song)
-            mapper_count += 1
+                song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
+            playlist.songs.add(song)
             defaults = {'order': song_order}
             SongInfo.objects.update_or_create(
-                song=new_song,
+                song=song,
                 playlist=playlist,
                 defaults=defaults,
             )
             song_order += 1
+            break
 
 
 if __name__ == '__main__':

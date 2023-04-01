@@ -1815,20 +1815,8 @@ def pos_acc_update(pk):
 
             print(score.weight_acc)
 
-            decorate = 'None'
-            if score.acc < 50:
-                decorate = 'color:dimgray'
-            if 95 <= score.acc and score.acc < 96:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-            if 96 <= score.acc and score.acc < 97:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-            if 97 <= score.acc and score.acc < 98:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-            if 98 <= score.acc and score.acc < 99:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-            if 99 <= score.acc and score.acc <= 100:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
-            score.decorate = decorate
+            decorate = get_decorate(score.acc)
+            score.decorate = get_decorate(score.acc)
 
             score.save()
 
@@ -1858,19 +1846,7 @@ def pos_acc_update(pk):
         if valid_count > 0:
             count_acc = sum([s.acc for s in score_list])/valid_count
 
-        # 精度により点数を強調
-        decorate = 'None'
-        if 95 <= count_acc and count_acc < 96:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-        if 96 <= count_acc and count_acc < 97:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-        if 97 <= count_acc and count_acc < 98:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-        if 98 <= count_acc and count_acc < 99:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-        if 99 <= count_acc and count_acc <= 100:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
-        # setattr(player, 'decorate', decorate)
+        decorate = get_decorate(count_acc)
         participant.decorate = decorate
 
         tooltip_pos = '<br>'.join(
@@ -1881,21 +1857,13 @@ def pos_acc_update(pk):
             [f'{score.song.title[:25]}...' for score in score_list])
         tooltip_acc = '<br>'.join(
             [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
-        # setattr(player, 'count_pos', count_pos)
         participant.count_pos = count_pos
-        # setattr(player, 'count_weight_acc', count_weight_acc)
         participant.count_weight_acc = count_weight_acc
-        # setattr(player, 'theoretical', theoretical)
         participant.theoretical = theoretical
-        # setattr(player, 'count_acc', count_acc)
         participant.count_acc = count_acc
-        # setattr(player, 'valid', valid_count)
         participant.valid_count = valid_count
-        # setattr(player, 'tooltip_pos', tooltip_pos)
         participant.tooltip_pos = tooltip_pos
-        # setattr(player, 'tooltip_valid', tooltip_valid)
         participant.tooltip_valid = tooltip_valid
-        # setattr(player, 'tooltip_acc', tooltip_acc)
         participant.tooltip_acc = tooltip_acc
         participant.tooltip_weight_acc = tooltip_weight_acc
         participant.save()

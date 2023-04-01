@@ -3,7 +3,7 @@ import django
 import sys
 import requests
 from calendar import monthrange
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import base64
@@ -42,28 +42,30 @@ def collect_maps(mapper, player=None):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap
-    if mapper > 0:
-        url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
-        res = requests.get(url).json()['docs']
+    if mapper == 0:
+        return
+    url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
+    res = requests.get(url).json()['docs']
 
-        for r in res:
-            name, bsr, hash, createdAt = r['name'], r['id'], r['versions'][0]['hash'], r['createdAt']
-            time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%S.%fZ")
+    for r in res:
+        name, bsr, hash, createdAt = r['name'], r['id'], r['versions'][0]['hash'], r['createdAt']
+        time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
 
-            for d in r['versions'][0]['diffs']:
-                nps, char, dif = d['nps'], d['characteristic'], d['difficulty']
+        for d in r['versions'][0]['diffs']:
+            nps, char, dif = d['nps'], d['characteristic'], d['difficulty']
 
-                if not JPMap.objects.filter(hash=hash, diff=dif, char=char).exists():
-                    JPMap.objects.create(
-                        uploader=player,
-                        name=name,
-                        bsr=bsr,
-                        hash=hash,
-                        char=char,
-                        diff=dif,
-                        nps=nps,
-                        createdAt=time,
-                    )
+            if not JPMap.objects.filter(hash=hash, diff=dif, char=char).exists():
+                new_jpmap = JPMap.objects.create(
+                    uploader=player,
+                    name=name,
+                    bsr=bsr,
+                    hash=hash,
+                    char=char,
+                    diff=dif,
+                    nps=nps,
+                    createdAt=time,
+                )
+                print(new_jpmap)
 
 
 def collect_by_player(player):

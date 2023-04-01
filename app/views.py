@@ -9,7 +9,7 @@ from .models import League, Participant, Player, Playlist, Song, Score, Headline
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count,Q
 from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 import base64
@@ -80,6 +80,20 @@ league_colors = [
     {'value': 'rgba(255,255,128,.8)', 'text': 'Yellow'},
 ]
 
+def get_decorate(acc):
+    if acc < 50:
+        return 'color:dimgray'
+    if 95 <= acc < 96:
+        return 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
+    if 96 <= acc < 97:
+        return 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
+    if 97 <= acc < 98:
+        return 'font-weight:bold;text-shadow: 1px 1px 0 orange'
+    if 98 <= acc < 99:
+        return 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
+    if 99 <= acc <= 100:
+        return 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+    return 'None'
 
 def score_to_acc(score, notes):
     max_score = 0
@@ -660,32 +674,6 @@ def create_playlist(request):
 
     return render(request, 'create_playlist.html', params)
 
-
-def make_sorted_playlists(playlists):
-    playlist_songs = defaultdict(list)
-    for playlist in playlists:
-        for song in playlist.songs.all():
-            print(playlist, song)
-            if SongInfo.objects.filter(song=song, playlist=playlist).exists():
-                songinfo = SongInfo.objects.get(song=song, playlist=playlist)
-                setattr(song, 'order', songinfo.order)
-            else:
-                SongInfo.objects.create(
-                    song=song,
-                    playlist=playlist,
-                )
-                setattr(song, 'order', 0)
-            playlist_songs[playlist].append(song)
-        print(type(playlist_songs[playlist]))
-        playlist_songs[playlist] = sorted(
-            playlist_songs[playlist], key=lambda x: x.order)
-        print(playlist)
-        print(playlist_songs[playlist])
-    for playlist in playlists:
-        setattr(playlist, 'playlist_songs', playlist_songs[playlist])
-    return playlists
-
-
 def playlists(request, page=1):
     params = {}
     user = request.user
@@ -722,20 +710,17 @@ def playlists(request, page=1):
 
 
 def make_sorted_playlist(playlist):
+    from operator import attrgetter
     sorted_songs = []
+    
     for song in playlist.songs.all():
-        if SongInfo.objects.filter(song=song, playlist=playlist).exists():
-            songinfo = SongInfo.objects.get(song=song, playlist=playlist)
-            setattr(song, 'order', songinfo.order)
-        else:
-            SongInfo.objects.create(
-                song=song,
-                playlist=playlist,
-            )
-            setattr(song, 'order', 0)
+        songinfo, created = SongInfo.objects.get_or_create(song=song, playlist=playlist)
+        song.order = songinfo.order if not created else 0
         sorted_songs.append(song)
-    sorted_songs = sorted(sorted_songs, key=lambda x: x.order)
-    setattr(playlist, 'sorted_songs', sorted_songs)
+    
+    sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
+    playlist.sorted_songs = sorted_songs
+    
     return playlist
 
 
@@ -925,51 +910,86 @@ def playlist(request, pk):
     return render(request, 'playlist.html', params)
 
 
+# def download_playlist(request, pk):
+#     from django.urls import reverse
+#     json_data = {}
+#     playlist = Playlist.objects.get(pk=pk)
+#     playlist = make_sorted_playlist(playlist)
+#     json_data['playlistTitle'] = playlist.title
+#     json_data['playlistAuthor'] = 'JBSL_Web_System'
+#     download_url = reverse('app:download_playlist', args=[pk])
+#     meta_url = request._current_scheme_host
+#     print(meta_url)
+#     print(download_url)
+#     json_data['playlistDescription'] = playlist.description
+#     json_data['customData'] = {'syncURL': meta_url + download_url}
+#     songs = []
+#     for song in playlist.sorted_songs:
+#         append_dict = {}
+#         append_dict['songName'] = song.title
+#         append_dict['levelAuthorName'] = song.author
+#         append_dict['hash'] = song.hash
+#         difficulties = []
+#         diff_append = {}
+#         diff_append['characteristic'] = song.char
+#         diff_append['name'] = song.diff
+#         difficulties.append(diff_append)
+#         append_dict['difficulties'] = difficulties
+#         songs.append(append_dict)
+#     json_data['songs'] = songs
+#     json_data['image'] = playlist.image
+#     download_data = json.dumps(json_data, ensure_ascii=False)
+#     return HttpResponse(download_data)
+
+
 def download_playlist(request, pk):
-    from django.urls import reverse
-    json_data = {}
     playlist = Playlist.objects.get(pk=pk)
     playlist = make_sorted_playlist(playlist)
-    json_data['playlistTitle'] = playlist.title
-    json_data['playlistAuthor'] = 'JBSL_Web_System'
+    
     download_url = reverse('app:download_playlist', args=[pk])
     meta_url = request._current_scheme_host
-    print(meta_url)
-    print(download_url)
-    json_data['playlistDescription'] = playlist.description
-    json_data['customData'] = {'syncURL': meta_url + download_url}
-    songs = []
-    for song in playlist.sorted_songs:
-        append_dict = {}
-        append_dict['songName'] = song.title
-        append_dict['levelAuthorName'] = song.author
-        append_dict['hash'] = song.hash
-        difficulties = []
-        diff_append = {}
-        diff_append['characteristic'] = song.char
-        diff_append['name'] = song.diff
-        difficulties.append(diff_append)
-        append_dict['difficulties'] = difficulties
-        songs.append(append_dict)
-    json_data['songs'] = songs
-    json_data['image'] = playlist.image
+    
+    json_data = {
+        'playlistTitle': playlist.title,
+        'playlistAuthor': 'JBSL_Web_System',
+        'playlistDescription': playlist.description,
+        'customData': {'syncURL': meta_url + download_url},
+        'image': playlist.image,
+        'songs': [
+            {
+                'songName': song.title,
+                'levelAuthorName': song.author,
+                'hash': song.hash,
+                'difficulties': [
+                    {
+                        'characteristic': song.char,
+                        'name': song.diff
+                    }
+                ]
+            }
+            for song in playlist.sorted_songs
+        ]
+    }
+    
     download_data = json.dumps(json_data, ensure_ascii=False)
     return HttpResponse(download_data)
 
-
 def leagues(request):
-    params = {}
     user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+    social = user.socialaccount_set.first() if user.is_authenticated else None
+    
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False).order_by('-end')
-    params['active_leagues'] = active_leagues
-    params['end_leagues'] = end_leagues
-    return render(request, 'leagues.html', params)
+    
+    context = {
+        'social': social,
+        'active_leagues': active_leagues,
+        'end_leagues': end_leagues,
+    }
+    
+    return render(request, 'leagues.html', context)
 
 
 def calculate_scoredrank_LBs(league, virtual=None, record=False):
@@ -982,33 +1002,17 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
     # プレイヤーごとのスコア
     total_rank = defaultdict(list)
     # マップごとのプレイヤーランキング
-    from django.db.models import Q
     for song in songs:
         query = Score.objects.filter(
             song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score').distinct()
-        max_score = -1
-        if len(query) > 0:
-            max_score = query[0].score
-        print(max_score)
+
         for rank, score in enumerate(query):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)
             setattr(score, 'pos', pos)
 
             # 精度により点数を強調
-            decorate = 'None'
-            if score.acc < 50:
-                decorate = 'color:dimgray'
-            if 95 <= score.acc and score.acc < 96:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-            if 96 <= score.acc and score.acc < 97:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-            if 97 <= score.acc and score.acc < 98:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-            if 98 <= score.acc and score.acc < 99:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-            if 99 <= score.acc and score.acc <= 100:
-                decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+            decorate = get_decorate(score.acc)
             setattr(score, 'decorate', decorate)
 
             player = score.player
@@ -1016,8 +1020,8 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         setattr(song, 'scores', query)
     # 順位点→精度でソート
 
-    for t in total_rank:
-        total_rank[t] = sorted(total_rank[t], key=lambda x: (-x.pos, -x.acc))
+    for player in total_rank:
+        total_rank[player] = sorted(total_rank[player], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
     players = []
     count_range = league.max_valid
@@ -1032,17 +1036,7 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         count_acc = sum([s.acc for s in score_list])/valid_count
 
         # 精度により点数を強調
-        decorate = 'None'
-        if 95 <= count_acc and count_acc < 96:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-        if 96 <= count_acc and count_acc < 97:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-        if 97 <= count_acc and count_acc < 98:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-        if 98 <= count_acc and count_acc < 99:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-        if 99 <= count_acc and count_acc <= 100:
-            decorate = 'font-weight:bold;text-shadow: 1px 1px 0 violet'
+        decorate = get_decorate(count_acc)
         setattr(player, 'decorate', decorate)
 
         tooltip_pos = '<br>'.join(

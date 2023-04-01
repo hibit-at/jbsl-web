@@ -44,19 +44,18 @@ def discord_check_process():
     # Discordにログインする
     bot.run(token)
 
-    print(type(member_ids[0]))
-
     for discord_id in member_ids:
         social = SocialAccount.objects.filter(uid=discord_id).first()
         if social:
             user = social.user
-            player : Player  = user.player
-            if player.inDiscord:
-                print(f'{user} already counted')
-            else:
-                print(f'{user} new count')
-                player.inDiscord = True
-                player.save()
+            player = Player.objects.filter(user=user).first()
+            if player:
+                if player.inDiscord:
+                    print(f'{user} already counted')
+                else:
+                    print(f'{user} new count')
+                    player.inDiscord = True
+                    player.save()
     
     for player in Player.objects.all():
         user : User = player.user

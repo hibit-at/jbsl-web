@@ -1,20 +1,24 @@
-from collections import defaultdict
-from datetime import datetime, timedelta
-from io import BytesIO
-import json
-from django.urls import reverse
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA
-import requests
-from allauth.socialaccount.models import SocialAccount
-from django.contrib.auth.decorators import login_required
-from django.db.models import Count,Q
-from django.views.decorators.csrf import csrf_exempt
-from PIL import Image
 import base64
+import json
 import os
 import sys
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from io import BytesIO
+from time import time
+
+import requests
+from PIL import Image
+from allauth.socialaccount.models import SocialAccount
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q, Max
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA, User
+
 
 
 diff_label = {
@@ -80,6 +84,7 @@ league_colors = [
     {'value': 'rgba(255,255,128,.8)', 'text': 'Yellow'},
 ]
 
+
 def get_decorate(acc):
     if acc < 50:
         return 'color:dimgray'
@@ -94,6 +99,7 @@ def get_decorate(acc):
     if 99 <= acc <= 100:
         return 'font-weight:bold;text-shadow: 1px 1px 0 violet'
     return 'None'
+
 
 def score_to_acc(score, notes):
     max_score = 0
@@ -136,11 +142,11 @@ def validation(s: str):
 
 
 def index(request):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
         if not Player.objects.filter(user=user).exists():
             return redirect('app:mypage')
         player = user.player
@@ -153,10 +159,10 @@ def index(request):
                 if not league.isLive:
                     continue
                 invitations.append(league)
-            params['invitations'] = invitations
+            context['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by('-borderPP')
-    params['active_players'] = active_players
+    context['active_players'] = active_players
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -172,10 +178,10 @@ def index(request):
             league.invite.remove(player)
             return redirect('app:index')
     headlines = Headline.objects.all().order_by('-time')[:8]
-    params['headlines'] = headlines
+    context['headlines'] = headlines
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
-    params['active_leagues'] = active_leagues
+    context['active_leagues'] = active_leagues
 
     love_pair = 0
     love_sort = defaultdict(int)
@@ -188,23 +194,23 @@ def index(request):
                 love_pair += 1
     love_pair = int(love_pair/2)
     love_sort = [k for k, v in love_sort.items() if v == love_max]
-    params['love_max'] = love_max
-    params['love_pair'] = love_pair
-    params['love_sort'] = love_sort
+    context['love_max'] = love_max
+    context['love_pair'] = love_pair
+    context['love_sort'] = love_sort
 
-    return render(request, 'index.html', params)
+    return render(request, 'index.html', context)
 
 
 def userpage(request, sid=0):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     if not Player.objects.filter(sid=sid).exists():
         return redirect('app:index')
     player = Player.objects.get(sid=sid)
-    params['player'] = player
+    context['player'] = player
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -251,7 +257,7 @@ def userpage(request, sid=0):
             else:
                 mapper_id = post['mapper']
                 if Player.objects.filter(mapper=mapper_id).exists():
-                    params['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
+                    context['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
                 else:
                     url = f'https://api.beatsaver.com/users/id/{mapper_id}'
                     mapper_name = requests.get(url).json()['name']
@@ -269,33 +275,31 @@ def userpage(request, sid=0):
         player.save()
     eyebeam = Player.objects.filter(rival=player).count()
     print(eyebeam)
-    params['eyebeam'] = eyebeam
+    context['eyebeam'] = eyebeam
     top10 = Score.objects.filter(
         player=player, league__name='Top10').order_by('-rawPP')
-    params['top10'] = top10
+    context['top10'] = top10
 
     badges = Badge.objects.filter(player=player)
     print(badges)
-    params['badges'] = badges
+    context['badges'] = badges
 
-    accMax = Player.objects.order_by('-accPP')[0].accPP
-    techMax = Player.objects.order_by('-techPP')[0].techPP
-    passMax = Player.objects.order_by('-passPP')[0].passPP
+    players = Player.objects.aggregate(
+        Max('accPP'), Max('techPP'), Max('passPP')
+    )
+    accMax = players['accPP__max']
+    techMax = players['techPP__max']
+    passMax = players['passPP__max']
 
-    print(accMax, techMax, passMax)
+    accIndex = player.accPP/accMax*100 if accMax > 0 else 0
+    techIndex = player.techPP/techMax*100 if techMax > 0 else 0
+    passIndex = player.passPP/passMax*100 if passMax > 0 else 0
 
-    accIndex = 0
-    techIndex = 0
-    passIndex = 0
-
-    if accMax + techMax + passMax > 0:
-        accIndex = player.accPP/accMax*100
-        techIndex = player.techPP/techMax*100
-        passIndex = player.passPP/passMax*100
-
-    params['acc'] = accIndex
-    params['tech'] = techIndex
-    params['pass'] = passIndex
+    context.update({
+        'acc': accIndex,
+        'tech': techIndex,
+        'pass': passIndex
+    })
 
     max_color = max(accIndex, techIndex, passIndex)
 
@@ -305,12 +309,10 @@ def userpage(request, sid=0):
         tech_col = 0
     else:
         pass_col = int(passIndex*255/max_color)
-        acc_col = accIndex/max_color
-        acc_col = acc_col * acc_col * acc_col
-        acc_col = int(accIndex*255/max_color)
+        acc_col = int((accIndex/max_color) ** 3 * 255)
         tech_col = int(techIndex*255/max_color)
 
-    params['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
+    context['style_color'] = f'rgba({pass_col},{acc_col},{tech_col},.8)'
     player_type = ''
 
     if techIndex > accIndex*1.2 and techIndex > passIndex*1.2:
@@ -328,17 +330,17 @@ def userpage(request, sid=0):
     else:
         player_type = f'バランス型'
 
-    params['player_type'] = player_type
+    context['player_type'] = player_type
 
-    return render(request, 'userpage.html', params)
+    return render(request, 'userpage.html', context)
 
 
 @login_required
 def mypage(request):
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params = {}
-    params['social'] = social
+    context = {}
+    context['social'] = social
     # player registartion
     if not Player.objects.filter(user=user).exists():
         player = Player.objects.create(user=user)
@@ -346,7 +348,7 @@ def mypage(request):
         player.save()
     # registration end
     if not user.player.isActivated:
-        return render(request, 'activation.html', params)
+        return render(request, 'activation.html', context)
     player = user.player
     return redirect('app:userpage', sid=player.sid)
 
@@ -501,9 +503,9 @@ def activate_process(request):
     player = user.player
     if player.isActivated:
         return redirect('app:mypage')
-    params = {}
+    context = {}
     social = SocialAccount.objects.get(user=user)
-    params['social'] = social
+    context['social'] = social
     if request.method == 'POST':
         url = request.POST.get('url')
         print(url)
@@ -513,8 +515,8 @@ def activate_process(request):
         url = f'https://scoresaber.com/api/player/{sid}/basic'
         res = requests.get(url).json()
         if res['country'] != 'JP':
-            params['error'] = '日本人以外のプレイヤーは登録できません。Sorry, Only Japanese player can be registered.'
-            return render(request, 'activation.html', params)
+            context['error'] = '日本人以外のプレイヤーは登録できません。Sorry, Only Japanese player can be registered.'
+            return render(request, 'activation.html', context)
         name = res['name']
         imageURL = res['profilePicture']
         pp = res['pp']
@@ -533,18 +535,18 @@ def activate_process(request):
         # top score registration
         top_score_registration(player)
         return redirect('app:mypage')
-    return render(request, 'activation.html', params)
+    return render(request, 'activation.html', context)
 
 
 def song(request, lid=0):
-    params = {}
+    context = {}
     song = Song.objects.get(lid=lid)
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    params['song'] = song
-    return render(request, 'song.html', params)
+        context['social'] = social
+    context['song'] = song
+    return render(request, 'song.html', context)
 
 
 def search_lid(hash, gameMode, diff_num):
@@ -605,16 +607,16 @@ def add_playlist(playlist, json_data):
 
 @login_required
 def create_playlist(request):
-    params = {}
+    context = {}
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params['social'] = social
+    context['social'] = social
     if request.method == 'POST':
         post = request.POST
         print(post)
         if 'playlist' in post and post['playlist'] == '':
-            params['error'] = 'ERROR : プレイリストファイルが存在しません。'
-            return render(request, 'create_playlist.html', params)
+            context['error'] = 'ERROR : プレイリストファイルが存在しません。'
+            return render(request, 'create_playlist.html', context)
         if 'playlist' in request.FILES:
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
@@ -628,8 +630,8 @@ def create_playlist(request):
             if 'editable' in request.POST:
                 isEditable = True
             if Playlist.objects.filter(title=title).exists():
-                params['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
-                return render(request, 'create_playlist.html', params)
+                context['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
+                return render(request, 'create_playlist.html', context)
             Playlist.objects.create(
                 title=title,
                 editor=editor,
@@ -648,11 +650,11 @@ def create_playlist(request):
             title = post['title']
             description = post['description']
             if title == '' or description == '':
-                params['error'] = 'ERROR : タイトルと説明文の両方を記入してください。'
-                return render(request, 'create_playlist.html', params)
+                context['error'] = 'ERROR : タイトルと説明文の両方を記入してください。'
+                return render(request, 'create_playlist.html', context)
             if Playlist.objects.filter(title=title).exists():
-                params['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
-                return render(request, 'create_playlist.html', params)
+                context['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
+                return render(request, 'create_playlist.html', context)
             editor = request.user.player
             isEditable = True
             url = 'https://4.bp.blogspot.com/-ZHlXgooA38A/Wn1WVe2XBhI/AAAAAAABKJY/5BE6ZAbyeRwv3UlGsVU2YfPWVS_uT0PFQCLcBGAs/s800/text_kakko_kari.png'
@@ -672,14 +674,15 @@ def create_playlist(request):
             )
             return redirect('app:playlist', pk=playlist.pk)
 
-    return render(request, 'create_playlist.html', params)
+    return render(request, 'create_playlist.html', context)
+
 
 def playlists(request, page=1):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     start = 8*(page-1)
     end = 8*page
     limit = (Playlist.objects.all().count() + 7) // 8
@@ -699,33 +702,34 @@ def playlists(request, page=1):
     weekly = Playlist.objects.get(title='JP Weekly')
     biweekly = Playlist.objects.get(title='JP Biweekly')
     latest = Playlist.objects.get(title='JP Latest')
-    params['weekly'] = weekly
-    params['biweekly'] = biweekly
-    params['latest'] = latest
-    params['playlists'] = playlists
-    params['archives'] = archives
-    params['page'] = page
-    params['limit'] = limit
-    return render(request, 'playlists.html', params)
+    context['weekly'] = weekly
+    context['biweekly'] = biweekly
+    context['latest'] = latest
+    context['playlists'] = playlists
+    context['archives'] = archives
+    context['page'] = page
+    context['limit'] = limit
+    return render(request, 'playlists.html', context)
 
 
 def make_sorted_playlist(playlist):
     from operator import attrgetter
     sorted_songs = []
-    
+
     for song in playlist.songs.all():
-        songinfo, created = SongInfo.objects.get_or_create(song=song, playlist=playlist)
+        songinfo, created = SongInfo.objects.get_or_create(
+            song=song, playlist=playlist)
         song.order = songinfo.order if not created else 0
         sorted_songs.append(song)
-    
+
     sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
     playlist.sorted_songs = sorted_songs
-    
+
     return playlist
 
 
 def playlist(request, pk):
-    params = {}
+    context = {}
     user = request.user
     playlist = Playlist.objects.get(pk=pk)
 
@@ -741,7 +745,7 @@ def playlist(request, pk):
     # leagues
     leagues = League.objects.filter(playlist=playlist)
     print(leagues)
-    params['leagues'] = leagues
+    context['leagues'] = leagues
 
     # reorder
     if user.is_authenticated:
@@ -753,13 +757,13 @@ def playlist(request, pk):
                 songInfo.order = i
                 songInfo.save()
 
-    params['playlist'] = playlist
+    context['playlist'] = playlist
 
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
         isEditor = user.player == playlist.editor or user.player in playlist.CoEditor.all()
-        params['isEditor'] = isEditor
+        context['isEditor'] = isEditor
 
     if request.method == 'POST':
         post = request.POST
@@ -781,14 +785,14 @@ def playlist(request, pk):
                     name = res['name']
                     author = res['uploader']['name']
                     hash = res['versions'][0]['hash']
-                    params['hash'] = hash
-                    params['name'] = name
-                    params['author'] = author
+                    context['hash'] = hash
+                    context['name'] = name
+                    context['author'] = author
                     data = res['versions'][0]['diffs']
-                    params['data'] = data
-                    return render(request, 'add_diff_by_map.html', params)
-                params['errorMessage'] = 'URL の解析に失敗しました。'
-                return render(request, 'playlist.html', params)
+                    context['data'] = data
+                    return render(request, 'add_diff_by_map.html', context)
+                context['errorMessage'] = 'URL の解析に失敗しました。'
+                return render(request, 'playlist.html', context)
             hash = res['songHash']
             diff_num = res['difficulty']['difficulty']
             gameMode = res['difficulty']['gameMode']
@@ -891,7 +895,7 @@ def playlist(request, pk):
             print(sort_index)
             if lid == None:
                 print('no lid')
-                params['errorMessage'] = 'スコアセイバーの ID が見つかりません'
+                context['errorMessage'] = 'スコアセイバーの ID が見つかりません'
             else:
                 print(lid)
                 song = create_song_by_hash(hash, diff_num, char, lid)
@@ -905,9 +909,9 @@ def playlist(request, pk):
                     playlist.recommend.remove(song)
                 return redirect('app:playlist', pk=pk)
     playlist = make_sorted_playlist(playlist)
-    params['playlist'] = playlist
+    context['playlist'] = playlist
 
-    return render(request, 'playlist.html', params)
+    return render(request, 'playlist.html', context)
 
 
 # def download_playlist(request, pk):
@@ -945,10 +949,10 @@ def playlist(request, pk):
 def download_playlist(request, pk):
     playlist = Playlist.objects.get(pk=pk)
     playlist = make_sorted_playlist(playlist)
-    
+
     download_url = reverse('app:download_playlist', args=[pk])
     meta_url = request._current_scheme_host
-    
+
     json_data = {
         'playlistTitle': playlist.title,
         'playlistAuthor': 'JBSL_Web_System',
@@ -970,25 +974,26 @@ def download_playlist(request, pk):
             for song in playlist.sorted_songs
         ]
     }
-    
+
     download_data = json.dumps(json_data, ensure_ascii=False)
     return HttpResponse(download_data)
+
 
 def leagues(request):
     user = request.user
     social = user.socialaccount_set.first() if user.is_authenticated else None
-    
+
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False).order_by('-end')
-    
+
     context = {
         'social': social,
         'active_leagues': active_leagues,
         'end_leagues': end_leagues,
     }
-    
+
     return render(request, 'leagues.html', context)
 
 
@@ -1021,7 +1026,8 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
     # 順位点→精度でソート
 
     for player in total_rank:
-        total_rank[player] = sorted(total_rank[player], key=lambda x: (-x.pos, -x.acc))
+        total_rank[player] = sorted(
+            total_rank[player], key=lambda x: (-x.pos, -x.acc))
     # 有効範囲の分だけ合算する
     players = []
     count_range = league.max_valid
@@ -1065,52 +1071,20 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
     return players, songs
 
 
-def leaderboard(request, pk):
-    params = {}
-    user = request.user
-    player = None
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-        player = Player.objects.get(user=user)
-    league = League.objects.get(pk=pk)
-    params['league'] = league
-
-    from time import time
-
-    duration_start = time()
-    scored_rank, LBs = calculate_scoredrank_LBs(league)
-    durtaion = time() - duration_start
-
-    params['scored_rank'] = scored_rank
-    params['LBs'] = LBs
-
-    isMember = False
-    isOwner = False
+def check_membership_and_ownership(user, league):
+    is_member = False
+    is_owner = False
     if user.is_authenticated:
         if user.player in league.player.all():
-            isMember = True
+            is_member = True
         if user.player == league.owner:
-            isOwner = True
+            is_owner = True
+    return is_member, is_owner
 
-    from datetime import timezone
-
-    close_line = league.end - timedelta(days=2)
-    isClose = datetime.now(timezone.utc) >= close_line and league.isOfficial
-    params['isClose'] = isClose
-
-    join_comment = {}
-    join_comment[-1] = ''
-    join_comment[0] = 'あなたはこのリーグに参加しています。'
-    join_comment[1] = '終了したリーグに参加することはできません。'
-    join_comment[2] = '非公開のリーグに参加することはできません。'
-    join_comment[3] = 'あなたは実力が高すぎるため、このリーグには参加できません……。'
-    join_comment[4] = '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。'
-    join_comment[5] = ''
-
+def get_join_state(user : User, is_member, league : League, player : Player, is_close):
     join_state = -1
     if user.is_authenticated:
-        if isMember:
+        if is_member:
             join_state = 0
         elif not league.isLive:
             join_state = 1
@@ -1118,21 +1092,58 @@ def leaderboard(request, pk):
             join_state = 2
         elif player.borderPP > league.limit:
             join_state = 3
-        elif isClose:
+        elif is_close:
             join_state = 4
         else:
             join_state = 5
+    return join_state
 
-    params['join_state'] = join_state
-    params['join_comment'] = join_comment[join_state]
-    params['edit_state'] = isOwner and league.isLive
-    params['isOwner'] = isOwner
-    params['isMember'] = isMember
+join_comment = {
+    -1: '',
+    0: 'あなたはこのリーグに参加しています。',
+    1: '終了したリーグに参加することはできません。',
+    2: '非公開のリーグに参加することはできません。',
+    3: 'あなたは実力が高すぎるため、このリーグには参加できません……。',
+    4: '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。',
+    5: '',
+}
+
+def leaderboard(request, pk):
+    context = {}
+    user = request.user
+    player = None
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        context['social'] = social
+        player = Player.objects.get(user=user)
+    league = League.objects.get(pk=pk)
+    context['league'] = league
+
+    duration_start = time()
+    scored_rank, LBs = calculate_scoredrank_LBs(league)
+    durtaion = time() - duration_start
+
+    context['scored_rank'] = scored_rank
+    context['LBs'] = LBs
+
+    is_member, is_owner = check_membership_and_ownership(user, league)
+
+    close_line = league.end - timedelta(days=2)
+    is_close = datetime.now(timezone.utc) >= close_line and league.isOfficial
+    context['isClose'] = is_close
+
+    join_state = get_join_state(user, is_member, league, player, is_close)
+
+    context['join_state'] = join_state
+    context['join_comment'] = join_comment[join_state]
+    context['edit_state'] = is_owner and league.isLive
+    context['isOwner'] = is_owner
+    context['isMember'] = is_member
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     close_str = (league.end + timedelta(hours=9-48)).strftime('%Y-%m-%dT%H:%M')
-    params['end_str'] = end_str
-    params['close_str'] = close_str
+    context['end_str'] = end_str
+    context['close_str'] = close_str
 
     # POST
 
@@ -1152,41 +1163,40 @@ def leaderboard(request, pk):
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
-    params['not_invite_players'] = not_invite_players
+    context['not_invite_players'] = not_invite_players
 
     if 'comment' in request.GET:
-        params['comment_open'] = 'open'
+        context['comment_open'] = 'open'
 
     load_index = league.player.all().count() * league.playlist.songs.all().count()
-    print(load_index)
-    params['load_index'] = load_index
-    params['duration'] = durtaion * 1000
+    context['load_index'] = load_index
+    context['duration'] = durtaion * 1000
 
-    return render(request, 'leaderboard.html', params)
+    return render(request, 'leaderboard.html', context)
 
 
 @login_required
 def create_league(request):
     get = request.GET
-    params = {}
+    context = {}
     if 'pk' in get:
         print(get['pk'])
-        params['select'] = int(get['pk'])
+        context['select'] = int(get['pk'])
         if Playlist.objects.filter(pk=int(get['pk'])).exists():
             selected_playlist = Playlist.objects.get(pk=int(get['pk']))
-            params['selected_playlist'] = selected_playlist
-        print(type(params['select']))
+            context['selected_playlist'] = selected_playlist
+        print(type(context['select']))
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params['social'] = social
+    context['social'] = social
     default_end = datetime.now() + timedelta(days=14)
     default_end_str = default_end.strftime('%Y-%m-%dT%H:%M')
-    params['default_end_str'] = default_end_str
+    context['default_end_str'] = default_end_str
     playlists = Playlist.objects.all().filter(editor=user.player)
     playlists = playlists.annotate(num_of_songs=Count('songs'))
     playlists = playlists.filter(num_of_songs__lte=20)
-    params['playlists'] = playlists
-    params['league_colors'] = league_colors
+    context['playlists'] = playlists
+    context['league_colors'] = league_colors
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -1200,8 +1210,8 @@ def create_league(request):
         valid = post['valid']
         playlist = Playlist.objects.get(pk=playlist_pk)
         if len(playlist.songs.all()) > 20:
-            params['error'] = 'プレイリストの曲数が多すぎます。上限は 20 です。'
-            return render(request, 'create_league.html', params)
+            context['error'] = 'プレイリストの曲数が多すぎます。上限は 20 です。'
+            return render(request, 'create_league.html', context)
         league = League.objects.create(
             name=title,  # 名称の不一致。余裕があれば後で直す。
             owner=user.player,
@@ -1215,17 +1225,17 @@ def create_league(request):
             limit=limit,
         )
         return redirect('app:leaderboard', pk=league.pk)
-    return render(request, 'create_league.html', params)
+    return render(request, 'create_league.html', context)
 
 
 @login_required
 def virtual_league(request, pk):
-    params = {}
+    context = {}
     user = request.user
     player = user.player
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     league = League.objects.get(pk=pk)
     for song in league.playlist.songs.all():
         print(song, song.lid)
@@ -1260,28 +1270,28 @@ def virtual_league(request, pk):
                 defaults=defaults,
             )
             print('score updated!')
-    params['league'] = league
+    context['league'] = league
     scored_rank, LBs = calculate_scoredrank_LBs(league, user.player)
-    params['scored_rank'] = scored_rank
-    params['LBs'] = LBs
+    context['scored_rank'] = scored_rank
+    context['LBs'] = LBs
 
     border_line = 8
     if 'j1_qualifier' in league.name.lower():
         border_line = 16
 
-    params['border_line'] = border_line
+    context['border_line'] = border_line
 
-    return render(request, 'virtual_league.html', params)
+    return render(request, 'virtual_league.html', context)
 
 
 @login_required
 def rivalpage(request):
-    params = {}
+    context = {}
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params['social'] = social
+    context['social'] = social
     player = user.player
-    params['player'] = player
+    context['player'] = player
     songs = Song.objects.all()
     compares = []
     match = 0
@@ -1337,10 +1347,10 @@ def rivalpage(request):
             win += val.win()
 
     compares = sorted(compares, key=lambda x: -x['dif'])
-    params['compares'] = compares
-    params['match'] = match
-    params['win'] = win
-    params['lose'] = match - win
+    context['compares'] = compares
+    context['match'] = match
+    context['win'] = win
+    context['lose'] = match - win
 
     # POST
 
@@ -1351,37 +1361,37 @@ def rivalpage(request):
             user.player.rival = None
             user.player.save()
             return redirect('app:mypage')
-    return render(request, 'rivalpage.html', params)
+    return render(request, 'rivalpage.html', context)
 
 
 def headlines(request, page=1):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     start = (page-1) * 100
     end = page * 100
     headlines = Headline.objects.all().order_by('-time')[start:end]
-    params['headlines'] = headlines
-    params['page'] = page
-    params['limit'] = (Headline.objects.all().count() + 99)//100
-    return render(request, 'headlines.html', params)
+    context['headlines'] = headlines
+    context['page'] = page
+    context['limit'] = (Headline.objects.all().count() + 99)//100
+    return render(request, 'headlines.html', context)
 
 
 def players(request, sort='borderPP'):
-    params = {}
+    context = {}
     user = request.user
     print(request.GET)
     if 'sort' in request.GET:
         sort = request.GET['sort']
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
         player = user.player
         if player.isActivated:
             invitations = player.invite.all()
-            params['invitations'] = invitations
+            context['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by(f'-{sort}', '-borderPP')
     print(active_players)
@@ -1393,19 +1403,19 @@ def players(request, sort='borderPP'):
         'passPP': 'PassPP',
     }
 
-    params['active_players'] = active_players
-    params['sort'] = sort
-    params['label'] = label[sort]
-    print(params)
-    return render(request, 'players.html', params)
+    context['active_players'] = active_players
+    context['sort'] = sort
+    context['label'] = label[sort]
+    print(context)
+    return render(request, 'players.html', context)
 
 
 def debug(request):
     if not request.user.is_staff:
         return redirect('app:index')
     active_players = Player.objects.filter(isActivated=True).order_by('-pp')
-    params = {}
-    params['active_players'] = active_players
+    context = {}
+    context['active_players'] = active_players
     for player in active_players:
         check = defaultdict(int)
         print(player)
@@ -1425,13 +1435,13 @@ def debug(request):
             rival = rival.rival
         setattr(player, 'rivals', rivals[1:])
 
-    return render(request, 'debug.html', params)
+    return render(request, 'debug.html', context)
 
 
 def api_leaderboard(request, pk):
-    params = {}
+    context = {}
     league = League.objects.get(pk=pk)
-    params['league'] = league
+    context['league'] = league
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     ans = {}
     ans['league_id'] = pk
@@ -1466,12 +1476,12 @@ def api_leaderboard(request, pk):
 
 
 def bsr_checker(request):
-    params = {}
-    params['twitch'] = ''
+    context = {}
+    context['twitch'] = ''
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
 
     user_state = 0
     if user.is_authenticated:
@@ -1479,7 +1489,7 @@ def bsr_checker(request):
         if player.twitch != '':
             user_state = 1
 
-    params['user_state'] = user_state
+    context['user_state'] = user_state
 
     if request.method == 'POST':
         post = request.POST
@@ -1512,14 +1522,14 @@ def bsr_checker(request):
         results.append(f'検出された Twitch ID : {twitchID}')
         if not Player.objects.filter(twitch=twitchID).exists():
             results.append(f'! JBSL Web にマッチするプレイヤーがいません。')
-            params['results'] = results
-            return render(request, 'bsr_checker.html', params)
+            context['results'] = results
+            return render(request, 'bsr_checker.html', context)
         player = Player.objects.get(twitch=twitchID)
         results.append(
             f'マッチするプレイヤー：{player.name}', f'https://jbsl-web.herokuapp.com/userpage/{player.sid}')
         results.append(f'Score Saber : {player.sid}',
                        f'https://scoresaber.com/u/{player.sid}')
-        params['results'] = results
+        context['results'] = results
         bsr = post['bsr_command'].split(' ')[-1].split('/')[-1]
         results.append(f'検出された bsr key : {bsr}')
         url = f'https://api.beatsaver.com/maps/id/{bsr}'
@@ -1527,8 +1537,8 @@ def bsr_checker(request):
         print(res)
         if not 'versions' in res:
             results.append(f'! bsr key から正しい譜面情報を取得できませんでした。')
-            params['results'] = results
-            return render(request, 'bsr_checker.html', params)
+            context['results'] = results
+            return render(request, 'bsr_checker.html', context)
         title = res['name']
         res = res['versions'][0]
         hash = res['hash']
@@ -1569,16 +1579,16 @@ def bsr_checker(request):
             acc = score/(115*8*int(notes)-7245)*100
             results.append(f'...{when} に {acc:,.2f} %のスコアが登録されています。')
         print(results)
-        params['twitch'] = twitchURL
-        params['results'] = results.results
+        context['twitch'] = twitchURL
+        context['results'] = results.results
 
-    return render(request, 'bsr_checker.html', params)
+    return render(request, 'bsr_checker.html', context)
 
 
 def coin(request):
     league = request.GET.get('league')
     league = League.objects.get(pk=league)
-    params = {'league': league}
+    context = {'league': league}
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     choice = []
     for s in scored_rank[:league.border_line]:
@@ -1612,27 +1622,27 @@ def coin(request):
             else:
                 results = [f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。',
                            f'（BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。']
-    params['form'] = form
-    params['results'] = results
-    return render(request, 'coin.html', params)
+    context['form'] = form
+    context['results'] = results
+    return render(request, 'coin.html', context)
 
 
 def info_test(request, pk):
     print(pk)
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, f'info{pk}.html', params)
+        context['social'] = social
+    return render(request, f'info{pk}.html', context)
 
 
 @login_required
 def score_comment(request):
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params = {}
-    params['social'] = social
+    context = {}
+    context['social'] = social
     print(request.method)
     if request.method == "POST":
         post = request.POST
@@ -1645,8 +1655,8 @@ def score_comment(request):
             print(redirect_url)
             return redirect(f'{redirect_url}#{score.song.lid}')
         print(score)
-        params['score'] = score
-        return render(request, 'score_comment.html', params)
+        context['score'] = score
+        return render(request, 'score_comment.html', context)
     return redirect('app:index')
 
 
@@ -1654,8 +1664,8 @@ def score_comment(request):
 def league_comment(request):
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params = {}
-    params['social'] = social
+    context = {}
+    context['social'] = social
     print(request.method)
     print('league comment')
     if request.method == "POST":
@@ -1663,8 +1673,8 @@ def league_comment(request):
         print(post)
         league = League.objects.get(pk=post['league'])
         player = Player.objects.get(pk=post['player'])
-        params['league'] = league
-        params['player'] = player
+        context['league'] = league
+        context['player'] = player
         if 'comment' in post:
             comment = post['comment'][:50]
             defaults = {'message': validation(comment)}
@@ -1677,7 +1687,7 @@ def league_comment(request):
         if Participant.objects.filter(league=league, player=player).exists():
             comment = Participant.objects.get(league=league, player=player)
             setattr(player, 'comment', comment)
-        return render(request, 'league_comment.html', params)
+        return render(request, 'league_comment.html', context)
     return redirect('app:index')
 
 
@@ -1685,25 +1695,25 @@ def league_comment(request):
 def league_edit(request, pk):
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params = {}
-    params['social'] = social
+    context = {}
+    context['social'] = social
     print(request.method)
     print('league edit')
     league = League.objects.get(pk=pk)
     player = Player.objects.get(user=user)
-    params['league'] = league
+    context['league'] = league
     print(league)
     if league.owner != player:
         return redirect('app:index')
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%d %H:%M')
-    params['end_str'] = end_str
-    params['league_colors'] = league_colors
+    context['end_str'] = end_str
+    context['league_colors'] = league_colors
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')
     invite_players = Player.objects.filter(invite=league).order_by('-borderPP')
-    params['not_invite_players'] = not_invite_players
-    params['invite_players'] = invite_players
+    context['not_invite_players'] = not_invite_players
+    context['invite_players'] = invite_players
 
     if request.method == 'POST':
         post = request.POST
@@ -1733,30 +1743,30 @@ def league_edit(request, pk):
             print(withdraw)
             league.invite.remove(withdraw)
             redirect('app:league_edit', pk=pk)
-    return render(request, 'league_edit.html', params)
+    return render(request, 'league_edit.html', context)
 
 
 def playlist_archives(request):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     archives = Playlist.objects.all().order_by('-pk').exclude(isHidden=True)
     cnt = 0
     for archive in archives:
         print(archive)
         setattr(archive, 'page', cnt//8 + 1)
         cnt += 1
-    params['archives'] = archives
-    return render(request, 'playlist_archives.html', params)
+    context['archives'] = archives
+    return render(request, 'playlist_archives.html', context)
 
 
 def owner_comment(request):
     user = request.user
     social = SocialAccount.objects.get(user=user)
-    params = {}
-    params['social'] = social
+    context = {}
+    context['social'] = social
     print(request.method)
     print('owner comment')
     if request.method == "POST":
@@ -1765,7 +1775,7 @@ def owner_comment(request):
         league = League.objects.get(pk=post['league'])
         if user.player != league.owner:
             return redirect('app:index')
-        params['league'] = league
+        context['league'] = league
         print(league)
         if 'owner_comment' in post:
             owner_comment = post['owner_comment'][:1000]
@@ -1777,7 +1787,7 @@ def owner_comment(request):
             print(url)
             url += '?comment=open'
             return redirect(url)
-        return render(request, 'owner_comment.html', params)
+        return render(request, 'owner_comment.html', context)
     return redirect('app:index')
 
 
@@ -1925,15 +1935,15 @@ def short_leaderboard(request, pk=0):
     from time import time
 
     duration_start = time()
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
     league = League.objects.get(pk=pk)
-    params['league'] = league
+    context['league'] = league
     songs = league.playlist.songs.all()
-    params['songs'] = songs
+    context['songs'] = songs
 
     for song in songs:
         query = Score.objects.filter(
@@ -1947,30 +1957,30 @@ def short_leaderboard(request, pk=0):
                 print(additional_score)
                 setattr(song, 'additional_score', additional_score)
 
-    params['participants'] = Participant.objects.filter(
+    context['participants'] = Participant.objects.filter(
         league=league).order_by('-count_pos')
     durtaion = time() - duration_start
-    params['duration'] = durtaion * 1000
+    context['duration'] = durtaion * 1000
 
-    return render(request, 'short_leaderboard.html', params)
+    return render(request, 'short_leaderboard.html', context)
 
 
 def song_leaderboard(request, league_pk, song_pk):
-    params = {}
+    context = {}
     user = request.user
     player = None
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
+        context['social'] = social
         player = Player.objects.get(user=user)
     league = League.objects.get(pk=league_pk)
     song = Song.objects.get(lid=song_pk)
     scores = Score.objects.filter(
         song=song, league=league, player__league=league).order_by('-score')
     setattr(song, 'scores', scores)
-    params['league'] = league
-    params['song'] = song
-    return render(request, 'song_leaderboard.html', params)
+    context['league'] = league
+    context['song'] = song
+    return render(request, 'song_leaderboard.html', context)
 
 
 @login_required
@@ -1986,7 +1996,7 @@ def beatleader_submission(request):
     # print(league)
     playlist = league.playlist
     songs = playlist.songs.all()
-    params = {}
+    context = {}
     results = []
     print(songs)
     for song in songs:
@@ -2019,18 +2029,18 @@ def beatleader_submission(request):
         if updated:
             result += ' ... UPDATED!'
         results.append(result)
-    params['league'] = league
-    params['results'] = results
-    return render(request, 'beatleader_submission.html', params)
+    context['league'] = league
+    context['results'] = results
+    return render(request, 'beatleader_submission.html', context)
 
 
 def archive(request):
-    params = {}
+    context = {}
     user = request.user
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    return render(request, 'archive.html', params)
+        context['social'] = social
+    return render(request, 'archive.html', context)
 
 
 def match(request, pk=1):
@@ -2045,17 +2055,17 @@ def match(request, pk=1):
     match = Match.objects.get(pk=pk)
     playlists = Playlist.objects.all().order_by('-pk')
     leagues = League.objects.all().order_by('-pk')
-    params = {}
-    params['match'] = match
-    params['pk'] = pk
-    params['isEditor'] = False
-    params['playlists'] = playlists
-    params['leagues'] = leagues
+    context = {}
+    context['match'] = match
+    context['pk'] = pk
+    context['isEditor'] = False
+    context['playlists'] = playlists
+    context['leagues'] = leagues
     user = request.user
     if user.is_authenticated:
         player = Player.objects.get(user=user)
         if player in match.editor.all():
-            params['isEditor'] = True
+            context['isEditor'] = True
 
     if request.method == 'POST':
         post = request.POST
@@ -2130,8 +2140,8 @@ def match(request, pk=1):
             if post['highest1'] != '':
                 match.highest_acc = float(post['highest1'])
             match.result1 += 1
-            match.result2 -= match.result2 % 2 # リトライ状態を戻す、3だったら2に、5だったら4に
-            if match.retry2: # リトライ「を使った後」である時
+            match.result2 -= match.result2 % 2  # リトライ状態を戻す、3だったら2に、5だったら4に
+            if match.retry2:  # リトライ「を使った後」である時
                 match.result1 += 1
                 match.result1 -= match.result1 % 2
                 match.state = 0
@@ -2168,17 +2178,17 @@ def match(request, pk=1):
             match.state = 0
             match.save()
 
-    params['highest'] = match.highest_acc
-    params['state'] = state_dict[match.state]
-    params['inMatch'] = match.state % 2 == 0
+    context['highest'] = match.highest_acc
+    context['state'] = state_dict[match.state]
+    context['inMatch'] = match.state % 2 == 0
 
-    return render(request, 'match.html', params)
+    return render(request, 'match.html', context)
 
 
 def api_match(request, pk):
-    params = {}
+    context = {}
     match = Match.objects.get(pk=pk)
-    params['match'] = match
+    context['match'] = match
     ans = {}
     ans['title'] = match.title
     ans['player1'] = match.player1.name
@@ -2228,7 +2238,8 @@ def api_dga(request):
 @csrf_exempt
 def api_dga_post(request):
     if request.method == 'GET':
-        post_json = {'message': 'レスポンス 200 で通信成功したと思った？ 残念！ GET じゃこの API は通りません～～～'}
+        post_json = {
+            'message': 'レスポンス 200 で通信成功したと思った？ 残念！ GET じゃこの API は通りません～～～'}
         post_json = json.dumps(post_json, ensure_ascii=False)
         return HttpResponse(post_json, content_type="application/json")
     post = request.POST
@@ -2264,6 +2275,7 @@ def api_dga_post(request):
     post_json = json.dumps(post_json, ensure_ascii=False)
     return HttpResponse(post_json, content_type="application/json")
 
+
 def api_twitch(request):
     from django.http import JsonResponse
     players = Player.objects.filter(twitch__gt='').values('twitch')
@@ -2272,17 +2284,18 @@ def api_twitch(request):
 
 
 def player_matrix(request):
-    params = {}
+    context = {}
     user = request.user
     offset_x = request.GET.get('offset_x', 600)
     offset_y = request.GET.get('offset_y', 600)
     scale = request.GET.get('scale', 1)
-    print(offset_x,offset_y)
+    print(offset_x, offset_y)
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
-        params['social'] = social
-    players = Player.objects.filter(isActivated=True,passPP__gt=0,techPP__gt=0)
-    from django.db.models import Max,F, ExpressionWrapper, FloatField
+        context['social'] = social
+    players = Player.objects.filter(
+        isActivated=True, passPP__gt=0, techPP__gt=0)
+    from django.db.models import Max, F, ExpressionWrapper, FloatField
     max_pass_pp = players.aggregate(Max('passPP'))['passPP__max']
     max_tech_pp = players.aggregate(Max('techPP'))['techPP__max']
 
@@ -2304,11 +2317,10 @@ def player_matrix(request):
         relative_techPP__lte=1200,
     )
 
-
     players = players.order_by('accPP')
-    params['players'] = players
-    params['now_offset_x'] = offset_x
-    params['now_offset_y'] = offset_y
-    params['now_scale'] = scale
-    
-    return render(request, 'player_matrix.html',params)
+    context['players'] = players
+    context['now_offset_x'] = offset_x
+    context['now_offset_y'] = offset_y
+    context['now_scale'] = scale
+
+    return render(request, 'player_matrix.html', context)

@@ -40,9 +40,9 @@ Co-editor :
                 <img class="icon" src="{{ player.imageURL }}" />
                 {{ player }}
             </a>\
-            {% endif %}
+            {% endfor %}
         </p>
-{% endfor %}
+{% endif %}
 {% if leagues|length > 0 %}
     <p>
         このプレイリストを採用しているリーグ

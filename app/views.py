@@ -554,12 +554,11 @@ def add_playlist(playlist, json_data):
     for song in json_data['songs']:
         hash = song['hash']
         print('searched song is', song)
-        key = song['key']
         difficulty = None
         gameMode = None
         char = None
         if 'difficulties' not in song:
-            url = f'https://api.beatsaver.com/maps/id/{key}'
+            url = f'https://api.beatsaver.com/maps/hash/{hash}'
             res = requests.get(url).json()
             version = res['versions'][0]
             dif_idx = -1
@@ -608,7 +607,7 @@ def create_playlist(request):
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
             image = json_data['image']
-            image = 'data:image/png;base64,' + image
+            image = 'data:image/png;' + image
             description = ''
             if 'playlistDescription' in json_data:
                 description = json_data['playlistDescription'][:200]

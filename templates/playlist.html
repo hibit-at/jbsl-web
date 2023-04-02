@@ -31,18 +31,18 @@
         <img class="icon" src="{{ playlist.editor.imageURL }}" />
         {{ playlist.editor }}
     </a>
-    {% if coeditors %}
-    Co-editor :
-    {% for player in coeditors %}
-            <p>
-                <a href={% url 'app:userpage' sid=player.sid %}>
-                    <img class="icon" src="{{ player.imageURL }}" />
-                    {{ player }}
-                </a>
-            </p>
-    {% endfor %}
-    {% endif %}
 </p>
+{% if coeditors %}
+<p>
+Co-editor :
+{% for player in coeditors %}\
+            <a href={% url 'app:userpage' sid=player.sid %}>
+                <img class="icon" src="{{ player.imageURL }}" />
+                {{ player }}
+            </a>\
+            {% endif %}
+        </p>
+{% endfor %}
 {% if leagues|length > 0 %}
     <p>
         このプレイリストを採用しているリーグ

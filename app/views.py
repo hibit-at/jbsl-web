@@ -743,6 +743,9 @@ def playlist(request, pk):
                 songInfo.order = i
                 songInfo.save()
 
+    # coeditor
+    coeditors = playlist.CoEditor.all()
+    context['coeditors'] = coeditors
     context['playlist'] = playlist
 
     if user.is_authenticated:

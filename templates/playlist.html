@@ -32,9 +32,9 @@
         {{ playlist.editor }}
     </a>
     {% if coeditors %}
+    Co-editor :
     {% for player in coeditors %}
             <p>
-                Co-editor :
                 <a href={% url 'app:userpage' sid=player.sid %}>
                     <img class="icon" src="{{ player.imageURL }}" />
                     {{ player }}

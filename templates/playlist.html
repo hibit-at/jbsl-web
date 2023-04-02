@@ -35,11 +35,11 @@
 {% if coeditors %}
 <p>
 Co-editor :
-{% for player in coeditors %}\
+{% for player in coeditors %}
             <a href={% url 'app:userpage' sid=player.sid %}>
                 <img class="icon" src="{{ player.imageURL }}" />
                 {{ player }}
-            </a>\
+            </a>
             {% endfor %}
         </p>
 {% endif %}

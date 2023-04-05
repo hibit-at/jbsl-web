@@ -1,4 +1,5 @@
 {% load static %}
+<html lang="ja">
 <head>
     <link rel="shortcut icon" type="image/png" href="{% static 'icon.png' %}">
     <link rel="stylesheet"
@@ -33,19 +34,19 @@
         </h3>
         <h4>
             <a href="{% url 'app:playlists' page=1 %}">
-                <img height="35px" width="35px" src= {% static 'pict_playlist.png' %} />
+                <img height="35px" width="35px" src= "{% static 'pict_playlist.png' %}" />
                 Playlists
             </a>
         </h4>
         <h4>
             <a href={% url 'app:leagues' %}>
-                <img height="35px" width="35px" src= {% static 'pict_league.png' %} />
+                <img height="35px" width="35px" src= "{% static 'pict_league.png' %}" />
                 Leagues
             </a>
         </h4>
         <h4>
             <a href={% url 'app:players' %}>
-                <img height="40px" width="40px" src= {% static 'pict_player.png' %} />
+                <img height="40px" width="40px" src= "{% static 'pict_player.png' %}" />
                 Players
             </a>
         </h4>
@@ -59,7 +60,7 @@
                    aria-expanded="false"
                    style="border-style:None">
                     <h4>
-                        <img src = {% static 'pict_gear.png' %} height="35px" width="35px">
+                        <img src = "{% static 'pict_gear.png' %}" height="35px" width="35px">
                         Others
                     </h4>
                 </a>
@@ -105,19 +106,19 @@
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://discord.gg/CqQ6ZD8KRn">
-                            <img src={% static 'Discord.png' %} height="30px" width="30px">
+                            <img src="{% static 'Discord.png' %}" height="30px" width="30px">
                             Our Discord
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://twitch.tv/jbsl115">
-                            <img src={% static 'twitch.png' %} height="30px" width="30px">
+                            <img src="{% static 'twitch.png' %}" height="30px" width="30px">
                             Our Twitch
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="https://twitter.com/115_jbsl">
-                            <img src={% static 'twitter.png' %} height="30px" width="30px">
+                            <img src="{% static 'twitter.png' %}" height="30px" width="30px">
                             Our Twitter
                         </a>
                     </li>
@@ -165,3 +166,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="{% static 'jbsl2.js' %}"></script>
 </body>
+</html>

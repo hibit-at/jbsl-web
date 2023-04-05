@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
-    <h2>JBSL-Webとは？</h2>
-    <div style="padding:20px">
+    <div class="in-text">
+        <h2>JBSL-Webとは？</h2>
         <p>
             あなたが今見ている、この Web サイトです！
         </p>
         <li>JBSL の予選のために作られたシステムです。</li>
         <li>JBSL の予選に限らず、誰もがオリジナルの自主大会を自由に企画できます。</li>
         <li>
-            この自主大会（課題譜面と期限を定めてベストスコアを競うこと）を、このシステムでは<a href="{% url 'app:leagues' %}" style="color:ff8628">リーグ</a>と読んでいます。
+            この自主大会（課題譜面と期限を定めてベストスコアを競うこと）を、このシステムでは<a href="{% url 'app:leagues' %}">リーグ</a>と読んでいます。
         </li>
         <li>この Web サイトでは、プレイヤー登録をすることにより、リーグに参加したり、リーグを開催したり、プレイリストを共有したりすることができます。</li>
+        <hr />
+        <p>
+            次：<a href="{% url 'app:info' pk=3 %}">登録してみよう</a>
+        </p>
     </div>
-    <hr>
-    <p>
-        次：<a href="{% url 'app:info' pk=3 %}" style="color:ff8628">登録してみよう</a>
-    </p>
-{% endblock %}
+{% endblock content %}

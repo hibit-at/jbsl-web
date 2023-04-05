@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>JBSLとは？</h2>
-    <div style="padding:20px">
+    <div class="in-text">
+        <h2>JBSLとは？</h2>
         <p>
             Japan Beat Saber League（JBSL）は、日本のプレイヤー同士でビートセイバーの総合的な実力を競い合う大会です
         </p>
@@ -10,13 +10,11 @@
         <li>調整の方法は大会毎に変わります。</li>
         <li>各ディビジョンで予選を行い上位が本戦出場となります。</li>
         <li>
-            予選は <a href="{% url 'app:info' pk=2 %}" style="color:ff8628">JBSL-Web</a> を用いて行われます。
+            予選は <a href="{% url 'app:info' pk=2 %}">JBSL-Web</a> を用いて行われます。
         </li>
         <li>本戦はTwitchで全試合配信されます。</li>
         <li>ディビジョン本戦はエリミネーションによる勝ち抜き制で行います。</li>
-    </div>
-    <h2>日程（予定）</h2>
-    <div style="padding:20px">
+        <h2>日程（予定）</h2>
         <p>
             次の大会は<span style="font-weight:bold">第5回 JBSL</span>になります。
         </p>
@@ -25,15 +23,13 @@
         <li>J2 予選 4/8～4/16 本戦 4/23</li>
         <li>J1 予選 4/8～4/16 レイドバトル 4/23</li>
         <li>※本戦の日程については、出場選手の都合に合わせて多少前後する可能性があります。</li>
-    </div>
-    <div style="padding:20px">
         <h2>過去の大会の様子</h2>
         <p>
-            <a href="https://www.twitch.tv/jbsl115/videos" style="color:#ff8628">こちら</a>からアーカイブを見ることができます。
+            <a href="{% url 'app:archive' %}">こちら</a>からアーカイブを見ることができます。
+        </p>
+        <hr>
+        <p>
+            次：<a href="{% url 'app:info' pk=2 %}">JBSL-Web とは？</a>
         </p>
     </div>
-    <hr>
-    <p>
-        次：<a href="{% url 'app:info' pk=2 %}" style="color:ff8628">JBSL-Web とは？</a>
-    </p>
-{% endblock %}
+{% endblock content %}

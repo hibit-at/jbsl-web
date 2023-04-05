@@ -1,32 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-{% load static %}
-    <h2>リーグの開催</h2>
-    <div style="padding:20px">
+    {% load static %}
+    <div class="in-text">
+        <h2>リーグの開催</h2>
         <p>
             プレイリストを作成したプレイヤーは、それをもとにリーグを開催することができます。
         </p>
-        <li>リーグ一覧のページから右上の「リーグを開催する」を押します。</li>
-        <img src="{% static 'info/info_create_league.png' %}" height="360px" style="border-style:solid">
-        <li>また、プレイリストのページからも開催することができます。</li>
-        <img src="{% static 'info/info_create_league2.png' %}" height="360px" style="border-style:solid">
-        <li>リーグの課題譜面とプレイリストの内容は常に連動します。</li>
-        <li>そのため、リーグに選ばれたプレイリストは、リーグの順位が遡って変更されることを防ぐため、<span style="color:red"><u>リーグ終了時点で強制的に更新不可能になる</u></span>ことにご注意ください。
-        <p>リーグの主催者（オーナー）は以下のことを決める必要があります。</p>
-        <img src="{% static 'info/info_create_league3.png' %}" height="360px" style="border-style:solid">
-        <li>リーグ名</li>
-        <li>リーグ説明文</li>
-        <li>リーグのテーマカラー</li>
-        <li>リーグの終了日時</li>
-        <li>公開リーグかどうか</li> 
-        <p>※　非公開リーグにした場合、自由参加はできず、参加方法はオーナーからの招待のみになります。</p>
-        <li>有効 PP の上限</li>
-        <p>※　公開リーグにした場合でも、上限を超える有効 PP の持ち主は参加できません。</p>
-        <p>※　初心者向けや中級者向けの大会にしたい場合は、上限を低く設定することを推奨します。</p>
-        <li>リーグ開催後、オーナーはリーダーボードの下部からプレイヤーを招待することができます（有効 PP を超えるプレイヤーも招待できます）。</li>
-        <li>招待されたプレイヤーは、トップページに招待通知が来ます。</li>
-    </div>
-    <p>
-        お疲れさまでした！　これであなたも JBSL-Web マスター！
-    </p>
-{% endblock %}
+        <ul>
+            <li>リーグ一覧のページから右上の「リーグを開催する」を押します。</li>
+            <img src="{% static 'info/info_create_league.png' %}"
+                 height="360px"
+                 style="border-style:solid">
+            <li>また、プレイリストのページからも開催することができます。</li>
+            <img src="{% static 'info/info_create_league2.png' %}"
+                 height="360px"
+                 style="border-style:solid">
+            <li>リーグの課題譜面とプレイリストの内容は常に連動します。</li>
+            <li>
+                そのため、リーグに選ばれたプレイリストは、リーグの順位が遡って変更されることを防ぐため、<u><span class="text-danger">リーグ終了時点で強制的に更新不可能になる</span></u>ことにご注意ください。
+            </ul>
+            <p>
+                リーグの主催者（オーナー）は以下のことを決める必要があります。
+            </p>
+            <img src="{% static 'info/info_create_league3.png' %}"
+                 height="360px"
+                 style="border-style:solid">
+            <ul>
+                <li>リーグ名</li>
+                <li>リーグ説明文</li>
+                <li>リーグのテーマカラー</li>
+                <li>リーグの終了日時</li>
+                <li>公開リーグかどうか</li>
+                <p>
+                    ※　非公開リーグにした場合、自由参加はできず、参加方法はオーナーからの招待のみになります。
+                </p>
+                <li>有効 PP の上限</li>
+                <p>
+                    ※　公開リーグにした場合でも、上限を超える有効 PP の持ち主は参加できません。
+                </p>
+                <p>
+                    ※　初心者向けや中級者向けの大会にしたい場合は、上限を低く設定することを推奨します。
+                </p>
+                <li>リーグ開催後、オーナーはリーダーボードの下部からプレイヤーを招待することができます（有効 PP を超えるプレイヤーも招待できます）。</li>
+                <li>招待されたプレイヤーは、トップページに招待通知が来ます。</li>
+            </ul>
+            <hr>
+            <p>
+                お疲れさまでした！　これであなたも JBSL-Web マスター！
+            </p>
+        </div>
+    {% endblock %}

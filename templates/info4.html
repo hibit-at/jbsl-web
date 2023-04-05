@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
-    <h2>リーグへの参加</h2>
-    <div style="padding:20px">
+    <div class="in-text">
+        <h2>リーグへの参加</h2>
         <p>
-            JBSL-Web では、課題譜面と期限を定めてベストスコアを競う自主大会を<a href="{% url 'app:leagues' %}" style="color:ff8628">リーグ</a>と呼んでいます。
+            JBSL-Web では、課題譜面と期限を定めてベストスコアを競う自主大会を<a href="{% url 'app:leagues' %}">リーグ</a>と呼んでいます。
         </p>
         <li>リーグでは以下のような形式で「順位点」の合計を競います。</li>
         <img src="{% static 'info/info_league.png' %}"
@@ -35,6 +35,7 @@
         </li>
         <hr>
         <p>
-            次：<a href="{% url 'app:info' pk=5 %}" style="color:ff8628">プレイリストを作ろう</a>
+            次：<a href="{% url 'app:info' pk=5 %}">プレイリストを作ろう</a>
         </p>
+    </div>
 {% endblock %}

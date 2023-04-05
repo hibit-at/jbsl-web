@@ -1,42 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
+    <div class="in-text">
     <h2>登録方法</h2>
-    <div style="padding:20px">
-        <p>
-            プレイヤーの登録には以下のものが必要になります。
-        </p>
+    <p>
+        プレイヤーの登録には以下のものが必要になります。
+    </p>
+    <ul>
         <li>Discord アカウント</li>
         <li>
             <b><u>日本の</b></u> ScoreSaber アカウント
         </li>
-        <br>
-        <p>
-            登録の手順
-        </p>
+    </ul>
+    <h4>
+        登録の手順
+    </h4>
+    <ul>
         <li>右上の「ログイン（Discord）認証」ボタンを押して認証を進めてください。（仮登録）</li>
-        <li>
-            Discord 初回認証時、<span style="color:red"><u>最初の 1 回は「Connection Refused Error」というエラーが出るようです。</u></span>（原因不明です。すいません）
-        </li>
-        <li>
-            その場合、ブラウザの<u>「戻る」ボタンを使って戻った後、もう一度トライする</u>と通ります。
-        </li>
         <li>その後、ScoreSaber の ID を入力して本登録を済ませると、プレイヤーとしての登録が完了します。</li>
         <img src="{% static 'info/info_player.png' %}"
              height="360px"
-             style="border: solid">
+             style="border: solid" />
         <li>上位 10 譜面のデータをもとに、HMD や有効 pp が登録されます。</li>
         <li>
-            有効 pp はリーグに参加する時の条件に使います。（詳しくは次節「<a href="{% url 'app:info' pk=4 %}" style="color:ff8628">リーグに参加しよう</a>」で）
+            有効 pp はリーグに参加する時の条件に使います。（詳しくは次節「<a href="{% url 'app:info' pk=4 %}">リーグに参加しよう</a>」で）
         </li>
         <li>
-            有効 pp の計算式は、現在、譜面ごとの pp を大きい順に並べた時に上位から <u>2,3,4 番目の譜面を合計した値となっています。（0.965 倍の逓減はかかりません）
+            有効 pp の計算式は、現在、譜面ごとの pp を大きい順に並べた時に上位から 2,3,4 番目の譜面を合計した値となっています。（0.965 倍の逓減はかかりません）
         </li>
         <li>有効 pp の計算式は、大会運営の都合上変更される可能性があります。</li>
         <li>これらの値は ScoreSaber のスコアの更新がある度に連動して変更されます。</li>
-    </div>
-    <hr>
+    </ul>
+    <hr />
     <p>
-        次：<a href="{% url 'app:info' pk=4 %}" style="color:ff8628">リーグに参加しよう</a>
+        次：<a href="{% url 'app:info' pk=4 %}">リーグに参加しよう</a>
     </p>
-{% endblock %}
+</div>
+{% endblock content %}

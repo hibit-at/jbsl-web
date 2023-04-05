@@ -11,16 +11,25 @@ from django.utils import timezone as django_timezone
 import base64
 
 
-def text_over(img, text, height, fontsize=36):
+def text_over(img, text, height, fontsize=36, text_color=(0, 0, 0, 0)):
     file = open("app/.fonts/meiryob.ttc", "rb")
     bytes_font = BytesIO(file.read())
     # ttfontname = "/app/.fonts/meiryob.ttc"
-    textRGB = (0, 0, 0, 0)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(bytes_font, fontsize)
     textTopLeft = (30, height)
-    draw.text(textTopLeft, text, fill=textRGB, font=font)
+    draw.text(textTopLeft, text, fill=text_color, font=font)
     return img
+
+
+division_colors = {
+    0: (0, 0, 0, 255),  # 黒
+    1: (200, 50, 200, 255),  # 紫
+    2: (255, 128, 50, 255),  # 赤
+    3: (200, 200, 0, 255),  # 黄
+    4: (50, 200, 50, 255),  # 緑
+    # 他のdivisionに対しても色を追加できます
+}
 
 
 def create_img(year=1000, month=13, div=0):
@@ -29,7 +38,8 @@ def create_img(year=1000, month=13, div=0):
     img = Image.new('RGBA', canvasSize, backgroundRGB)
     img = text_over(img, 'JP Monthly', 50)
     img = text_over(img, f'{year} - {month}', 100)
-    img = text_over(img, f'Div. {div}', 150)
+    text_color = division_colors.get(div, (0, 0, 0, 255))
+    img = text_over(img, f'Div. {div}', 150, 36, text_color=text_color)
     return img
 
 
@@ -51,7 +61,8 @@ def collect_maps(mapper, player=None):
 
     for r in res:
         name, bsr, hash, createdAt = r['name'], r['id'], r['versions'][0]['hash'], r['createdAt']
-        time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        time = datetime.strptime(
+            createdAt, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
 
         for d in r['versions'][0]['diffs']:
             nps, char, dif = d['nps'], d['characteristic'], d['difficulty']
@@ -241,14 +252,15 @@ def latest():
 
     for player in Player.objects.filter(mapper__gt=0).order_by('mapper_name'):
         print(player.mapper_name)
-        
+
         for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt', '-char', '-nps'):
             print(jmap)
             dif_num = diff_label_inv[jmap.diff]
             if jmap.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[jmap.char]
-            song = Song.objects.filter(hash=jmap.hash, diff=jmap.diff, char=jmap.char).first()
+            song = Song.objects.filter(
+                hash=jmap.hash, diff=jmap.diff, char=jmap.char).first()
             if song == None:
                 lid = search_lid(jmap.hash, gameMode, dif_num)
                 if lid is None:

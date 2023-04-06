@@ -57,14 +57,14 @@ def discord_check_process():
                     player.inDiscord = True
                     player.save()
     
-    print('who is not in?')
+    print('\nwho is not in?\n')
 
     for player in Player.objects.all():
         user : User = player.user
         social = user.socialaccount_set.first()
         if social:
             if not int(social.uid) in member_ids:
-                print(f'{social} is not in discord')
+                print(f'{player} ({social}) is not in discord')
 
 
 if __name__ == '__main__':

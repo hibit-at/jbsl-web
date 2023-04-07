@@ -80,7 +80,7 @@ async def league_create(league_data):
 
     # await bot.start(token)
     try:
-        await asyncio.wait_for(bot.start(token), timeout=60)
+        await asyncio.wait_for(bot.start(token), timeout=120)
     except asyncio.TimeoutError:
         print("Bot failed to start within 60 seconds. Timing out...")
         await bot.close()

@@ -973,7 +973,7 @@ def leagues(request):
     social = user.socialaccount_set.first() if user.is_authenticated else None
 
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial', 'end', 'pk')
+        isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False).order_by('-end')
 

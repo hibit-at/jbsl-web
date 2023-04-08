@@ -1264,9 +1264,7 @@ def virtual_league(request, pk):
     context['scored_rank'] = scored_rank
     context['LBs'] = LBs
 
-    border_line = 8
-    if 'j1_qualifier' in league.name.lower():
-        border_line = 16
+    border_line = league.border_line
 
     context['border_line'] = border_line
 

@@ -58,16 +58,17 @@ async def league_create(league_data):
                 col_dict['rgba(255,255,128,.8)'] = discord.Colour.gold()
                 if league_color in col_dict:
                     colour = col_dict[league_color]
-                await guild.create_role(name=league_name, colour=colour, hoist=True)
+                current_role = await guild.create_role(name=league_name, colour=colour, hoist=True)
 
-            everyone = discord.utils.get(guild.roles, name='@everyone')
-            current_channel = discord.utils.get(
-                guild.channels, name=league_name)
+                everyone = discord.utils.get(guild.roles, name='@everyone')
+                current_channel = discord.utils.get(
+                    guild.channels, name=league_name)
+                print(current_channel)
+                await current_channel.set_permissions(everyone, send_messages=False)
+                await current_channel.set_permissions(current_role, send_messages=True)
+            
             current_role = discord.utils.get(guild.roles, name=league_name)
-            print(current_channel)
             print(current_role)
-            await current_channel.set_permissions(everyone, send_messages=False)
-            await current_channel.set_permissions(current_role, send_messages=True)
 
             async def assign_role_to_member(member, role):
                 if member is None:
@@ -84,23 +85,15 @@ async def league_create(league_data):
             
             await asyncio.gather(*tasks)
 
-        # await bot.close()
+        await bot.close()
 
-    # await bot.start(token)
-    try:
-        await asyncio.wait_for(bot.start(token), timeout=180)
-    except asyncio.TimeoutError:
-        print("Bot failed to start within 120 seconds. Timing out...")
-        await bot.close()
-    finally:
-        await bot.close()
+    await bot.start(token)
 
 def league_role_total():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import League
 
-    leagues = League.objects.filter(isLive=True)
     league_data = []
     for league in League.objects.filter(isLive=True):
         valid_name = name_validation(league.name)

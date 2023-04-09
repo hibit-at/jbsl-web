@@ -9,6 +9,7 @@ def discord_check_process():
     from discord.ext import commands
     from app.models import Player, User
     from allauth.socialaccount.models import SocialAccount
+    import asyncio
     import time
     if os.path.exists('local.py'):
         from local import DISCORD_BOT_TOKEN, GUILD_ID
@@ -28,17 +29,14 @@ def discord_check_process():
     async def on_ready():
         # ログインが完了したときに呼び出される関数
         print('Logged in as {0}'.format(bot.user))
-
-        # サーバーのメンバーのIDを取得してグローバル変数のリストに追加する
-
-        
+        # サーバーのメンバーのIDを取得してグローバル変数のリストに追加する   
+        async def add_member_id(member_ids, member):
+            member_ids.append(member.id)   
         guild = bot.get_guild(int(guild_id))
-
+        tasks = []
         for member in guild.members:
-            member_ids.append(member.id)
-
-        # 5秒待ってからBotを終了する
-        time.sleep(5)
+            tasks.append(add_member_id(member_ids, member))
+        await asyncio.gather(*tasks)
         await bot.close()
 
     # Discordにログインする

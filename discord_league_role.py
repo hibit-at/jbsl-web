@@ -69,12 +69,20 @@ async def league_create(league_data):
             await current_channel.set_permissions(everyone, send_messages=False)
             await current_channel.set_permissions(current_role, send_messages=True)
 
+            async def assign_role_to_member(member, role):
+                if member is None:
+                    return
+                await member.add_roles(role)
+
+            tasks = []  # ここで tasks リストを定義します
+
             for player_dID in player_dIDs:
                 print(player_dID)
                 member = guild.get_member(int(player_dID))
-                if member is None:
-                    continue
-                await member.add_roles(current_role)
+                task = asyncio.create_task(assign_role_to_member(member, current_role))
+                tasks.append(task)
+            
+            await asyncio.gather(*tasks)
 
         # await bot.close()
 
@@ -82,7 +90,7 @@ async def league_create(league_data):
     try:
         await asyncio.wait_for(bot.start(token), timeout=120)
     except asyncio.TimeoutError:
-        print("Bot failed to start within 60 seconds. Timing out...")
+        print("Bot failed to start within 120 seconds. Timing out...")
         await bot.close()
     finally:
         await bot.close()

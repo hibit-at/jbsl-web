@@ -47,7 +47,7 @@ async def league_create(league_data):
                            f'終了日時は {gmt_time:%Y/%m/%d %H:%M} です！\n'
                            f'https://jbsl-web.herokuapp.com/leaderboard/{league_id}')
                 await current_channel.send(content)
-            if not league_name in role_names:
+                # role create
                 colour = discord.Colour.default()
                 col_dict = {}
                 col_dict['rgba(130,211,255,.8)'] = discord.Colour.blue()
@@ -59,15 +59,13 @@ async def league_create(league_data):
                 if league_color in col_dict:
                     colour = col_dict[league_color]
                 current_role = await guild.create_role(name=league_name, colour=colour, hoist=True)
-
                 everyone = discord.utils.get(guild.roles, name='@everyone')
-                current_channel = discord.utils.get(
-                    guild.channels, name=league_name)
-                print(current_channel)
                 await current_channel.set_permissions(everyone, send_messages=False)
                 await current_channel.set_permissions(current_role, send_messages=True)
-            
-            current_role = discord.utils.get(guild.roles, name=league_name)
+            else:
+                current_channel = discord.utils.get(guild.channels, name=league_name)
+                current_role = discord.utils.get(guild.roles, name=league_name)
+            print(current_channel)
             print(current_role)
 
             async def assign_role_to_member(member, role):

@@ -164,9 +164,9 @@
                                 <img src="{{ player.imageURL }}" class="icon" alt="icon" loading="lazy"/>
                                 {% include 'player_element.html' %}
                             </a>
-                            {% if league.isOfficial and player.rank <= league.border_line and player.twitch != ''%}
+                            {% if twitch_show == 'on' and player.twitch != ''%}
                             <a href="https://twitch.tv/{{ player.twitch }}">
-                            <img src="{% static 'twitch.png' %}" height=20 width=20/>
+                            <img src="{% static 'twitch.png' %}" height=25 width=25/>
                             </a>
                             {% endif %}
                         </div>

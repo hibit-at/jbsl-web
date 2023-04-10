@@ -1128,6 +1128,7 @@ def leaderboard(request, pk):
     context['edit_state'] = is_owner and league.isLive
     context['isOwner'] = is_owner
     context['isMember'] = is_member
+    context['twitch_show'] = request.GET.get('twitch_show','off')
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     close_str = (league.end + timedelta(hours=9-48)).strftime('%Y-%m-%dT%H:%M')

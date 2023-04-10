@@ -1440,6 +1440,7 @@ def api_leaderboard(request, pk):
             'sid': rank.sid,
             'name': rank.name,
             'pos': rank.count_pos,
+            'acc' : rank.count_acc,
         })
         print(rank.name)
     ans['maps'] = []

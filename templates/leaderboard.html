@@ -169,6 +169,9 @@
                                     <img src="{% static 'twitch.png' %}" height=25 width=25/>
                                 </a>
                             {% endif %}
+                            {% if discord_show == 'on' and not player.inDiscord %}
+                                <b><u>NOT IN DISCORD</u></b>
+                            {% endif %}
                         </div>
                     </td>
                     <td>

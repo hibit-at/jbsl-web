@@ -1972,6 +1972,7 @@ def beatleader_submission(request):
             'acc': float(res['accuracy'])*100,
             'rawPP': 0,
             'miss': int(res['missedNotes']),
+            'miss': int(res['badCuts']),
             'beatleader': res['id'],
         }
         score_to_headline(score, song, player, league)

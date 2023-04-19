@@ -2083,9 +2083,8 @@ def match(request, pk=1):
             if league.player.all().count() >= 2:
                 print(league)
                 match.league = league
-                scored_rank, LBs = calculate_scoredrank_LBs(league)
-                match.player1 = scored_rank[0]
-                match.player2 = scored_rank[1%league.border_line]
+                match.player1 = league.player.all()[0]
+                match.player2 = league.player.all()[1]
                 match.save()
 
         if 'player1_win' in post:
@@ -2131,11 +2130,6 @@ def match(request, pk=1):
             match.save()
 
     
-    scored_rank, LBs = calculate_scoredrank_LBs(match.league)
-    
-    print(scored_rank)
-    context['scored_rank'] = scored_rank[:match.league.border_line]
-
     context['highest'] = match.highest_acc
     context['state'] = state_dict[match.state]
     context['inMatch'] = match.state % 2 == 0

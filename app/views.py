@@ -2061,11 +2061,11 @@ def match(request, pk=1):
             player2 = Player.objects.get(sid=sid2)
             match.player1 = player1
             match.player2 = player2
-            match.result1 = 0
-            match.result2 = 0
-            match.retry1 = 0
-            match.retry2 = 0
-            match.state = 0
+            # match.result1 = 0
+            # match.result2 = 0
+            # match.retry1 = 0
+            # match.retry2 = 0
+            # match.state = 0
             match.save()
         if 'title' in post:
             title = post['title']

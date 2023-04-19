@@ -2011,7 +2011,10 @@ state_dict = {
 
 def match(request, pk=1):
 
-    match = Match.objects.get(pk=pk)
+    from django.db.models import Prefetch
+
+    match = Match.objects.prefetch_related(
+    Prefetch('league__player', queryset=Player.objects.order_by('name'))).get(pk=pk)
     playlists = Playlist.objects.all().order_by('-pk')
     leagues = League.objects.all().order_by('-pk')
     context = {}

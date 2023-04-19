@@ -2083,8 +2083,9 @@ def match(request, pk=1):
             if league.player.all().count() >= 2:
                 print(league)
                 match.league = league
-                match.player1 = league.player.all()[0]
-                match.player2 = league.player.all()[1]
+                scored_rank, LBs = calculate_scoredrank_LBs(league)
+                match.player1 = scored_rank[0]
+                match.player2 = scored_rank[1%league.border_line]
                 match.save()
 
         if 'player1_win' in post:

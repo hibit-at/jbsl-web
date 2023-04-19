@@ -200,13 +200,13 @@
             player_set :
             {% csrf_token %}
             <select name="player1">
-                {% for player in match.league.player.all %}
+                {% for player in scored_rank %}
                     <option value={{ player.sid }} {% if player == match.player1 %}selected{% endif %}> {{ player }}
                     </option>
                 {% endfor %}
             </select>
             <select name="player2">
-                {% for player in match.league.player.all %}
+                {% for player in scored_rank %}
                     <option value={{ player.sid }}  {% if player == match.player2 %}selected{% endif %}> {{ player }}
                     </option>
                 {% endfor %}

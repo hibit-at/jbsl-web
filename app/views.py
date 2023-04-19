@@ -2129,6 +2129,12 @@ def match(request, pk=1):
             match.state = 0
             match.save()
 
+    
+    scored_rank, LBs = calculate_scoredrank_LBs(match.league)
+    
+    print(scored_rank)
+    context['scored_rank'] = scored_rank[:match.league.border_line]
+
     context['highest'] = match.highest_acc
     context['state'] = state_dict[match.state]
     context['inMatch'] = match.state % 2 == 0

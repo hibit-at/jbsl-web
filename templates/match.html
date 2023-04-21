@@ -212,6 +212,7 @@
                 {% endfor %}
             </select>
             <button class="btn" type="submit">選手切り替え</button>
+            <button class="btn" type="button" id="coinToss">コイントス</button>
         </form>
         <form method="post">
             playlist :
@@ -395,5 +396,15 @@
         win_button2.disabled = true;
     }
 
+    });
+
+    document.getElementById("coinToss").addEventListener("click", function () {
+        var player1 = document.getElementById("player1");
+        var player2 = document.getElementById("player2");
+        var selectedPlayer1 = player1.innerText;
+        var selectedPlayer2 = player2.innerText;
+
+        var tossResult = Math.random() >= 0.5 ? selectedPlayer1 : selectedPlayer2;
+        alert("コイントスの結果: " + tossResult);
     });
 </script>

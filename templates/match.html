@@ -68,7 +68,7 @@
         <img src="" height=150 width=150 id="bomb1">
     </div>
     <div class="match-highest1" id="match-highest1">
-        ADV. {{ match.highest_acc }} %
+        ADV. {{ match.highest_acc|floatformat:2 }} %
     </div>
     <div class="match-player2">
         <span id="player2" style="font-size:70px">Player2</span>
@@ -114,7 +114,7 @@
         <img src="" height=150 width=150 id="bomb2">
     </div>
     <div class="match-highest2" id="match-highest2">
-        ADV. {{ match.highest_acc }} %
+        ADV. {{ match.highest_acc|floatformat:2 }} %
     </div>
     <div class="match-image">
         <img src=""
@@ -335,16 +335,17 @@
         }
         // <---star2
 
-        if(data['state'] < 0){
-            document.getElementById("match-highest1").innerHTML = "ADV." + data['highest'] + "%";
-        }else{
+        if (data['state'] < 0) {
+            document.getElementById("match-highest1").innerHTML = "ADV. " + parseFloat(data['highest']).toFixed(2) + "%";
+        } else {
             document.getElementById("match-highest1").innerHTML = "";
         }
-        if(data['state'] > 0){
-            document.getElementById("match-highest2").innerHTML = "ADV." + data['highest'] + "%";
-        }else{
+        if (data['state'] > 0) {
+            document.getElementById("match-highest2").innerHTML = "ADV. " + parseFloat(data['highest']).toFixed(2) + "%";
+        } else {
             document.getElementById("match-highest2").innerHTML = "";
         }
+        
 
         document.getElementById("imageURL").src = data['imageURL'];
         document.getElementById("map-info1").innerHTML = data['map-info1'];

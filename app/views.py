@@ -2158,7 +2158,7 @@ def api_match(request, pk):
     ans['map-info3-color'] = match.now_playing.color
     ans['map-info4'] = match.map_info
     ans['state'] = match.state
-    ans['highest'] = f'{match.highest_acc:.1f}'
+    ans['highest'] = f'{match.highest_acc:.2f}'
 
     return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))
 

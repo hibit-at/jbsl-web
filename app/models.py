@@ -147,7 +147,8 @@ class Score(models.Model):
     def __str__(self):
         name = self.player.name
         title = self.song.title
-        return name + ' > ' + title
+        league = self.league
+        return f'{name} > {title} ({league})'
 
 
 class Participant(models.Model):

@@ -99,7 +99,7 @@ class League(models.Model):
     owner = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, related_name='owner')
     description = models.CharField(default='', max_length=100, blank=True)
-    color = models.CharField(default='', max_length=20)
+    color = models.CharField(default='', max_length=30)
     player = models.ManyToManyField(Player, blank=True, related_name='league')
     max_valid = models.IntegerField(default=0)
     limit = models.FloatField(default=2000)

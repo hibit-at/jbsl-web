@@ -7,3 +7,4 @@ discord_manual_message.py
 dataclip*
 myenv
 db copy.sqlite3
+*.dump

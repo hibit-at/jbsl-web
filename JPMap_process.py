@@ -27,7 +27,7 @@ division_colors = {
     1: (200, 50, 200, 255),  # 紫
     2: (255, 128, 50, 255),  # 赤
     3: (200, 200, 0, 255),  # 黄
-    4: (50, 200, 50, 255),  # 緑
+    4: (50, 50, 200, 255),  # 青
     # 他のdivisionに対しても色を追加できます
 }
 
@@ -36,8 +36,16 @@ division_colors_transparent = {
     1: 'rgba(220,130,250,.8)',  # 紫
     2: 'rgba(255,128,128,.8)',  # 赤
     3: 'rgba(255,255,128,.8)',  # 黄
-    4: 'rgba(130,255,130,.8)',  # 緑
+    4: 'rgba(130,211,255,.8)',  # 青
     # 他のdivisionに対しても色を追加できます
+}
+
+division_borders = {
+    0 : 2000,
+    1 : 2000,
+    2 : 1100,
+    3 : 900,
+    4 : 700,
 }
 
 def create_img(year=1000, month=13, div=0):
@@ -150,7 +158,7 @@ def create_league(songs, start, last, division, superuser):
             description=description,
             color=division_colors_transparent[division],
             max_valid=playlist.songs.count()//2+1,
-            limit=2000,
+            limit=division_borders[division],
             end=last,
             isOpen=True,
             playlist=playlist,

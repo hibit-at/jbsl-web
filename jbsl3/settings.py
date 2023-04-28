@@ -86,14 +86,24 @@ import dj_database_url
 if os.path.exists('local.py'):
     DEBUG = True
     ALLOWED_HOSTS = ['*']
-    from local import SK
+    from local import SK,LOCAL_DATABASE_NAME,LOCAL_DATABASE_USER,LOCAL_DATABASE_PASSWORD
     SECRET_KEY = SK
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    #     }
+    # }
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': LOCAL_DATABASE_NAME,
+        'USER': LOCAL_DATABASE_USER,
+        'PASSWORD': LOCAL_DATABASE_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': '',
     }
+}
 else:
     DEBUG = True
     ALLOWED_HOSTS = ['*']

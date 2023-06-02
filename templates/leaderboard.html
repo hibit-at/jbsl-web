@@ -240,7 +240,7 @@
                  alt="scoresaber"
                  loading="lazy"/>
         </a>
-        {% if isOwner and league.isLive %}
+        {% if user.is_staff and league.isLive %}
             {% csrf_token %}
             <input type="hidden" name="remove_song" value="{{ song.lid }}">
             <button type="submit" class="btn btn-danger" style="background:red">除外</button>

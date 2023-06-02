@@ -1151,6 +1151,11 @@ def leaderboard(request, pk):
             remove_player = Player.objects.get(sid=sid)
             league.player.remove(remove_player)
             return redirect('app:leaderboard', pk=pk)
+        if 'remove_song' in post:
+            lid = post['remove_song']
+            playlist = league.playlist
+            playlist.songs.remove(Song.objects.get(lid=lid))
+            return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(
         league=league).exclude(invite=league).filter(isActivated=True).order_by('-borderPP')

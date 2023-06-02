@@ -12,6 +12,8 @@ def name_validation(valid_name):
     valid_name = valid_name.replace('.', '')
     valid_name = valid_name.replace('!', '')
     valid_name = valid_name.replace('/', '')
+    valid_name = valid_name.replace('(', '')
+    valid_name = valid_name.replace(')', '')
     valid_name = valid_name.strip()
     return valid_name
 
@@ -39,7 +41,7 @@ async def league_create(league_data):
         print(role_names)
         channels = category.channels
         for league_name, league_end, league_id, league_color, player_dIDs in league_data:
-            exist = any(channel.name == league_name for channel in channels)
+            exist = any(channel.name == name_validation(league_name) for channel in channels)
             if not exist:
                 current_channel = await category.create_text_channel(league_name)
                 gmt_time = league_end + timedelta(hours=9)
@@ -63,8 +65,8 @@ async def league_create(league_data):
                 await current_channel.set_permissions(everyone, send_messages=False)
                 await current_channel.set_permissions(current_role, send_messages=True)
             else:
-                current_channel = discord.utils.get(guild.channels, name=league_name)
-                current_role = discord.utils.get(guild.roles, name=league_name)
+                current_channel = discord.utils.get(guild.channels, name=name_validation(league_name))
+                current_role = discord.utils.get(guild.roles, name=name_validation(league_name))
             print(current_channel)
             print(current_role)
 

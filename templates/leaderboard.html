@@ -169,9 +169,7 @@
                                     <img src="{% static 'twitch.png' %}" height=25 width=25/>
                                 </a>
                             {% endif %}
-                            {% if discord_show == 'on' and not player.inDiscord %}
-                                <b><u>NOT IN DISCORD</u></b>
-                            {% endif %}
+                            {% if discord_show == 'on' and not player.inDiscord %}<b><u>NOT IN DISCORD</u></b>{% endif %}
                         </div>
                     </td>
                     <td>
@@ -228,7 +226,9 @@
 <hr />
 <h2 style="text-align:center">譜面別リーグ内順位</h2>
 {% for song in LBs %}
-    <p>
+    <form method="POST"
+          action="{% url 'app:leaderboard' pk=league.pk %}"
+          onsubmit="return confirm('本当に除外してよいですか？');">
         <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
             {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
         </span></span> by {{ song.author }}
@@ -240,8 +240,12 @@
                  alt="scoresaber"
                  loading="lazy"/>
         </a>
-        <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
-    </p>
+        {% if isOwner and league.isLive %}
+            {% csrf_token %}
+            <input type="hidden" name="remove_song" value="{{ song.lid }}">
+            <button type="submit" class="btn btn-danger" style="background:red">除外</button>
+        {% endif %}
+    </form>
     <div id="{{ song.lid }}"
          class="top5-target"
          style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">

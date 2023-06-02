@@ -1,6 +1,5 @@
 import os
 import django
-import sys
 
 def process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
@@ -21,8 +20,6 @@ def process():
         for player in matching_players:
             playlist.CoEditor.add(player)
 
-        
-        
 
 if __name__ == '__main__':
     process()

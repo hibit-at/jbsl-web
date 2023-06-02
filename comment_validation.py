@@ -1,6 +1,6 @@
 import os
 import django
-import sys
+
 
 def validation(s : str):
     ans = ''
@@ -11,6 +11,7 @@ def validation(s : str):
         ans += c
     # print(ans)
     return ans
+
 
 def process():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')

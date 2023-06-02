@@ -1,7 +1,6 @@
 import base64
 import json
 import os
-import sys
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
@@ -19,7 +18,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone as django_timezone
 
 from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA, User
-
 
 
 diff_label = {
@@ -86,7 +84,7 @@ league_colors = [
 ]
 
 
-def get_decorate(acc):
+def get_decorate(acc: float) -> str:
     if acc < 50:
         return 'color:dimgray'
     if 95 <= acc < 96:
@@ -102,7 +100,7 @@ def get_decorate(acc):
     return 'None'
 
 
-def score_to_acc(score, notes):
+def score_to_acc(score: float, notes: int) -> float:
     max_score = 0
     multiply_count = 1
     while notes > 0 and multiply_count > 0:
@@ -125,7 +123,7 @@ def score_to_acc(score, notes):
     return score/max_score*100
 
 
-def slope(n):
+def slope(n: int) -> int:
     if n == 1:
         return 0
     if n == 2:
@@ -202,7 +200,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def process_mapper(post, player : Player, context):
+def process_mapper(post, player: Player, context):
     mapper_id = post['mapper']
     if mapper_id == '':
         player.mapper = 0
@@ -234,7 +232,8 @@ def userpage(request, sid=0):
     if request.method == 'POST':
         post = request.POST
         print(post)
-        player.message = validation(post['message'][:50]) if 'message' in post else player.message
+        player.message = validation(
+            post['message'][:50]) if 'message' in post else player.message
         player.twitter = post.get('twitter', player.twitter)
         player.twitch = post.get('twitch', player.twitch)
         player.booth = post.get('booth', player.booth)
@@ -262,7 +261,8 @@ def userpage(request, sid=0):
         player.save()
 
     eyebeam_count = Player.objects.filter(rival=player).count()
-    top10_scores = Score.objects.filter(player=player, league__name='Top10').order_by('-rawPP')
+    top10_scores = Score.objects.filter(
+        player=player, league__name='Top10').order_by('-rawPP')
     player_badges = Badge.objects.filter(player=player)
 
     context.update({
@@ -317,7 +317,7 @@ def userpage(request, sid=0):
                 player_type = label
 
         return player_type
-    
+
     context['player_type'] = get_player_type(techIndex, accIndex, passIndex)
 
     return render(request, 'userpage.html', context)
@@ -394,7 +394,8 @@ def score_to_headline(new_score, song, player, league):
     title = song.title[:30] + '...' if len(song.title) > 30 else song.title
     new_acc = score_to_acc(new_score, song.notes)
 
-    old_score = Score.objects.filter(player=player, song=song, league=league).first()
+    old_score = Score.objects.filter(
+        player=player, song=song, league=league).first()
 
     if old_score is not None:
         if new_score > old_score.score:
@@ -402,6 +403,7 @@ def score_to_headline(new_score, song, player, league):
             return create_headline(player, title, song.diff, old_acc, new_acc)
     else:
         return create_headline(player, title, song.diff, None, new_acc)
+
 
 def top_score_registration(player):
     sid = player.sid
@@ -523,17 +525,6 @@ def activate_process(request):
         top_score_registration(player)
         return redirect('app:mypage')
     return render(request, 'activation.html', context)
-
-
-def song(request, lid=0):
-    context = {}
-    song = Song.objects.get(lid=lid)
-    user = request.user
-    if user.is_authenticated:
-        social = SocialAccount.objects.get(user=user)
-        context['social'] = social
-    context['song'] = song
-    return render(request, 'song.html', context)
 
 
 def search_lid(hash, gameMode, diff_num):
@@ -903,38 +894,6 @@ def playlist(request, pk):
     return render(request, 'playlist.html', context)
 
 
-# def download_playlist(request, pk):
-#     from django.urls import reverse
-#     json_data = {}
-#     playlist = Playlist.objects.get(pk=pk)
-#     playlist = make_sorted_playlist(playlist)
-#     json_data['playlistTitle'] = playlist.title
-#     json_data['playlistAuthor'] = 'JBSL_Web_System'
-#     download_url = reverse('app:download_playlist', args=[pk])
-#     meta_url = request._current_scheme_host
-#     print(meta_url)
-#     print(download_url)
-#     json_data['playlistDescription'] = playlist.description
-#     json_data['customData'] = {'syncURL': meta_url + download_url}
-#     songs = []
-#     for song in playlist.sorted_songs:
-#         append_dict = {}
-#         append_dict['songName'] = song.title
-#         append_dict['levelAuthorName'] = song.author
-#         append_dict['hash'] = song.hash
-#         difficulties = []
-#         diff_append = {}
-#         diff_append['characteristic'] = song.char
-#         diff_append['name'] = song.diff
-#         difficulties.append(diff_append)
-#         append_dict['difficulties'] = difficulties
-#         songs.append(append_dict)
-#     json_data['songs'] = songs
-#     json_data['image'] = playlist.image
-#     download_data = json.dumps(json_data, ensure_ascii=False)
-#     return HttpResponse(download_data)
-
-
 def download_playlist(request, pk):
     playlist = Playlist.objects.get(pk=pk)
     playlist = make_sorted_playlist(playlist)
@@ -975,7 +934,7 @@ def leagues(request):
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
     end_leagues = League.objects.filter(
-        isOpen=True, isLive=False).order_by('-end','-pk')
+        isOpen=True, isLive=False).order_by('-end', '-pk')
 
     context = {
         'social': social,
@@ -1070,7 +1029,8 @@ def check_membership_and_ownership(user, league):
             is_owner = True
     return is_member, is_owner
 
-def get_join_state(user : User, is_member, league : League, player : Player, is_close):
+
+def get_join_state(user: User, is_member, league: League, player: Player, is_close):
     join_state = -1
     if user.is_authenticated:
         if is_member:
@@ -1087,6 +1047,7 @@ def get_join_state(user : User, is_member, league : League, player : Player, is_
             join_state = 5
     return join_state
 
+
 join_comment = {
     -1: '',
     0: 'あなたはこのリーグに参加しています。',
@@ -1096,6 +1057,7 @@ join_comment = {
     4: '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。',
     5: '',
 }
+
 
 def leaderboard(request, pk):
     context = {}
@@ -1128,8 +1090,8 @@ def leaderboard(request, pk):
     context['edit_state'] = is_owner and league.isLive
     context['isOwner'] = is_owner
     context['isMember'] = is_member
-    context['twitch_show'] = request.GET.get('twitch_show','off')
-    context['discord_show'] = request.GET.get('discord_show','off')
+    context['twitch_show'] = request.GET.get('twitch_show', 'off')
+    context['discord_show'] = request.GET.get('discord_show', 'off')
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     close_str = (league.end + timedelta(hours=9-48)).strftime('%Y-%m-%dT%H:%M')
@@ -1447,7 +1409,7 @@ def api_leaderboard(request, pk):
             'sid': rank.sid,
             'name': rank.name,
             'pos': rank.count_pos,
-            'acc' : rank.count_acc,
+            'acc': rank.count_acc,
         })
         print(rank.name)
     ans['maps'] = []
@@ -1578,48 +1540,6 @@ def bsr_checker(request):
         context['results'] = results.results
 
     return render(request, 'bsr_checker.html', context)
-
-
-def coin(request):
-    league = request.GET.get('league')
-    league = League.objects.get(pk=league)
-    context = {'league': league}
-    scored_rank, LBs = calculate_scoredrank_LBs(league)
-    choice = []
-    for s in scored_rank[:league.border_line]:
-        choice.append((s.sid, s.name))
-
-    from django import forms
-
-    class CoinForm(forms.Form):
-        partA = forms.ChoiceField(
-            label='選手1', widget=forms.Select, choices=choice, required=False)
-        partB = forms.ChoiceField(
-            label='選手2', widget=forms.Select, choices=choice, required=False)
-
-    import random
-
-    form = CoinForm()
-    results = []
-    if request.method == 'POST':
-        post = request.POST
-        partA = Player.objects.get(sid=post['partA'])
-        partB = Player.objects.get(sid=post['partB'])
-        print(partA)
-        print(partB)
-        form = CoinForm(post)
-        if partA == partB:
-            results = ['同じ選手が選択されています。違う選手を選択してください。']
-        else:
-            if random.random() > 0.5:
-                results = [f'（通常）コイントスの結果、{partA} さんがファーストピックの権利を得ました。',
-                           f'（BAN/PICK 制）コイントスの結果、{partA} さんがファーストピックの権利を得ました。BANは {partB} さんからです。']
-            else:
-                results = [f'（通常）コイントスの結果、{partB} さんがファーストピックの権利を得ました。',
-                           f'（BAN/PICK 制）コイントスの結果、{partB} さんがファーストピックの権利を得ました。BANは {partA} さんからです。']
-    context['form'] = form
-    context['results'] = results
-    return render(request, 'coin.html', context)
 
 
 def info_test(request, pk):
@@ -1840,7 +1760,7 @@ def pos_acc_update(pk):
                 league=league, player=player)
         print(participant)
         query = Score.objects.filter(
-            league=league, player=player).order_by('-pos','-acc')
+            league=league, player=player).order_by('-pos', '-acc')
         for i, score in enumerate(query):
             score.valid = (i < count_range)
             score.save()
@@ -2005,6 +1925,7 @@ def archive(request):
         context['social'] = social
     return render(request, 'archive.html', context)
 
+
 state_dict = {
     -2: 'RETRY PLAYER1 ADVANTAGE',
     -1: 'PLAYER1 WIN SUSPEND',
@@ -2012,6 +1933,7 @@ state_dict = {
     1: 'PLAYER2 WIN SUSPEND',
     2: 'RETRY PLAYER2 ADVANTAGE',
 }
+
 
 def match(request, pk=1):
 
@@ -2133,7 +2055,6 @@ def match(request, pk=1):
             match.state = 0
             match.save()
 
-    
     context['highest'] = match.highest_acc
     context['state'] = state_dict[match.state]
     context['inMatch'] = match.state % 2 == 0
@@ -2165,13 +2086,6 @@ def api_match(request, pk):
     ans['highest'] = f'{match.highest_acc:.2f}'
 
     return HttpResponse(json.dumps(ans, indent=4, ensure_ascii=False))
-
-# def api_profile_overlay(request, sid):
-#     url = f'https://scoresaber.com/api/player/{sid}/full'
-#     from django.http import JsonResponse
-#     res = JsonResponse(requests.get(url).json())
-#     res['Access-Control-Allow-Origin'] = '*'
-#     return res
 
 
 def api_dga(request):
@@ -2230,13 +2144,6 @@ def api_dga_post(request):
     post_json = {'message': 'スコアを登録完了しました'}
     post_json = json.dumps(post_json, ensure_ascii=False)
     return HttpResponse(post_json, content_type="application/json")
-
-
-def api_twitch(request):
-    from django.http import JsonResponse
-    players = Player.objects.filter(twitch__gt='').values('twitch')
-    twitch_usernames = [player['twitch'] for player in players]
-    return JsonResponse({'twitch_usernames': twitch_usernames})
 
 
 def player_matrix(request):

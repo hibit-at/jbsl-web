@@ -18,6 +18,9 @@
             <canvas id="myRadarChart" width="100" height="100"></canvas>
         </div>
         {{ player }} さんは <span style="color:{{ style_color }};font-weight:bold">{{ player_type }}</span> です。
+        <a href="{% url 'app:player_matrix' %}">
+            <button class="btn">Player Matrix</button>
+        </a>
     {% endif %}
     {% if user.player == player %}
         <p>
@@ -168,7 +171,9 @@
             <th>Author</th>
             <th>Diff</th>
             <th>Accuracy</th>
-            <th>PP</th>
+            <th>
+                PP
+            </th>
             <th>
                 Miss
             </th>

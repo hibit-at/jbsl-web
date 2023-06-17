@@ -42,6 +42,7 @@ char_dict = {
     'SoloOneSaber': 'OneSaber',
     'Solo90Degree': '90Degree',
     'Solo360Degree': '360Degree',
+    'SoloNoArrows' : 'NoArrows',
 }
 
 char_dict_inv = {
@@ -50,6 +51,7 @@ char_dict_inv = {
     'OneSaber': 'SoloOneSaber',
     '90Degree': 'Solo90Degree',
     '360Degree': 'Solo360Degree',
+    'NoArrows' : 'SoloNoArrows',
 }
 
 col_dict = {
@@ -705,6 +707,43 @@ def make_sorted_playlist(playlist):
     return playlist
 
 
+# def create_song_by_beatleader(diff_num, char, bid):
+#     if Song.objects.filter(lid=lid).exists():
+#         return Song.objects.get(lid=lid)
+#     url = f'https://api.beatsaver.com/maps/hash/{hash}'
+#     res = requests.get(url).json()
+#     if 'error' in res:
+#         return None
+#     bsr = res['id']
+#     title = res['name']
+#     author = res['uploader']['name']
+#     versions = res['versions']
+#     latest = versions[0]
+#     diffs = latest['diffs']
+#     diff = diff_label[diff_num]
+#     color = col_dict[diff_num]
+#     imageURL = f"https://cdn.scoresaber.com/covers/{str(hash).upper()}.png"
+#     notes = 0
+#     for diff_data in diffs:
+#         if diff_data['difficulty'] == diff and diff_data['characteristic'] == char:
+#             notes = diff_data['notes']
+#     print(bsr, title, author, diff, notes)
+#     Song.objects.create(
+#         title=title,
+#         author=author,
+#         diff=diff,
+#         char=char,
+#         notes=notes,
+#         bsr=bsr,
+#         hash=hash,
+#         lid=lid,
+#         color=color,
+#         imageURL=imageURL,
+#     )
+#     return Song.objects.get(lid=lid)
+
+
+
 def playlist(request, pk):
     context = {}
     user = request.user
@@ -876,6 +915,27 @@ def playlist(request, pk):
             if lid == None:
                 print('no lid')
                 context['errorMessage'] = 'スコアセイバーの ID が見つかりません'
+
+                # beta v3 registartion
+                
+                # beatleader id list-up
+                url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
+                res = requests.get(url).json()
+                print(res)
+                bid = -1
+                for r in res['leaderboards']:
+                    # print(r['id'])
+                    bid = r['id']
+                    res_diff = r['difficulty']['difficultyName']
+                    res_mode = r['difficulty']['modeName']
+                    print(res_diff,res_mode)
+                    print(dif,char)
+                    if res_diff == dif and res_mode == char:
+                        break
+                if bid == -1:
+                    context['errorMessage'] = 'ビートリーダーの ID 検出が正常に起動しませんでした'
+                print(bid)
+
             else:
                 print(lid)
                 song = create_song_by_hash(hash, diff_num, char, lid)

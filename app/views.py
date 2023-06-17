@@ -822,28 +822,29 @@ def playlist(request, pk):
                     playlist=playlist,
                     defaults={'order': sort_index},
                 )
-                playlist.recommend.remove(song)
+                # playlist.recommend.remove(song)
             return redirect('app:playlist', pk=pk)
-        if 'recommend_song' in post and post['recommend_song'] != '':
-            lid = post['recommend_song'].split('/')[-1]
-            url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
-            res = requests.get(url).json()
-            hash = res['songHash']
-            diff_num = res['difficulty']['difficulty']
-            gameMode = res['difficulty']['gameMode']
-            char = char_dict[gameMode]
-            song = create_song_by_hash(hash, diff_num, char, lid)
-            if song is not None:
-                playlist.recommend.add(song)
+        # if 'recommend_song' in post and post['recommend_song'] != '':
+        #     lid = post['recommend_song'].split('/')[-1]
+        #     url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
+        #     res = requests.get(url).json()
+        #     hash = res['songHash']
+        #     diff_num = res['difficulty']['difficulty']
+        #     gameMode = res['difficulty']['gameMode']
+        #     char = char_dict[gameMode]
+        #     song = create_song_by_hash(hash, diff_num, char, lid)
+        #     if song is not None:
+        #         playlist.recommend.add(song)
         if 'remove_song' in post and post['remove_song'] != '':
-            lid = post['remove_song']
-            song = Song.objects.get(lid=lid)
+            # lid = post['remove_song']
+            song_pk = post['remove_song']
+            song = Song.objects.get(pk=song_pk)
             playlist.songs.remove(song)
             return redirect('app:playlist', pk=pk)
-        if 'remove_recommend' in post and post['remove_recommend'] != '':
-            lid = post['remove_recommend']
-            song = Song.objects.get(lid=lid)
-            playlist.recommend.remove(song)
+        # if 'remove_recommend' in post and post['remove_recommend'] != '':
+        #     lid = post['remove_recommend']
+        #     song = Song.objects.get(lid=lid)
+        #     playlist.recommend.remove(song)
         if 'description' in post and post['description'] != '':
             description = post['description']
             playlist.description = description[:100]
@@ -872,8 +873,9 @@ def playlist(request, pk):
             playlist.title = title
             playlist.save()
         if 'up' in post:
-            lid = post['up']
-            song = Song.objects.get(lid=lid)
+            # lid = post['up']
+            song_pk = post['up']
+            song = Song.objects.get(pk=song_pk)
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
             songInfo.order -= 1
             songInfo.save()
@@ -884,8 +886,9 @@ def playlist(request, pk):
                 swapped_song.save()
             songInfo.save()
         if 'down' in post:
-            lid = post['down']
-            song = Song.objects.get(lid=lid)
+            # lid = post['down']
+            song_pk = post['down']
+            song = Song.objects.get(pk=song_pk)
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
             songInfo.order += 1
             # swap
@@ -948,7 +951,7 @@ def playlist(request, pk):
                         playlist=playlist,
                         defaults={'order': sort_index},
                     )
-                    playlist.recommend.remove(song)
+                    # playlist.recommend.remove(song)
                 return redirect('app:playlist', pk=pk)
     playlist = make_sorted_playlist(playlist)
     context['playlist'] = playlist
@@ -1176,9 +1179,9 @@ def leaderboard(request, pk):
             league.player.remove(remove_player)
             return redirect('app:leaderboard', pk=pk)
         if 'remove_song' in post:
-            lid = post['remove_song']
+            song_pk = post['remove_song']
             playlist = league.playlist
-            playlist.songs.remove(Song.objects.get(lid=lid))
+            playlist.songs.remove(Song.objects.get(pk=song_pk))
             return redirect('app:leaderboard', pk=pk)
 
     not_invite_players = Player.objects.exclude(

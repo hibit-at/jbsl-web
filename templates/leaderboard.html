@@ -232,17 +232,29 @@
         <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
             {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
         </span></span> by {{ song.author }}
-        <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
-           style="filter:invert()">
-            <img src="{% static 'ScoreSaberLogo.png' %}"
-                 width="30px"
-                 height="30px"
-                 alt="scoresaber"
-                 loading="lazy"/>
-        </a>
+        {% if song.lid|length %}
+        {{ song.lid }}
+            <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
+               style="filter:invert()">
+                <img src="{% static 'ScoreSaberLogo.png' %}"
+                     width="30px"
+                     height="30px"
+                     alt="scoresaber"
+                     loading="lazy"/>
+            </a>
+        {% else %}
+            <a href="https://www.beatleader.xyz/leaderboard/global/{{ song.bid }}"
+            style="filter:invert()">
+                <img src="{% static 'BeatLeader.png' %}"
+                     width="30px"
+                     height="30px"
+                     alt="BeatLeader"
+                     loading="lazy"/>
+            </a>
+        {% endif %}
         {% if user.is_staff and league.isLive %}
             {% csrf_token %}
-            <input type="hidden" name="remove_song" value="{{ song.lid }}">
+            <input type="hidden" name="remove_song" value="{{ song.pk }}">
             <button type="submit" class="btn btn-danger" style="background:red">除外</button>
         {% endif %}
     </form>

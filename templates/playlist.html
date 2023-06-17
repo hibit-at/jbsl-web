@@ -129,9 +129,9 @@ Co-editor :
                         <button class="danger"
                                 type="submit"
                                 name="remove_song"
-                                value="{{ song.lid }}">削除</button>
-                        <button class="btn" name="up" value="{{ song.lid }}">▲</button>
-                        <button class="btn" name="down" value="{{ song.lid }}">▼</button>
+                                value="{{ song.pk }}">削除</button>
+                        <button class="btn" name="up" value="{{ song.pk }}">▲</button>
+                        <button class="btn" name="down" value="{{ song.pk }}">▼</button>
                         {{ song.order }}
                     </form>
                 {% endif %}
@@ -210,21 +210,6 @@ Co-editor :
             </tr>
         {% endfor %}
     </table>
-{% endif %}
-{% if user.player.isActivated and playlist.isEditable and not isEditor %}
-    <h3>
-        譜面を推薦する
-    </h3>
-    <form method="post">
-        {% csrf_token %}
-        <p>
-            譜面を追加（記入例：https://scoresaber.com/leaderboard/311076）
-        </p>
-        <input type="text" size="100px" name="recommend_song"/>
-        <button class="btn" type="submit">
-            追加
-        </button>
-    </form>
 {% endif %}
 {% if isEditor %}
     <hr style="height:5px; background-color:ff8628;">

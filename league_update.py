@@ -70,52 +70,59 @@ def get_beatleader_data(player, song):
         return beatleader
     return None
 
+def update_score_internal(player, song, league, score, rawPP, miss, notes):
+    from app.models import Score
+    from app.views import score_to_acc, score_to_headline
+
+    defaults = {
+        'score': score,
+        'acc': score_to_acc(score, int(notes)),
+        'rawPP': rawPP,
+        'miss': miss,
+    }
+
+    old_score = Score.objects.filter(player=player, song=song, league=league).first()
+    if old_score and score <= old_score.score:
+        print('already updated score')
+        return
+    
+    beatleader = get_beatleader_data(player, song)
+    if beatleader:
+        defaults['beatleader'] = beatleader
+
+    new_headline = None
+    if league in player.league.all():
+        new_headline = score_to_headline(score, song, player, league)
+    
+    new_score, check = Score.objects.update_or_create(
+        player=player,
+        song=song,
+        league=league,
+        defaults=defaults,
+    )
+    if new_headline:
+        print("headline attached", new_headline)
+        new_headline.score = new_score
+        new_headline.save()
+    print('score updated!')
+
+
 def update_score(player, song, league, res):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import Score
-    from app.views import score_to_headline
+
     notes = song.notes
     for scoreData in res['scores']:
         hitname = scoreData['leaderboardPlayerInfo']['name']
         if player.name != hitname:
             print('wrong name!')
             continue
-        
+
         score = scoreData['modifiedScore']
         rawPP = scoreData['pp']
         miss = scoreData['badCuts'] + scoreData['missedNotes']
-        defaults = {
-            'score': score,
-            'acc': score_to_acc(score, int(notes)),
-            'rawPP': rawPP,
-            'miss': miss,
-        }
 
-        old_score = Score.objects.filter(player=player, song=song, league=league).first()
-        if old_score and score <= old_score.score:
-            print('already updated score')
-            break
-        
-        beatleader = get_beatleader_data(player, song)
-        if beatleader:
-            defaults['beatleader'] = beatleader
-
-        new_headline = None
-        if league in player.league.all():
-            new_headline = score_to_headline(score, song, player, league)
-        
-        new_score, check = Score.objects.update_or_create(
-            player=player,
-            song=song,
-            league=league,
-            defaults=defaults,
-        )
-        if new_headline:
-            print("headline attached", new_headline)
-            new_headline.score = new_score
-            new_headline.save()
-        print('score updated!')
+        update_score_internal(player, song, league, score, rawPP, miss, notes)
         break
 
 def create_headline(player, league, position):
@@ -153,7 +160,41 @@ def league_update_process():
                 print(song, song.lid)
                 res = get_score_data(player, song)
                 if 'errorMessage' in res:
-                    print('no score')
+                    print('no scoresaber data')
+
+                    # beatleader_try
+                    beatleader = get_beatleader_data(player, song)
+                    if beatleader == None:
+                        print('no beatleader data')
+                        continue
+
+                    url = f'https://api.beatleader.xyz/score/{player.sid}/{song.hash}/{song.diff}/{song.char}'
+                    # print(url)
+                    res = requests.get(url)
+                    status_code = res.status_code
+                    if status_code != 200:
+                        continue
+                    res = res.json()
+                    # print(res)
+                    score = int(res['modifiedScore'])
+                    print(score)
+                    defaults = {
+                        'score': score,
+                        'acc': float(res['accuracy'])*100,
+                        'rawPP': 0,
+                        'miss': int(res['missedNotes'] + int(res['badCuts'])),
+                        'beatleader': res['id'],
+                    }
+                    headline = score_to_headline(score, song, player, league)
+                    score_obj = Score.objects.update_or_create(
+                        player=player,
+                        song=song,
+                        league=league,
+                        defaults=defaults,
+                    )[0]
+                    if headline != None:
+                        headline.score = score_obj
+                        headline.save()
                     continue
                 update_score(player, song, league, res)
         print(league)

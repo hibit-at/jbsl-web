@@ -79,7 +79,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <img width="30px" height="30px" src="{% static player.hmd %}.png" />
+                    <img width="30px" height="30px" src="{% static 'hmd/'|add:player.hmd|add:'.png' %}" />
                 </td>
                 <td>
                     {% if sort == 'borderPP' %}{{ player.borderPP | floatformat:2 | intcomma }}{% endif %}

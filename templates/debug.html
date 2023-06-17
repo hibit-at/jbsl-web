@@ -3,18 +3,12 @@
     {% for player in active_players %}
         <ul>
             <li>
-                {{ player }} (discord : {{ player.user }})
-                {% if player.rival != None %}(rival : {{ player.rival }}){% endif %}
-                {% if player.mapper > 0 %}(mapper : {{ player.mapper_name }}){% endif %}
-                <ul>
-                    {% for league in player.league.all %}<li>{{ league }}</li>{% endfor %}
-                </ul>
-                {% if player.virtual.all|length > 0 %}
-                    virtual
-                    <ul>
-                        {% for league in player.virtual.all %}<li>{{ league }}</li>{% endfor %}
-                    </ul>
-                {% endif %}
+            {{ player }} (discord : {{ player.user }})
+            {% if player.rival != None %}(rival : {{ player.rival }}){% endif %}
+            {% if player.mapper > 0 %}(mapper : {{ player.mapper_name }}){% endif %}
+            <p>
+            {{ player.league.all|join:", " }}
+            </p>
             </li>
         </ul>
     {% endfor %}

@@ -1374,7 +1374,7 @@ def debug(request):
     context['active_players'] = active_players
     for player in active_players:
         check = defaultdict(int)
-        print(player)
+        # print(player)
         rivals = []
         if player.rival == None:
             continue
@@ -1384,7 +1384,7 @@ def debug(request):
             if check[rival] > 1:
                 rivals.append(rival)
                 break
-            print('...', rival)
+            # print('...', rival)
             rivals.append(rival)
             if rival.rival == None:
                 break
@@ -1549,7 +1549,7 @@ def info_test(request, pk):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
-    return render(request, f'info{pk}.html', context)
+    return render(request, f'info/info{pk}.html', context)
 
 
 @login_required

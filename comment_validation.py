@@ -1,7 +1,6 @@
 import os
 import django
 
-
 def validation(s : str):
     ans = ''
     for c in s:

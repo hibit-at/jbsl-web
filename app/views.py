@@ -707,40 +707,34 @@ def make_sorted_playlist(playlist):
     return playlist
 
 
-# def create_song_by_beatleader(diff_num, char, bid):
-#     if Song.objects.filter(lid=lid).exists():
-#         return Song.objects.get(lid=lid)
-#     url = f'https://api.beatsaver.com/maps/hash/{hash}'
-#     res = requests.get(url).json()
-#     if 'error' in res:
-#         return None
-#     bsr = res['id']
-#     title = res['name']
-#     author = res['uploader']['name']
-#     versions = res['versions']
-#     latest = versions[0]
-#     diffs = latest['diffs']
-#     diff = diff_label[diff_num]
-#     color = col_dict[diff_num]
-#     imageURL = f"https://cdn.scoresaber.com/covers/{str(hash).upper()}.png"
-#     notes = 0
-#     for diff_data in diffs:
-#         if diff_data['difficulty'] == diff and diff_data['characteristic'] == char:
-#             notes = diff_data['notes']
-#     print(bsr, title, author, diff, notes)
-#     Song.objects.create(
-#         title=title,
-#         author=author,
-#         diff=diff,
-#         char=char,
-#         notes=notes,
-#         bsr=bsr,
-#         hash=hash,
-#         lid=lid,
-#         color=color,
-#         imageURL=imageURL,
-#     )
-#     return Song.objects.get(lid=lid)
+def create_song_by_beatleader(hash, char, dif, bid):
+    if Song.objects.filter(bid=bid).exists():
+        return Song.objects.get(bid=bid)
+    url = f'https://api.beatleader.xyz/leaderboard/{bid}'
+    res = requests.get(url)
+    if res.status_code != 200:
+        return None
+    res = res.json()
+    bsr = res['song']['id']
+    title = res['song']['name']
+    author = res['song']['mapper']
+    notes = res['difficulty']['notes']
+    imageURL = res['song']['coverImage']
+    color = col_dict[res['difficulty']['value']]
+    print(bsr, title, author, dif, notes, color)
+    return Song.objects.create(
+        title=title,
+        author=author,
+        diff=dif,
+        char=char,
+        notes=notes,
+        bsr=bsr,
+        hash=hash,
+        lid=None,
+        color=color,
+        imageURL=imageURL,
+        bid=bid,
+    )
 
 
 
@@ -935,7 +929,15 @@ def playlist(request, pk):
                 if bid == -1:
                     context['errorMessage'] = 'ビートリーダーの ID 検出が正常に起動しませんでした'
                 print(bid)
-
+                song = create_song_by_beatleader(hash, char,dif,bid)
+                if song is not None:
+                    playlist.songs.add(song)
+                    SongInfo.objects.update_or_create(
+                        song = song,
+                        playlist = playlist,
+                        defaults={'order' : sort_index},
+                    )
+                return redirect('app:playlist', pk=pk)
             else:
                 print(lid)
                 song = create_song_by_hash(hash, diff_num, char, lid)

@@ -46,10 +46,10 @@ class Song(models.Model):
     notes = models.IntegerField(default=0)
     bsr = models.CharField(default='', max_length=10)
     hash = models.CharField(default='', max_length=100)
-    lid = models.CharField(default='', max_length=10)
+    lid = models.CharField(default='', max_length=10, blank=True ,null=True)
     color = models.CharField(default='white', max_length=20)
     imageURL = models.CharField(default='', max_length=100)
-    bid = models.CharField(default='', max_length=50)
+    bid = models.CharField(default='', max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f'{self.title} ({self.diff}) by {self.author}'

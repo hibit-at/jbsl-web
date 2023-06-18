@@ -11,7 +11,8 @@ class BadgeAdmin(admin.ModelAdmin):
 
 admin.site.register(Player, search_fields=['name'])
 admin.site.register(Song, search_fields=['title', 'author'])
-admin.site.register(League, search_fields=['name'], readonly_fields=['player','invite','virtual'])
+# admin.site.register(League, search_fields=['name'], readonly_fields=['player','invite','virtual'])
+admin.site.register(League, search_fields=['name'], readonly_fields=['invite', 'virtual'])
 admin.site.register(Score, search_fields=['player__name', 'song__title'], readonly_fields=['song'])
 admin.site.register(Playlist, search_fields=['title', 'editor'], readonly_fields=['songs','recommend','CoEditor'])
 admin.site.register(Participant, search_fields=['player__name', 'league__name'])

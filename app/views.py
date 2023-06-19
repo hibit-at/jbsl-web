@@ -349,6 +349,7 @@ def create_song_by_hash(hash, diff_num, char, lid):
     url = f'https://api.beatsaver.com/maps/hash/{hash}'
     res = requests.get(url).json()
     if 'error' in res:
+        print('error! in create_song_by_hash')
         return None
     bsr = res['id']
     title = res['name']
@@ -545,7 +546,7 @@ def search_lid(hash, gameMode, diff_num):
 
 def add_playlist(playlist, json_data):
     for song in json_data['songs']:
-        hash = song['hash']
+        hash = str(song['hash']).upper()
         print('searched song is', song)
         difficulty = None
         gameMode = None
@@ -572,14 +573,42 @@ def add_playlist(playlist, json_data):
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
             print('song does not exist so create')
             diff_num = diff_label_inv[diff]
+            print(diff_num)
             if search_lid(hash, gameMode, diff_num) == None:
                 print('no LID')
+
+                # try beatleader
+                
+                # beatleader id list-up
+                url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
+                res = requests.get(url).json()
+                bid = -1
+                for r in res['leaderboards']:
+                    # print(r['id'])
+                    bid = r['id']
+                    res_diff = r['difficulty']['difficultyName']
+                    res_mode = r['difficulty']['modeName']
+                    print(res_diff,res_mode)
+                    if res_diff == diff and res_mode == char:
+                        break
+                beatleader_song = create_song_by_beatleader(hash,char,diff,bid)
+                if beatleader_song != None:
+                    print('add by beatleader', beatleader_song)
+                    playlist.songs.add(beatleader_song)
+
                 continue
             lid = search_lid(hash, gameMode, diff_num)
+            print(lid)
             create_song_by_hash(hash, diff_num, char, lid)
+
+        # 作成に失敗した場合は強制終了、基本的には発生しない
+        print(hash,diff,char)
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
+            print('failed!')
             continue
+
         song_object = Song.objects.get(hash=hash, diff=diff, char=char)
+        print('add by scoresaber',song_object)
         playlist.songs.add(song_object)
         print(hash, char, diff)
 
@@ -599,8 +628,9 @@ def create_playlist(request):
         if 'playlist' in request.FILES:
             json_data = json.load(request.FILES['playlist'].file)
             title = json_data['playlistTitle']
-            image = json_data['image']
-            image = 'data:image/png;' + image
+            image = str(json_data['image'])
+            if not image.startswith('data:'):
+                image = 'data:image/png;base64,' + image
             description = ''
             if 'playlistDescription' in json_data:
                 description = json_data['playlistDescription'][:200]

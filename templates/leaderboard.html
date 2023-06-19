@@ -392,7 +392,7 @@
 <p>
     順位の計算に要した時間：{{ duration | floatformat:0 }} ms
 </p>
-{% if league.isLive and isMember %}
+{% comment %} {% if league.isLive and isMember %}
     <form method="POST" action="{% url 'app:beatleader_submission' %}">
         {% csrf_token %}
         Beta :
@@ -401,7 +401,7 @@
         </button>
     </a>
 </form>
-{% endif %}
+{% endif %} {% endcomment %}
 <script>
 function check(){
 if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示

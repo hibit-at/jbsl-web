@@ -233,7 +233,6 @@
             {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
         </span></span> by {{ song.author }}
         {% if song.lid|length %}
-        {{ song.lid }}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
                style="filter:invert()">
                 <img src="{% static 'ScoreSaberLogo.png' %}"

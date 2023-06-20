@@ -13,7 +13,7 @@
                 <form method="POST">
                     {% csrf_token %}
                     <li>
-                        {{ dif.characteristic }} {{ dif.difficulty }} (nps : {{ dif.notes }})
+                        {{ dif.characteristic }} {{ dif.difficulty }} (notes : {{ dif.notes }})
                         <input type="hidden" name="hash" value="{{ hash }}">
                         <input type="hidden" name="char" value="{{ dif.characteristic }}">
                         <input type="hidden" name="dif" value="{{ dif.difficulty }}">

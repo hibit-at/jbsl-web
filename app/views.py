@@ -833,6 +833,8 @@ def playlist(request, pk):
                     context['author'] = author
                     data = res['versions'][0]['diffs']
                     context['data'] = data
+                    if post['sort_index'] != '':
+                        context['sort_index'] = int(post['sort_index'])
                     return render(request, 'add_diff_by_map.html', context)
                 context['errorMessage'] = 'URL の解析に失敗しました。'
                 return render(request, 'playlist.html', context)

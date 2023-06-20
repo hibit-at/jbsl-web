@@ -2,9 +2,6 @@
 {% block content %}
     <h3>譜面から難易度の追加</h3>
     <p>
-        あれほどまでにスコセイの ID を入れてくれと言ったのに bsr key を入れてしまったのですね……
-    </p>
-    <p>
         プレイリスト : {{ playlist }}
     </p>
     <p>
@@ -21,7 +18,10 @@
                         <input type="hidden" name="char" value="{{ dif.characteristic }}">
                         <input type="hidden" name="dif" value="{{ dif.difficulty }}">
                         <input type="hidden" name="pk" value="{{ playlist.pk }}">
-                        <input type="text" name="sort_index" placeholder="ソート番号">
+                        <input type="text"
+                               name="sort_index"
+                               placeholder="ソート番号"
+                               value="{{ sort_index }}">
                         <button class="btn" name="add_from_map" value="1">Add this difficulty</button>
                     </li>
                 </form>

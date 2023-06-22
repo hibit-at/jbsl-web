@@ -11,7 +11,7 @@ def update_process():
         top_score_registration(player)
         print(f'{player} updated!')
         print(player.sid)
-        url = f'https://stage.api.beatleader.net/player/{player.sid}?stats=true'
+        url = f'https://api.beatleader.xyz/player/{player.sid}?stats=true'
         res = requests.get(url)
 
         if res.status_code == 200:

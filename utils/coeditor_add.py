@@ -2,6 +2,9 @@ import os
 import django
 
 def process():
+    import sys
+    cwd = os.getcwd()
+    sys.path.append(cwd)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Playlist, Player

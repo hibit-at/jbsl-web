@@ -10,6 +10,7 @@ urlpatterns = [
     path('userpage/<int:sid>', views.userpage, name='userpage'),
     path('activate_process/', views.activate_process, name='activate_process'),
     path('create_playlist/', views.create_playlist, name='create_playlist'),
+    path('playlists/', views.playlists, name='playlists', kwargs={'page': 1}),
     path('playlists/<int:page>', views.playlists, name='playlists'),
     path('playlist/<int:pk>', views.playlist, name='playlist'),
     path('download_playlist/<int:pk>',

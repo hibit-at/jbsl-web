@@ -11,6 +11,7 @@ from PIL import Image
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, Max
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -1432,9 +1433,11 @@ def headlines(request, page=1):
     return render(request, 'headlines.html', context)
 
 
-def players(request, sort='borderPP'):
+def players(request, sort='borderPP',page=1):
     context = {}
     user = request.user
+    page = request.GET.get('page',1)
+    print(page)
     print(request.GET)
     if 'sort' in request.GET:
         sort = request.GET['sort']
@@ -1447,7 +1450,11 @@ def players(request, sort='borderPP'):
             context['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by(f'-{sort}', '-borderPP')
+    for i,active in enumerate(active_players):
+        setattr(active,'rank',i+1)
     print(active_players)
+    # paginator = Paginator(active_players, 50)
+    # players = paginator.get_page(page)
 
     label = {
         'borderPP': '有効PP',

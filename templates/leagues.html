@@ -5,6 +5,5 @@
             <button class="btn" onclick="location.href='{% url 'app:create_league' %}'">リーグを開催する</button>
         </p>
     {% endif %}
-    {% include "live_leagues.html" with leagues=active_leagues %}
     {% include "end_leagues.html" with leagues=end_leagues %}
 {% endblock content %}

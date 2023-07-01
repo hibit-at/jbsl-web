@@ -134,6 +134,15 @@
                             <button class="btn" name="up" value="{{ song.pk }}">▲</button>
                             <button class="btn" name="down" value="{{ song.pk }}">▼</button>
                             {{ song.order }}
+                            <input type="hidden" name="song_id" value="{{ song.pk }}">
+                            <select name="genre">
+                                {% for genre_value in genres %}
+                                    <option value="{{ genre_value }}">
+                                        {{ genre_value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <input type="submit" value="Submit">
                         </form>
                     {% endif %}
                 </td>

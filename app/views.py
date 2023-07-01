@@ -43,7 +43,7 @@ char_dict = {
     'SoloOneSaber': 'OneSaber',
     'Solo90Degree': '90Degree',
     'Solo360Degree': '360Degree',
-    'SoloNoArrows' : 'NoArrows',
+    'SoloNoArrows': 'NoArrows',
 }
 
 char_dict_inv = {
@@ -52,7 +52,7 @@ char_dict_inv = {
     'OneSaber': 'SoloOneSaber',
     '90Degree': 'Solo90Degree',
     '360Degree': 'Solo360Degree',
-    'NoArrows' : 'SoloNoArrows',
+    'NoArrows': 'SoloNoArrows',
 }
 
 col_dict = {
@@ -579,7 +579,7 @@ def add_playlist(playlist, json_data):
                 print('no LID')
 
                 # try beatleader
-                
+
                 # beatleader id list-up
                 url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
                 res = requests.get(url).json()
@@ -589,10 +589,11 @@ def add_playlist(playlist, json_data):
                     bid = r['id']
                     res_diff = r['difficulty']['difficultyName']
                     res_mode = r['difficulty']['modeName']
-                    print(res_diff,res_mode)
+                    print(res_diff, res_mode)
                     if res_diff == diff and res_mode == char:
                         break
-                beatleader_song = create_song_by_beatleader(hash,char,diff,bid)
+                beatleader_song = create_song_by_beatleader(
+                    hash, char, diff, bid)
                 if beatleader_song != None:
                     print('add by beatleader', beatleader_song)
                     playlist.songs.add(beatleader_song)
@@ -603,13 +604,13 @@ def add_playlist(playlist, json_data):
             create_song_by_hash(hash, diff_num, char, lid)
 
         # 作成に失敗した場合は強制終了、基本的には発生しない
-        print(hash,diff,char)
+        print(hash, diff, char)
         if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
             print('failed!')
             continue
 
         song_object = Song.objects.get(hash=hash, diff=diff, char=char)
-        print('add by scoresaber',song_object)
+        print('add by scoresaber', song_object)
         playlist.songs.add(song_object)
         print(hash, char, diff)
 
@@ -769,7 +770,6 @@ def create_song_by_beatleader(hash, char, dif, bid):
     )
 
 
-
 def playlist(request, pk):
     context = {}
     user = request.user
@@ -902,6 +902,7 @@ def playlist(request, pk):
                 swapped_song.order += 1
                 swapped_song.save()
             songInfo.save()
+            return redirect('app:playlist', pk=pk)
         if 'down' in post:
             # lid = post['down']
             song_pk = post['down']
@@ -914,6 +915,7 @@ def playlist(request, pk):
                 swapped_song.order -= 1
                 swapped_song.save()
             songInfo.save()
+            return redirect('app:playlist', pk=pk)
         if 'add_from_map' in post:
             hash = post['hash']
             char = post['char']
@@ -931,7 +933,7 @@ def playlist(request, pk):
                 context['errorMessage'] = 'スコアセイバーの ID が見つかりません'
 
                 # beta v3 registartion
-                
+
                 # beatleader id list-up
                 url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
                 res = requests.get(url).json()
@@ -942,20 +944,20 @@ def playlist(request, pk):
                     bid = r['id']
                     res_diff = r['difficulty']['difficultyName']
                     res_mode = r['difficulty']['modeName']
-                    print(res_diff,res_mode)
-                    print(dif,char)
+                    print(res_diff, res_mode)
+                    print(dif, char)
                     if res_diff == dif and res_mode == char:
                         break
                 if bid == -1:
                     context['errorMessage'] = 'ビートリーダーの ID 検出が正常に起動しませんでした'
                 print(bid)
-                song = create_song_by_beatleader(hash, char,dif,bid)
+                song = create_song_by_beatleader(hash, char, dif, bid)
                 if song is not None:
                     playlist.songs.add(song)
                     SongInfo.objects.update_or_create(
-                        song = song,
-                        playlist = playlist,
-                        defaults={'order' : sort_index},
+                        song=song,
+                        playlist=playlist,
+                        defaults={'order': sort_index},
                     )
                 return redirect('app:playlist', pk=pk)
             else:
@@ -970,8 +972,38 @@ def playlist(request, pk):
                     )
                     # playlist.recommend.remove(song)
                 return redirect('app:playlist', pk=pk)
+        if 'genre' in post:
+            genre = post['genre']
+            song_pk = post['song_id']
+            # print(genre,pk)
+            song_info = SongInfo.objects.get(song__pk=song_pk,playlist=playlist)
+            if genre != "---":
+                song_info.genre = genre
+            else:
+                song_info.genre = None
+            song_info.save()
+            # print(song_info)
+            return redirect('app:playlist', pk=pk)
+        
     playlist = make_sorted_playlist(playlist)
     context['playlist'] = playlist
+
+    # genre
+    genres = [
+        "---",
+        "TrueAcc",
+        "StandardAcc",
+        "TechAcc",
+        "LowTech",
+        "HighTech",
+        "Balanced",
+        "Full-Range",
+        "Speed",
+        "Stamina",
+        "Enjoy",
+        "Unlimited",
+    ]
+    context['genres'] = genres
 
     return render(request, 'playlist.html', context)
 
@@ -1417,10 +1449,10 @@ def headlines(request, page=1):
     return render(request, 'headlines.html', context)
 
 
-def players(request, sort='borderPP',page=1):
+def players(request, sort='borderPP', page=1):
     context = {}
     user = request.user
-    page = request.GET.get('page',1)
+    page = request.GET.get('page', 1)
     print(page)
     print(request.GET)
     if 'sort' in request.GET:
@@ -1434,8 +1466,8 @@ def players(request, sort='borderPP',page=1):
             context['invitations'] = invitations
     active_players = Player.objects.filter(
         isActivated=True).order_by(f'-{sort}', '-borderPP')
-    for i,active in enumerate(active_players):
-        setattr(active,'rank',i+1)
+    for i, active in enumerate(active_players):
+        setattr(active, 'rank', i+1)
     print(active_players)
     # paginator = Paginator(active_players, 50)
     # players = paginator.get_page(page)

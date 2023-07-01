@@ -722,7 +722,7 @@ def playlists(request, page=1):
     return render(request, 'playlists.html', context)
 
 
-def make_sorted_playlist(playlist):
+def make_sorted_playlist(playlist: Playlist):
     from operator import attrgetter
     sorted_songs = []
 
@@ -730,6 +730,7 @@ def make_sorted_playlist(playlist):
         songinfo, created = SongInfo.objects.get_or_create(
             song=song, playlist=playlist)
         song.order = songinfo.order if not created else 0
+        song.genre = songinfo.genre if not created else None
         sorted_songs.append(song)
 
     sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
@@ -855,29 +856,12 @@ def playlist(request, pk):
                     playlist=playlist,
                     defaults={'order': sort_index},
                 )
-                # playlist.recommend.remove(song)
             return redirect('app:playlist', pk=pk)
-        # if 'recommend_song' in post and post['recommend_song'] != '':
-        #     lid = post['recommend_song'].split('/')[-1]
-        #     url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
-        #     res = requests.get(url).json()
-        #     hash = res['songHash']
-        #     diff_num = res['difficulty']['difficulty']
-        #     gameMode = res['difficulty']['gameMode']
-        #     char = char_dict[gameMode]
-        #     song = create_song_by_hash(hash, diff_num, char, lid)
-        #     if song is not None:
-        #         playlist.recommend.add(song)
         if 'remove_song' in post and post['remove_song'] != '':
-            # lid = post['remove_song']
             song_pk = post['remove_song']
             song = Song.objects.get(pk=song_pk)
             playlist.songs.remove(song)
             return redirect('app:playlist', pk=pk)
-        # if 'remove_recommend' in post and post['remove_recommend'] != '':
-        #     lid = post['remove_recommend']
-        #     song = Song.objects.get(lid=lid)
-        #     playlist.recommend.remove(song)
         if 'description' in post and post['description'] != '':
             description = post['description']
             playlist.description = description[:100]

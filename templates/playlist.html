@@ -33,15 +33,15 @@
     </a>
 </p>
 {% if coeditors %}
-<p>
-Co-editor :
-{% for player in coeditors %}
+    <p>
+        Co-editor :
+        {% for player in coeditors %}
             <a href={% url 'app:userpage' sid=player.sid %}>
                 <img class="icon" src="{{ player.imageURL }}" />
                 {{ player }}
             </a>
-            {% endfor %}
-        </p>
+        {% endfor %}
+    </p>
 {% endif %}
 {% if leagues|length > 0 %}
     <p>
@@ -99,45 +99,46 @@ Co-editor :
         <button class="btn">変更</button>
     </form>
 {% endif %}
-<h3> {{ playlist.sorted_songs|length }} Songs</h3>
+<h3>{{ playlist.sorted_songs|length }} Songs</h3>
 <table class="table table-striped table-borderless">
     <thead>
         <th>Cover</th>
         <th>Title</th>
         <th>Author</th>
         <th>Diff</th>
-        <th>Edit</th>
+        <th>Genre</th>
+        {% if isEditor and playlist.isEditable %}<th>Edit</th>{% endif %}
     </thead>
     <tbody id="sortable">
-    {% for song in playlist.sorted_songs %}
-        <tr>
-            <td>
-                <a href="https://scoresaber.com/leaderboard/{{ song.lid }}">
-                    <img class="mid-thumb" src="{{ song.imageURL }}"/>
-                </a>
-            </td>
-            <td>{{ song.title|truncatechars:50 }}</td>
-            <td>{{ song.author }}</td>
-            <td>
-                <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
-            </td>
-            <td>
-                {% if isEditor and playlist.isEditable %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <button class="danger"
-                                type="submit"
-                                name="remove_song"
-                                value="{{ song.pk }}">削除</button>
-                        <button class="btn" name="up" value="{{ song.pk }}">▲</button>
-                        <button class="btn" name="down" value="{{ song.pk }}">▼</button>
-                        {{ song.order }}
-                    </form>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
+        {% for song in playlist.sorted_songs %}
+            <tr>
+                <td>
+                    <a href="https://scoresaber.com/leaderboard/{{ song.lid }}">
+                        <img class="mid-thumb" src="{{ song.imageURL }}"/>
+                    </a>
+                </td>
+                <td>{{ song.title|truncatechars:50 }}</td>
+                <td>{{ song.author }}</td>
+                <td>
+                    <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
+                    {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
+                </td>
+                <td>
+                    {% if song.genre != None %}{{ song.genre }}{% endif %}
+                </td>
+                <td>
+                    {% if isEditor and playlist.isEditable %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
+                            <button class="btn" name="up" value="{{ song.pk }}">▲</button>
+                            <button class="btn" name="down" value="{{ song.pk }}">▼</button>
+                            {{ song.order }}
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% if isEditor and playlist.isEditable %}
@@ -153,7 +154,6 @@ Co-editor :
         ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
     </form>
 {% endif %}
-
 {% if playlist.recommend.all|length > 0 and playlist.isEditable %}
     <hr style="height:5px; background-color:mediumseagreen;">
     <h3>Recommend</h3>
@@ -163,7 +163,9 @@ Co-editor :
             <th>Title</th>
             <th>Author</th>
             <th>Diff</th>
-            <th>Accept</th>
+            <th>
+                Accept
+            </th>
             <th>
                 Decline
             </th>

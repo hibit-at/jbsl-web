@@ -17,7 +17,7 @@ admin.site.register(Score, search_fields=['player__name', 'song__title'], readon
 admin.site.register(Playlist, search_fields=['title', 'editor'], readonly_fields=['songs','recommend','CoEditor'])
 admin.site.register(Participant, search_fields=['player__name', 'league__name'])
 admin.site.register(Headline, search_fields=['player__name'], readonly_fields=['score','player'])
-admin.site.register(SongInfo, readonly_fields=['song','playlist'])
+admin.site.register(SongInfo, readonly_fields=['song','playlist'], search_fields=['song__title'])
 admin.site.register(Badge, BadgeAdmin)
 admin.site.register(JPMap, search_fields=['name', 'uploader__name'])
 admin.site.register(Match)

@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from time import time
+from typing import Dict, List, Any
 
 import requests
 from PIL import Image
@@ -134,7 +135,7 @@ def slope(n: int) -> int:
     return -(n+2)
 
 
-def validation(s: str):
+def validation(s: str) -> str:
     ans = ''
     for c in s:
         if b'\xc2\x80' <= c.encode('utf-8') and c.encode('utf-8') <= b'\xd4\xbf':
@@ -143,7 +144,35 @@ def validation(s: str):
     return ans
 
 
-def index(request):
+def get_love_pair_context(active_players) -> Dict[str, Any]:
+    context = {}
+    love_pair = 0
+    love_sort = defaultdict(int)
+    love_max = 0
+    for player in active_players:
+        if player.rival != None:
+            love_sort[player.rival] += 1
+            love_max = max(love_max, love_sort[player.rival])
+            if player.rival.rival == player:
+                love_pair += 1
+    love_pair = int(love_pair/2)
+    love_sort = [k for k, v in love_sort.items() if v == love_max]
+    context['love_max'] = love_max
+    context['love_pair'] = love_pair
+    context['love_sort'] = love_sort
+    return context
+
+def get_headline_and_league_context() -> Dict[str, Any]:
+    context = {}
+    headlines = Headline.objects.all().order_by('-time')[:8]
+    context['headlines'] = headlines
+    active_leagues = League.objects.filter(
+        isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
+    context['active_leagues'] = active_leagues
+    return context
+
+
+def index(request) -> HttpResponse:
     context = {}
     user = request.user
     if user.is_authenticated:
@@ -162,9 +191,9 @@ def index(request):
                     continue
                 invitations.append(league)
             context['invitations'] = invitations
-    active_players = Player.objects.filter(
-        isActivated=True).order_by('-borderPP')
-    context['active_players'] = active_players
+    # active_players = Player.objects.filter(
+    #     isActivated=True).order_by('-borderPP')
+    # context['active_players'] = active_players
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -179,27 +208,8 @@ def index(request):
             league = League.objects.get(pk=decline)
             league.invite.remove(player)
             return redirect('app:index')
-    headlines = Headline.objects.all().order_by('-time')[:8]
-    context['headlines'] = headlines
-    active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
-    context['active_leagues'] = active_leagues
-
-    love_pair = 0
-    love_sort = defaultdict(int)
-    love_max = 0
-    for player in active_players:
-        if player.rival != None:
-            love_sort[player.rival] += 1
-            love_max = max(love_max, love_sort[player.rival])
-            if player.rival.rival == player:
-                love_pair += 1
-    love_pair = int(love_pair/2)
-    love_sort = [k for k, v in love_sort.items() if v == love_max]
-    context['love_max'] = love_max
-    context['love_pair'] = love_pair
-    context['love_sort'] = love_sort
-
+    context.update(get_headline_and_league_context())
+    # context.update(get_love_pair_context(context['active_players']))
     return render(request, 'index.html', context)
 
 

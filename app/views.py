@@ -1274,9 +1274,11 @@ def create_league(request):
     default_end = datetime.now() + timedelta(days=14)
     default_end_str = default_end.strftime('%Y-%m-%dT%H:%M')
     context['default_end_str'] = default_end_str
-    playlists = Playlist.objects.all().filter(editor=user.player)
+    playlists = Playlist.objects.all().filter(editor=user.player).order_by('-pk')
     playlists = playlists.annotate(num_of_songs=Count('songs'))
-    playlists = playlists.filter(num_of_songs__lte=20)
+    if not user.is_staff:
+        playlists = playlists.filter(num_of_songs__lte=20)
+    playlists = playlists[:20]
     context['playlists'] = playlists
     context['league_colors'] = league_colors
     if request.method == 'POST':

@@ -22,7 +22,10 @@
                 </li>
                 <li>
                     !bsr Command
-                    <input type="text" size="60px" name="bsr_command"/>
+                    <input type="text"
+                           size="60px"
+                           name="bsr_command"
+                           {% if bsr != None %}value="!bsr {{ bsr }}"{% endif %}/>
                     （例：!bsr 23d0c、https://beatsaver.com/maps/23d0c）
                 </li>
             </ul>
@@ -31,12 +34,47 @@
     {% endif %}
     {% if results|length > 0 %}
         <hr>
+        <button class="btn" id="copyButton">!bsr {{ bsr }}</button>　クリップボードにコピーします
+        <span id="copyStatus" style="visibility: hidden; margin-left: 10px;">Copied!</span>
         <h3>解析結果</h3>
         {% for result in results %}
             <p>
-                {{ result }}
-                {% if result.link != None %}<a class="btn" href=" {{ result.link }} " target="blank">Link</a>{% endif %}
+                {% if result.link != None %}
+                    <form action="{{ result.link }}" method="get" target="_blank">
+                        {{ result }}
+                        <button class="btn" type="submit">Link</button>
+                    </form>
+                {% else %}
+                    {{ result }}
+                {% endif %}
             </p>
         {% endfor %}
     {% endif %}
+    <script>
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // ボタンのテキストを取得
+            var textToCopy = this.innerText;
+        
+            // 一時的なテキストエリアを作成して、テキストをセット
+            var tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+        
+            // テキストエリアの内容を選択してコピー
+            tempTextArea.select();
+            document.execCommand('copy');
+        
+            // 一時的なテキストエリアを削除
+            document.body.removeChild(tempTextArea);
+            
+            // 「Copied!」というテキストを表示
+            var copyStatus = document.getElementById('copyStatus');
+            copyStatus.style.visibility = 'visible';
+
+            // 2秒後に「Copied!」というテキストを非表示にする（オプション）
+            setTimeout(function() {
+                copyStatus.style.visibility = 'hidden';
+            }, 2000);
+                });
+    </script>
 {% endblock content %}

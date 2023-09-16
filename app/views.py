@@ -1630,7 +1630,7 @@ def bsr_checker(request):
                        f'https://scoresaber.com/u/{player.sid}')
         context['results'] = results
         bsr = post['bsr_command'].split(' ')[-1].split('/')[-1]
-        results.append(f'検出された bsr key : {bsr}')
+        results.append(f'検出された bsr key : {bsr}',f'!bsr {bsr}')
         url = f'https://api.beatsaver.com/maps/id/{bsr}'
         res = requests.get(url).json()
         print(res)
@@ -1680,6 +1680,7 @@ def bsr_checker(request):
         print(results)
         context['twitch'] = twitchURL
         context['results'] = results.results
+        context['bsr'] = bsr
 
     return render(request, 'bsr_checker.html', context)
 

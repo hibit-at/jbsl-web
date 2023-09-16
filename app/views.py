@@ -162,6 +162,7 @@ def get_love_pair_context(active_players) -> Dict[str, Any]:
     context['love_sort'] = love_sort
     return context
 
+
 def get_headline_and_league_context() -> Dict[str, Any]:
     context = {}
     headlines = Headline.objects.all().order_by('-time')[:8]
@@ -676,6 +677,9 @@ def create_playlist(request):
             if Playlist.objects.filter(title=title).exists():
                 context['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
                 return render(request, 'create_playlist.html', context)
+            isHidden = True
+            if 'open' in request.POST:
+                isHidden = False                
             editor = request.user.player
             isEditable = True
             url = 'https://4.bp.blogspot.com/-ZHlXgooA38A/Wn1WVe2XBhI/AAAAAAABKJY/5BE6ZAbyeRwv3UlGsVU2YfPWVS_uT0PFQCLcBGAs/s800/text_kakko_kari.png'
@@ -691,6 +695,7 @@ def create_playlist(request):
                 editor=editor,
                 description=description,
                 isEditable=isEditable,
+                isHidden=isHidden,
                 image='data:image/png;base64,' + img_str
             )
             return redirect('app:playlist', pk=playlist.pk)
@@ -986,7 +991,8 @@ def playlist(request, pk):
             genre = post['genre']
             song_pk = post['song_id']
             # print(genre,pk)
-            song_info = SongInfo.objects.get(song__pk=song_pk,playlist=playlist)
+            song_info = SongInfo.objects.get(
+                song__pk=song_pk, playlist=playlist)
             if genre != "---":
                 song_info.genre = genre
             else:
@@ -994,7 +1000,15 @@ def playlist(request, pk):
             song_info.save()
             # print(song_info)
             return redirect('app:playlist', pk=pk)
-        
+        if 'back_hidden' in post:
+            playlist.isHidden = True
+            playlist.save()
+            return redirect('app:playlist', pk=pk)
+        if 'to_open' in post:
+            playlist.isHidden = False
+            playlist.save()
+            return redirect('app:playlist', pk=pk)
+
     playlist = make_sorted_playlist(playlist)
     context['playlist'] = playlist
 

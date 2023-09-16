@@ -7,6 +7,7 @@
            download="{{ playlist.title }}.json">
             <span class="dl_link">ダウンロード</span>
         </a>
+        {% if playlist.isHidden %}（未公開）{% endif %}
     </h3>
     <p>
         <img class="thumb" src="data:image/png;{{ playlist.image }}" />
@@ -14,11 +15,12 @@
             <form method="GET" action="{% url 'app:create_league' %}">
                 <input type="hidden" name="pk" value="{{ playlist.pk }}">
             </input>
-            <button class="btn">
+            <button class="btn" {% if playlist.isHidden %}disabled{% endif %}>
                 <img src="{% static 'pict_league.png' %}" height="25px">
                 　リーグを開催する　
                 <img src="{% static 'pict_league.png' %}" height="25px">
             </button>
+            {% if playlist.isHidden %}<p style="color:red">※未公開のプレイリストでリーグを開くことはできません。</p>{% endif %}
         </form>
     {% endif %}
 </p>
@@ -75,12 +77,32 @@
         </p>
     </form>
 {% endif %}
+{% if isEditor %}
+    <p>
+        {% if playlist.isHidden %}
+            <form method="post">
+                公開状況：未公開
+                {% csrf_token %}
+                <button class="btn" type="submit" name="to_open">プレイリストを公開する</button>
+            </form>
+            <p style="color:red">
+                ※このプレイリストは現在、未公開です。あなた以外からは見えていません。
+            </p>
+        {% else %}
+            <form method="post">
+                公開状況：公開
+                {% csrf_token %}
+                {% if playlist.isEditable %}<button class="btn"  type="submit" name="back_hidden">プレイリストを未公開に戻す</button>{% endif %}
+            </form>
+        {% endif %}
+    </p>
+{% endif %}
 <p>
     <form method="post" onSubmit="return check()">
         更新：
         {% if playlist.isEditable %}
             📝可能
-            {% if isEditor %}
+            {% if isEditor and not playlist.isHidden %}
                 {% csrf_token %}
                 <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
             {% endif %}
@@ -170,8 +192,12 @@
         <thead>
             <th>Cover</th>
             <th>Title</th>
-            <th>Author</th>
-            <th>Diff</th>
+            <th>
+                Author
+            </th>
+            <th>
+                Diff
+            </th>
             <th>
                 Accept
             </th>

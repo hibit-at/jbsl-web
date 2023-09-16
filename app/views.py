@@ -530,7 +530,7 @@ def activate_process(request):
         player.isActivated = True
         player.pp = pp
         player.save()
-        text = f'{player} さんが参加しました！　JBSLへようこそ！'
+        text = f'{player} さんが参加しました！　JBSL-Webへようこそ！'
         Headline.objects.create(
             player=player,
             text=text,

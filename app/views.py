@@ -1001,17 +1001,13 @@ def playlist(request, pk):
     # genre
     genres = [
         "---",
-        "TrueAcc",
-        "StandardAcc",
-        "TechAcc",
-        "LowTech",
-        "HighTech",
+        "Acc",
+        "Tech",
         "Balanced",
-        "Full-Range",
+        "FullRange",
         "Speed",
         "Stamina",
-        "Enjoy",
-        "Unlimited",
+        "Concept",
     ]
     context['genres'] = genres
 

@@ -21,9 +21,9 @@
                 <img src="{% static 'pict_league.png' %}" height="25px">
             </button>
             {% if playlist.isHidden %}
-                <p style="color:red">
+                <span style="color:red">
                     ※未公開のプレイリストでリーグを開くことはできません。
-                </p>
+                </span>
             {% endif %}
         </form>
     {% endif %}
@@ -101,7 +101,7 @@
                         <button class="btn"  type="submit" name="back_hidden">プレイリストを未公開に戻す</button>
                     {% else %}
                         <button class="btn"  type="submit" name="back_hidden" disabled>プレイリストを未公開に戻す</button>
-                        　※リーグ開催中のプレイリストを未公開に戻すことはできません
+                        <span style="color:red">※リーグ開催中のプレイリストを未公開に戻すことはできません</span>
                     {% endif %}
                 {% endif %}
             </form>
@@ -116,7 +116,7 @@
             {% if isEditor and not playlist.isHidden %}
                 {% csrf_token %}
                 <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
-                　※この操作は取り消しできませんので、ご注意ください
+                　この操作は取り消しできませんので、ご注意ください
             {% endif %}
         {% else %}
             🔐不可能
@@ -286,7 +286,12 @@
                 </p>
             </form>
         {% else %}
-            リーグ開催中のプレイリストを削除することはできません
+            <p style="color:red">
+                <button class="btn danger" disabled>
+                    削除
+                </button>
+            ※リーグ開催中のプレイリストを削除することはできません
+            </p>
         {% endif %}
     {% else %}
         <p>

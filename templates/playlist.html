@@ -20,7 +20,11 @@
                 　リーグを開催する　
                 <img src="{% static 'pict_league.png' %}" height="25px">
             </button>
-            {% if playlist.isHidden %}<p style="color:red">※未公開のプレイリストでリーグを開くことはできません。</p>{% endif %}
+            {% if playlist.isHidden %}
+                <p style="color:red">
+                    ※未公開のプレイリストでリーグを開くことはできません。
+                </p>
+            {% endif %}
         </form>
     {% endif %}
 </p>
@@ -92,7 +96,14 @@
             <form method="post">
                 公開状況：公開
                 {% csrf_token %}
-                {% if playlist.isEditable %}<button class="btn"  type="submit" name="back_hidden">プレイリストを未公開に戻す</button>{% endif %}
+                {% if playlist.isEditable %}
+                    {% if not league_used %}
+                        <button class="btn"  type="submit" name="back_hidden">プレイリストを未公開に戻す</button>
+                    {% else %}
+                        <button class="btn"  type="submit" name="back_hidden" disabled>プレイリストを未公開に戻す</button>
+                        　※リーグ開催中のプレイリストを未公開に戻すことはできません
+                    {% endif %}
+                {% endif %}
             </form>
         {% endif %}
     </p>
@@ -105,6 +116,7 @@
             {% if isEditor and not playlist.isHidden %}
                 {% csrf_token %}
                 <button class="danger" type="submit" name="editable">プレイリストを固定し、更新不可能にする</button>
+                　※この操作は取り消しできませんので、ご注意ください
             {% endif %}
         {% else %}
             🔐不可能
@@ -191,7 +203,9 @@
     <table class="table table-striped table-borderless">
         <thead>
             <th>Cover</th>
-            <th>Title</th>
+            <th>
+                Title
+            </th>
             <th>
                 Author
             </th>
@@ -251,32 +265,29 @@
 {% if isEditor %}
     <hr style="height:5px; background-color:ff8628;">
     {% if playlist.isEditable %}
-        <h3>
-            プレイリストの削除
-        </h3>
-        <form method="post">
-            {% csrf_token %}
-            <Label>
-                Title :
-            </Label>
-            <input type="text" size="40px" name="remove_playlist"/>
-            <button class="danger"
-                    type="submit"
-                    name="confirm"
-                    value="{{ playlist.title }}">
-                削除
-            </button>
-            <p>
-                <ul>
-                    <li>
-                        誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
-                    </li>
-                    <li>
-                        確認画面等は一切出ませんので、ご注意ください。
-                    </li>
-                </ul>
-            </p>
-        </form>
+        {% if not league_used %}
+            <h3>
+                プレイリストの削除
+            </h3>
+            <form method="post" onSubmit="return delete_check()">
+                {% csrf_token %}
+                <Label>
+                    Title :
+                </Label>
+                <input type="text" size="40px" name="remove_playlist"/>
+                <button class="danger"
+                        type="submit"
+                        name="confirm"
+                        value="{{ playlist.title }}">
+                    削除
+                </button>
+                <p>
+                    誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
+                </p>
+            </form>
+        {% else %}
+            リーグ開催中のプレイリストを削除することはできません
+        {% endif %}
     {% else %}
         <p>
             更新不可能にしたプレイリストを削除することはできません
@@ -290,6 +301,15 @@
         }
         else{ // 「キャンセル」時の処理
             window.alert('固定化を取り消しました。'); // 警告ダイアログを表示
+            return false; // 送信を中止
+        }
+    }
+    function delete_check(){
+        if(window.confirm('プレイリストを削除しますか？　この操作は取り消せません。')){ // 確認ダイアログを表示
+            return true; // 「OK」時は送信を実行
+        }
+        else{ // 「キャンセル」時の処理
+            window.alert('プレイリストの削除を取り消しました。'); // 警告ダイアログを表示
             return false; // 送信を中止
         }
     }

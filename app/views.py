@@ -819,6 +819,10 @@ def playlist(request, pk):
     context['coeditors'] = coeditors
     context['playlist'] = playlist
 
+    # league_used check
+    league_used = League.objects.filter(playlist=playlist).exists()
+    context['league_used'] = league_used
+
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         context['social'] = social

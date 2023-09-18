@@ -2331,3 +2331,12 @@ def player_matrix(request):
     context['now_scale'] = scale
 
     return render(request, 'player_matrix.html', context)
+
+
+def genre_criteria(request):
+    context = {}
+    user = request.user
+    if user.is_authenticated:
+        social = SocialAccount.objects.get(user=user)
+        context['social'] = social
+    return render(request, f'genre_criteria.html', context)

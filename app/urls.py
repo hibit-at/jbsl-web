@@ -43,4 +43,5 @@ urlpatterns = [
     path('api/dga', views.api_dga, name='api_dga'),
     path('api/dga/post',views.api_dga_post, name='api_dga_post'),
     path('player_matrix/',views.player_matrix,name='player_matrix'),
+    path('genre_criteria',views.genre_criteria, name='genre_criteria'),
 ]

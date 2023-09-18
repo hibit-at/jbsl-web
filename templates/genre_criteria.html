@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="in-text">
+        <h2>JBSL Genre Criteria</h2>
+        <h3>概要</h3>
+        <p>
+            Japan Beat Saber League 運営チームは、プレイヤーとプーラーの認識を一致させ、よりプレイヤーの期待するマッププールを提供しやすくするために、以下にジャンルの基準を定める。
+        </p>
+        <p>
+            大会応募譜面の希望ジャンルやマッププール内でのジャンル表示は、以下の 7 ジャンルとなる。
+        </p>
+        <ul>
+            <li>Acc</li>
+            <li>Tech</li>
+            <li>Balanced</li>
+            <li>Full Range</li>
+            <li>Speed</li>
+            <li>Stamina</li>
+            <li>Concept</li>
+        </ul>
+        <h3>本文</h3>
+        <p>
+            本文は<a href="https://docs.google.com/document/d/1VtEzBUZbuwZ1vWBeAptonmITdfXnZKH9GR9gCzgcKvQ/edit">こちら</a>
+        </p>
+        <h3>参考譜面</h3>
+        <p>
+            プレイリストは<a href="{% url "app:playlist" pk=236 %}">こちら</a>
+        </p>
+    </div>
+{% endblock content %}

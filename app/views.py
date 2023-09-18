@@ -671,9 +671,6 @@ def create_playlist(request):
         if 'title' in post:
             title = post['title']
             description = post['description']
-            if title == '' or description == '':
-                context['error'] = 'ERROR : タイトルと説明文の両方を記入してください。'
-                return render(request, 'create_playlist.html', context)
             if Playlist.objects.filter(title=title).exists():
                 context['error'] = 'ERROR : すでに同名のプレイリストが存在します。'
                 return render(request, 'create_playlist.html', context)
@@ -1292,7 +1289,7 @@ def create_league(request):
     playlists = playlists.annotate(num_of_songs=Count('songs'))
     if not user.is_staff:
         playlists = playlists.filter(num_of_songs__lte=20)
-    playlists = playlists[:20]
+    playlists = playlists.filter(isHidden=False)[:20]
     context['playlists'] = playlists
     context['league_colors'] = league_colors
     if request.method == 'POST':

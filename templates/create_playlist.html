@@ -8,7 +8,7 @@
                 {% csrf_token %}
                 <p>
                     <Label>File :</Label>
-                    <input type="file" name="playlist" accept=".json,.bplist"/>
+                    <input type="file" name="playlist" accept=".json,.bplist" required/>
                 </p>
                 <p>
                     <Label>更新可能 :</Label>
@@ -38,11 +38,11 @@
             {% csrf_token %}
             <p>
                 <Label>Title :</Label>
-                <input type="text" size="50px" name="title">
+                <input type="text" size="50px" name="title" required>
             </p>
             <p>
                 <Label>Description :</Label>
-                <input type="textarea" style="width:400px;height:100px" name="description">
+                <input type="textarea" style="width:400px;height:100px" name="description" required>
             </p>
             <p>
                 <Label>公開 :</Label>

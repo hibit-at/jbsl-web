@@ -81,7 +81,7 @@
                     <ul>
                         <li>マッププールの中から、どれだけの譜面が有効譜面となるかです。</li>
                         <li>有効譜面を超える譜面は、あえて詰めなくてもよい譜面となります。</li>
-                        <li>多くの場合は、マッププールの半数強程度が適切です。</li>
+                        <li>多くの場合は、マッププールの半数を少し超える程度が適切です。</li>
                     </ul>
                 </p>
                 <p>
@@ -116,8 +116,6 @@ $("input[name='valid']").on("input", function (e) {
 var range = e.target
 $(".indicate-valid").text(range.value)
 })
-    </script>
-    <script>
 $("input[name='limit']").on("input", function (e) {
 var range = e.target
 $(".indicate-limit").text(range.value)

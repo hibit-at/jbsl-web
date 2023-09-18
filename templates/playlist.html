@@ -20,11 +20,7 @@
                 　リーグを開催する　
                 <img src="{% static 'pict_league.png' %}" height="25px">
             </button>
-            {% if playlist.isHidden %}
-                <span style="color:red">
-                    ※未公開のプレイリストでリーグを開くことはできません。
-                </span>
-            {% endif %}
+            {% if playlist.isHidden %}<span style="color:red">※未公開のプレイリストでリーグを開くことはできません。</span>{% endif %}
         </form>
     {% endif %}
 </p>
@@ -197,12 +193,16 @@
         ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
     </form>
 {% endif %}
-{% if playlist.recommend.all|length > 0 and playlist.isEditable %}
+{% comment %} {% if playlist.recommend.all|length > 0 and playlist.isEditable %}
     <hr style="height:5px; background-color:mediumseagreen;">
-    <h3>Recommend</h3>
+    <h3>
+        Recommend
+    </h3>
     <table class="table table-striped table-borderless">
         <thead>
-            <th>Cover</th>
+            <th>
+                Cover
+            </th>
             <th>
                 Title
             </th>
@@ -261,9 +261,9 @@
             </tr>
         {% endfor %}
     </table>
-{% endif %}
+{% endif %} {% endcomment %}
 {% if isEditor %}
-    <hr style="height:5px; background-color:ff8628;">
+    <hr style="height:5px; background-color:saddlebrown;">
     {% if playlist.isEditable %}
         {% if not league_used %}
             <h3>
@@ -274,11 +274,17 @@
                 <Label>
                     Title :
                 </Label>
-                <input type="text" size="40px" name="remove_playlist"/>
-                <button class="danger"
+                <input type="text"
+                       size="40px"
+                       name="remove_playlist"
+                       onkeyup="checkValue()"
+                       id="inputTitle"/>
+                <button class="btn danger"
                         type="submit"
                         name="confirm"
-                        value="{{ playlist.title }}">
+                        value="{{ playlist.title }}"
+                        id="deleteButton"
+                        disabled>
                     削除
                 </button>
                 <p>
@@ -290,7 +296,7 @@
                 <button class="btn danger" disabled>
                     削除
                 </button>
-            ※リーグ開催中のプレイリストを削除することはできません
+                ※リーグ開催中のプレイリストを削除することはできません
             </p>
         {% endif %}
     {% else %}
@@ -316,6 +322,16 @@
         else{ // 「キャンセル」時の処理
             window.alert('プレイリストの削除を取り消しました。'); // 警告ダイアログを表示
             return false; // 送信を中止
+        }
+    }
+    function checkValue() {
+        var inputValue = document.getElementById('inputTitle').value;
+        var deleteButton = document.getElementById('deleteButton');
+        
+        if (inputValue === '{{ playlist.title }}') {
+            deleteButton.disabled = false;
+        } else {
+            deleteButton.disabled = true;
         }
     }
 </script>

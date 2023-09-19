@@ -9,7 +9,14 @@
                 あなたはまだ JBSL の Discord サーバーに参加していません。以下のボタンから参加お願いします。
             </p>
             <p>
-                <a href="https://discord.gg/CqQ6ZD8KRn"><img src="{% static 'Discord.png' %}" height=200 width=200 style="filter:invert()"></a>
+                <a href="https://discord.gg/CqQ6ZD8KRn">
+                    <img src="{% static 'Discord.png' %}"
+                         height
+                         200
+                         width
+                         200
+                         style="filter:invert()">
+                </a>
             </p>
         </div>
     {% endif %}
@@ -38,16 +45,29 @@
             </h3>
         {% endif %}
     </div>
-    <h3>Headlines</h3>
-    {% for headline in headlines %}
-        <ul>
-            {% include 'headline_object.html' %}
-        </ul>
-    {% endfor %}
-    <p>
-        <form action="{% url 'app:headlines' page=1 %}">
-            <button class="btn">All Headlines</button>
-        </form>
-    </p>
-    {% include "live_leagues.html" with leagues=active_leagues %}
+    <div style="width:300px;margin:auto">
+        <p>
+            ！！JBSL 6 開催決定！！　<a href="https://twitter.com/115_jbsl/status/1702940385419628789" style="color:orange">告知</a>
+        </p>
+        <li>10/7 マッパー募集締切</li>
+        <li>10/28～11/5 J1,J2,J3,J4 締切</li>
+        <li>11/11 J4 前半,J3 前半</li>
+        <li>11/12 J2 前半,J1 前半</li>
+        <li>11/18 J4 後半,J3 後半</li>
+        <li>11/19 J2 後半,J1 後半</li>
+        <li>11/25 打ち上げ</li>
+    </ul>
+</div>
+<h3>Headlines</h3>
+{% for headline in headlines %}
+    <ul>
+        {% include 'headline_object.html' %}
+    </ul>
+{% endfor %}
+<p>
+    <form action="{% url 'app:headlines' page=1 %}">
+        <button class="btn">All Headlines</button>
+    </form>
+</p>
+{% include "live_leagues.html" with leagues=active_leagues %}
 {% endblock %}

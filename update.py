@@ -1,13 +1,20 @@
 import os
 import django
 import requests
+import sys
 
-def update_process():
+def update_process(specific=None):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.views import top_score_registration
     from app.models import Player,League
-    for player in Player.objects.filter(isActivated=True):
+
+    if specific:
+        players = Player.objects.filter(isActivated=True, sid=specific)
+    else:
+        players = Player.objects.filter(isActivated=True)
+
+    for player in players:
         top_score_registration(player)
         print(f'{player} updated!')
         print(player.sid)
@@ -47,4 +54,8 @@ def update_process():
 
 
 if __name__ == '__main__':
-    update_process()
+    specific = None
+    if len(sys.argv) > 1:
+        specific = sys.argv[1]
+        print(f'specific mode on {specific}')
+    update_process(specific)

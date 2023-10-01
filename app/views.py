@@ -1165,7 +1165,7 @@ def check_membership_and_ownership(user, league):
     return is_member, is_owner
 
 
-def get_join_state(user: User, is_member, league: League, player: Player, is_close):
+def get_join_state(user: User, is_member, league: League, player: Player, is_close, is_prohibited):
     join_state = -1
     if user.is_authenticated:
         if is_member:
@@ -1178,8 +1178,11 @@ def get_join_state(user: User, is_member, league: League, player: Player, is_clo
             join_state = 3
         elif is_close:
             join_state = 4
-        else:
+        elif is_prohibited:
             join_state = 5
+        else:
+            join_state = 6
+        print(join_state)
     return join_state
 
 
@@ -1190,7 +1193,8 @@ join_comment = {
     2: '非公開のリーグに参加することはできません。',
     3: 'あなたは実力が高すぎるため、このリーグには参加できません……。',
     4: '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。',
-    5: '',
+    5: '同時参加不可能なリーグにすでに参加しているため、このリーグには参加できません。',
+    6: '',
 }
 
 
@@ -1205,6 +1209,15 @@ def leaderboard(request, pk):
     league = League.objects.get(pk=pk)
     context['league'] = league
 
+    # prohibited leagues
+    is_prohibited = False
+    if player:
+        user_leagues = player.league.all()
+        prohibited_leagues = league.prohibited_leagues.all()
+        is_prohibited = any(user_league in prohibited_leagues for user_league in user_leagues)
+        print(is_prohibited)
+    # 
+
     duration_start = time()
     scored_rank, LBs = calculate_scoredrank_LBs(league)
     durtaion = time() - duration_start
@@ -1218,7 +1231,7 @@ def leaderboard(request, pk):
     is_close = datetime.now(timezone.utc) >= close_line and league.isOfficial
     context['isClose'] = is_close
 
-    join_state = get_join_state(user, is_member, league, player, is_close)
+    join_state = get_join_state(user, is_member, league, player, is_close, is_prohibited)
 
     context['join_state'] = join_state
     context['join_comment'] = join_comment[join_state]

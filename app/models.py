@@ -124,6 +124,7 @@ class League(models.Model):
     isOfficial = models.BooleanField(default=False)
     ownerComment = models.CharField(default='', max_length=1000, blank=True)
     border_line = models.IntegerField(default=8)
+    prohibited_leagues = models.ManyToManyField('self', blank=True, symmetrical=True, related_name='prohibited')
 
     def __str__(self):
         return str(self.name)

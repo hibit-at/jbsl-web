@@ -77,8 +77,10 @@ def collect_maps(mapper, player=None):
 
     for r in res:
         name, bsr, hash, createdAt = r['name'], r['id'], r['versions'][0]['hash'], r['createdAt']
-        time = datetime.strptime(
-            createdAt, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        try:
+            time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%SZ")
 
         for d in r['versions'][0]['diffs']:
             nps, char, dif = d['nps'], d['characteristic'], d['difficulty']

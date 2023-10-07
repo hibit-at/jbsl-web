@@ -57,7 +57,7 @@ class Song(models.Model):
 
 class JPMap(models.Model):
     uploader = models.ForeignKey(Player, on_delete=models.CASCADE, default=None)
-    name = models.CharField(default='', max_length=200)
+    name = models.CharField(default='', max_length=2000)
     bsr = models.CharField(default='', max_length=10)
     hash = models.CharField(default='', max_length=100)
     char = models.CharField(default='', max_length=50)

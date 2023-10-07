@@ -66,7 +66,7 @@ class JPMap(models.Model):
     createdAt = models.DateTimeField()
 
     def __str__(self):
-        return f'{self.name}-{self.diff}-{self.char} by {self.uploader.name}'
+        return f'{self.createdAt} {self.name}-{self.diff}-{self.char} by {self.uploader.name}'
 
 
 class Playlist(models.Model):

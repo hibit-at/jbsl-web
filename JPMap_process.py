@@ -112,7 +112,7 @@ def collection():
 
 
 def get_last_date(dt: datetime):
-    dt = dt.replace(hour=23, minute=59)
+    dt = dt.replace(hour=23, minute=59, second=0, microsecond=0)
     return dt.replace(day=monthrange(dt.year, dt.month)[1])
 
 
@@ -127,11 +127,13 @@ def create_league(songs, start, last, division, superuser):
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
         img = create_img(start.year, start.month, division)
         img_str = 'data:image/png;base64,' + pil_to_base64(img)
-        playlist, check = Playlist.objects.update_or_create(
+        playlist, created = Playlist.objects.update_or_create(
             title=title,
-            editor=superuser,
-            description=description,
-            image=img_str,
+            defaults={
+                'editor': superuser,
+                'description': description,
+                'image': img_str
+            }
         )
         for song in songs:
             print(song)
@@ -154,17 +156,20 @@ def create_league(songs, start, last, division, superuser):
                 continue
             playlist.songs.add(new_song)
 
-        League.objects.create(
+        league, created = League.objects.update_or_create(
             name=playlist.title,
-            owner=superuser,
-            description=description,
-            color=division_colors_transparent[division],
-            max_valid=playlist.songs.count()//2+1,
-            limit=division_borders[division],
-            end=last,
-            isOpen=True,
-            playlist=playlist,
+            defaults={
+                'owner': superuser,
+                'description': description,
+                'color': division_colors_transparent[division],
+                'max_valid': playlist.songs.count() // 2 + 1,
+                'limit': division_borders[division],
+                'end': last,
+                'isOpen': True,
+                'playlist': playlist,
+            }
         )
+
 
 
 def get_division(nps):

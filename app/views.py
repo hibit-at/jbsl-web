@@ -464,7 +464,7 @@ def top_score_registration(player):
             'miss': miss,
         }
         # score_to_headline(score, song, player, league)
-        print(defaults)
+        # print(defaults)
         Score.objects.update_or_create(
             player=player,
             song=song,

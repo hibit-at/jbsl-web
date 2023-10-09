@@ -24,7 +24,7 @@ def update_process(specific=None):
         if res.status_code == 200:
 
             res = res.json()
-            print(res)
+            # print(res)
             player.accPP = res['accPp']
             player.techPP = res['techPp']
             player.passPP = res['passPp']

@@ -12,7 +12,7 @@ def update_process(specific=None):
     if specific:
         players = Player.objects.filter(isActivated=True, sid=specific)
     else:
-        players = Player.objects.filter(isActivated=True)
+        players = Player.objects.filter(isActivated=True).order_by('-borderPP')
 
     for player in players:
         top_score_registration(player)

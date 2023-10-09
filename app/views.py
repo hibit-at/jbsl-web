@@ -436,10 +436,7 @@ def top_score_registration(player):
     url = f'https://scoresaber.com/api/player/{sid}/scores?limit=10&sort=top'
     res = requests.get(url).json()
     playerScores = res['playerScores']
-    # initialize
     league = League.objects.get(name='Top10')
-    for score in Score.objects.filter(league=league, player=player):
-        score.delete()
     # add
     for playerScore in playerScores:
         leaderboard = playerScore['leaderboard']

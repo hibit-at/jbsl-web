@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
+    {% if errorMessage %}
+    <h3 style="color:red">{{ errorMessage }}</h3>
+    {% endif %}
     <h3>
         {{ playlist }}
         <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
@@ -185,7 +188,7 @@
     <form method="post">
         {% csrf_token %}
         <p>
-            譜面を追加（記入例：https://scoresaber.com/leaderboard/311076, https://beatsaver.com/maps/2543f）
+            譜面を追加（記入例：https://beatsaver.com/maps/2543f）
         </p>
         <input type="text" size="100px" name="add_song"/>
         <input type="text" size="10px" name="sort_index" />

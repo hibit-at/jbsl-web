@@ -832,15 +832,15 @@ def playlist(request, pk):
             lid = post['add_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
             res = requests.get(url).json()
-            if 'errorMessage' in res:
                 # then retry in bsr key
+            if True:
                 bsr = lid
                 url = f'https://api.beatsaver.com/maps/id/{bsr}'
                 res = requests.get(url)
                 if res.status_code == 200:
                     res = res.json()
                     print(res)
-                    name = res['name']
+                    name = res['name']  
                     author = res['uploader']['name']
                     hash = res['versions'][0]['hash']
                     context['hash'] = hash
@@ -852,6 +852,7 @@ def playlist(request, pk):
                         context['sort_index'] = int(post['sort_index'])
                     return render(request, 'add_diff_by_map.html', context)
                 context['errorMessage'] = 'URL の解析に失敗しました。'
+                print('error')
                 return render(request, 'playlist.html', context)
             hash = res['songHash']
             diff_num = res['difficulty']['difficulty']

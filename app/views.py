@@ -356,6 +356,8 @@ def mypage(request):
 
 
 def create_song_by_hash(hash, diff_num, char, lid):
+    if lid == None:
+        return None
     if Song.objects.filter(lid=lid).exists():
         return Song.objects.get(lid=lid)
     url = f'https://api.beatsaver.com/maps/hash/{hash}'
@@ -832,8 +834,7 @@ def playlist(request, pk):
             lid = post['add_song'].split('/')[-1]
             url = f'https://scoresaber.com/api/leaderboard/by-id/{lid}/info'
             res = requests.get(url).json()
-                # then retry in bsr key
-            if True:
+            if True: # BeatLeader の方をデフォにするため
                 bsr = lid
                 url = f'https://api.beatsaver.com/maps/id/{bsr}'
                 res = requests.get(url)

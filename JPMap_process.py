@@ -72,6 +72,7 @@ def collect_maps(mapper, player=None):
     from app.models import JPMap
     if mapper == 0:
         return
+    print(f'collect {player}')
     url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
     res = requests.get(url).json()['docs']
 
@@ -98,6 +99,7 @@ def collect_maps(mapper, player=None):
                 )
                 print(new_jpmap)
 
+    print(f'finished {player}')
 
 def collect_by_player(player):
     collect_maps(player.mapper, player)
@@ -107,7 +109,8 @@ def collection():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Player
-    for player in Player.objects.all():
+    print('collection')
+    for player in Player.objects.filter(mapper__gt=0):
         collect_maps(player.mapper, player)
 
 
@@ -121,7 +124,7 @@ def create_league(songs, start, last, division, superuser):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Playlist, Song, League
-    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
+    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv, create_song_by_beatleader
     if len(songs) > 0:
         title = f"JP Monthly {start.year}-{start.month} Div.{division}"
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
@@ -146,11 +149,43 @@ def create_league(songs, start, last, division, superuser):
                 lid = search_lid(song.hash, gameMode, dif_num)
                 if lid == None:
                     print('no lid detected')
+                    # continue
+                    # try beatleader
+                    hash = song.hash
+                    dif = song.diff
+                    char = song.char
+                    # beatleader id list-up
+                    url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
+                    res = requests.get(url).json()
+                    print(res)
+                    bid = -1
+                    for r in res['leaderboards']:
+                        # print(r['id'])
+                        bid = r['id']
+                        res_diff = r['difficulty']['difficultyName']
+                        res_mode = r['difficulty']['modeName']
+                        print(res_diff, res_mode)
+                        print(dif, char)
+                        if res_diff == dif and res_mode == char:
+                            break
+                    if bid == -1:
+                        print('bid detection failed')
+                        continue
+                    print(bid)
+                    new_song = create_song_by_beatleader(hash=hash,char=char,dif=dif,bid=bid)
+                    print(new_song)
+                    if new_song == None:
+                        continue
+                    playlist.songs.add(new_song)
                     continue
             else:
                 lid = Song.objects.get(
                     hash=song.hash, diff=song.diff, char=song.char).lid
-            new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
+                print(lid)
+                if lid == None:
+                    new_song = Song.objects.filter(hash=song.hash,char=song.char,diff=song.diff).first()
+                else:
+                    new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
             print(new_song)
             if new_song == None:
                 continue
@@ -274,7 +309,7 @@ def latest():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import JPMap, Playlist, Player, Song, SongInfo
-    from app.views import search_lid, create_song_by_hash, diff_label_inv, char_dict_inv
+    from app.views import search_lid, create_song_by_hash, diff_label_inv, char_dict_inv, create_song_by_beatleader
     playlist = Playlist.objects.get(title='JP Latest')
 
     playlist.songs.clear()
@@ -296,9 +331,36 @@ def latest():
                 lid = search_lid(jmap.hash, gameMode, dif_num)
                 if lid is None:
                     print('no lid detected')
-                    continue
-                song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
-                print(song)
+                    # try beatleader
+                    hash = jmap.hash
+                    dif = jmap.diff
+                    char = jmap.char
+                    # beatleader id list-up
+                    url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
+                    res = requests.get(url).json()
+                    print(res)
+                    bid = -1
+                    for r in res['leaderboards']:
+                        # print(r['id'])
+                        bid = r['id']
+                        res_diff = r['difficulty']['difficultyName']
+                        res_mode = r['difficulty']['modeName']
+                        print(res_diff, res_mode)
+                        print(dif, char)
+                        if res_diff == dif and res_mode == char:
+                            break
+                    if bid == -1:
+                        print('bid detection failed')
+                        continue
+                    print(bid)
+                    new_song = create_song_by_beatleader(hash=hash,char=char,dif=dif,bid=bid)
+                    print(new_song)
+                    if new_song == None:
+                        continue
+                    song = new_song
+                else:
+                    song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
+                    print(song)
             playlist.songs.add(song)
             defaults = {'order': song_order}
             SongInfo.objects.update_or_create(

@@ -442,7 +442,7 @@ def top_score_registration(player):
 
     # inititalize
     initialize = False # 普段は False だけど、ナーフがあった時だけ True にして Push
-    initialize = True
+    # initialize = True
     if initialize:
         for score in Score.objects.filter(player=player, league__name='Top10').order_by('-rawPP'):
             score.delete()

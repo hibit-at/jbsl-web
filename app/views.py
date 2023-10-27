@@ -528,6 +528,9 @@ def activate_process(request):
         if res['country'] != 'JP':
             context['error'] = '日本人以外のプレイヤーは登録できません。Sorry, Only Japanese player can be registered.'
             return render(request, 'activation.html', context)
+        if Player.objects.filter(sid=sid).exists():
+            context['error'] = 'すでにこのスコアセイバーIDで登録しているユーザーがいます。もし、自分のアカウントを他のユーザーによって使われている場合、管理者（hibit）までご連絡ください。'
+            return render(request, 'activation.html', context)
         name = res['name']
         imageURL = res['profilePicture']
         pp = res['pp']

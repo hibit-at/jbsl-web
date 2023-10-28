@@ -1104,6 +1104,14 @@ def calculate_scoredrank_LBs(league, virtual=None, record=False):
         query = Score.objects.filter(
             song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score').distinct()
 
+        # genre_add
+        try:
+            song_info = SongInfo.objects.get(song=song, playlist=playlist)
+            setattr(song, 'song_info_genre', song_info.genre)
+        except SongInfo.DoesNotExist:
+            # song_infoが存在しない場合の処理（必要に応じて）
+            pass
+
         for rank, score in enumerate(query):
             pos = base + slope(rank + 1)
             setattr(score, 'rank', rank+1)

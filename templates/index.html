@@ -40,23 +40,24 @@
     <div style="text-align:center">
         <h3>Welcome to JBSL-Web!</h3>
         {% if not user.is_authenticated %}
-            <h3>
-                <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
-            </h3>
+        <h3>
+            <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
+        </h3>
         {% endif %}
     </div>
     <div style="width:300px;margin:auto">
-        <p>
-            ！！JBSL 6 開催決定！！　<a href="https://twitter.com/115_jbsl/status/1702940385419628789" style="color:orange">告知</a>
-        </p>
-        <li>10/7 マッパー募集締切</li>
-        <li>10/28～11/5 J1,J2,J3,J4 締切</li>
+        <details>
+        <summary>
+            ！！JBSL 6 開催中！！　<a href="https://twitter.com/115_jbsl/status/1702940385419628789" style="color:orange">告知ツイート</a>
+        </summary>
+        <li>10/28～11/5 J1,J2,J3,J4 予選</li>
         <li>11/11 J4 前半,J3 前半</li>
         <li>11/12 J2 前半,J1 前半</li>
         <li>11/18 J4 後半,J3 後半</li>
         <li>11/19 J2 後半,J1 後半</li>
         <li>11/25 打ち上げ</li>
     </ul>
+    </details>
 </div>
 <h3>Headlines</h3>
 {% for headline in headlines %}

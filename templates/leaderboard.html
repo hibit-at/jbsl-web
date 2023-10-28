@@ -164,12 +164,15 @@
                                 <img src="{{ player.imageURL }}" class="icon" alt="icon" loading="lazy"/>
                                 {% include 'player_element.html' %}
                             </a>
-                            {% if twitch_show == 'on' and player.twitch != '' %}
+                            {% if is_detail %}
+                            {% if player.twitch != '' %}
                                 <a href="https://twitch.tv/{{ player.twitch }}">
                                     <img src="{% static 'twitch.png' %}" height=25 width=25/>
                                 </a>
                             {% endif %}
-                            {% if discord_show == 'on' and not player.inDiscord %}<b><u>NOT IN DISCORD</u></b>{% endif %}
+                            {% endif %}
+                            {% include "badge_element.html" with badges=player.badges.all badge_width=35 %}
+                            {% if not player.inDiscord %}<b><u>NOT IN DISCORD</u></b>{% endif %}
                         </div>
                     </td>
                     <td>

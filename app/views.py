@@ -1219,13 +1219,18 @@ def leaderboard(request, pk):
     league = League.objects.get(pk=pk)
     context['league'] = league
 
+
+    # detail check
+    is_detail = bool(request.GET.get('detail'))
+    context['is_detail'] = is_detail
+    print(is_detail)
+
     # prohibited leagues
     is_prohibited = False
     if player:
         user_leagues = player.league.all()
         prohibited_leagues = league.prohibited_leagues.all()
         is_prohibited = any(user_league in prohibited_leagues for user_league in user_leagues)
-        print(is_prohibited)
     # 
 
     duration_start = time()
@@ -1248,8 +1253,6 @@ def leaderboard(request, pk):
     context['edit_state'] = is_owner and league.isLive
     context['isOwner'] = is_owner
     context['isMember'] = is_member
-    context['twitch_show'] = request.GET.get('twitch_show', 'off')
-    context['discord_show'] = request.GET.get('discord_show', 'off')
 
     end_str = (league.end + timedelta(hours=9)).strftime('%Y-%m-%dT%H:%M')
     close_str = (league.end + timedelta(hours=9-48)).strftime('%Y-%m-%dT%H:%M')

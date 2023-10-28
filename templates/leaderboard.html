@@ -165,14 +165,14 @@
                                 {% include 'player_element.html' %}
                             </a>
                             {% if is_detail %}
-                            {% if player.twitch != '' %}
-                                <a href="https://twitch.tv/{{ player.twitch }}">
-                                    <img src="{% static 'twitch.png' %}" height=25 width=25/>
-                                </a>
+                                {% if player.twitch != '' %}
+                                    <a href="https://twitch.tv/{{ player.twitch }}">
+                                        <img src="{% static 'twitch.png' %}" height=25 width=25/>
+                                    </a>
+                                {% endif %}
+                                {% include "badge_element.html" with badges=player.badges.all badge_width=35 %}
+                                {% if not player.inDiscord %}<b><u>NOT IN DISCORD</u></b>{% endif %}
                             {% endif %}
-                            {% endif %}
-                            {% include "badge_element.html" with badges=player.badges.all badge_width=35 %}
-                            {% if not player.inDiscord %}<b><u>NOT IN DISCORD</u></b>{% endif %}
                         </div>
                     </td>
                     <td>
@@ -246,7 +246,7 @@
             </a>
         {% else %}
             <a href="https://www.beatleader.xyz/leaderboard/global/{{ song.bid }}"
-            style="filter:invert()">
+               style="filter:invert()">
                 <img src="{% static 'BeatLeader.png' %}"
                      width="30px"
                      height="30px"

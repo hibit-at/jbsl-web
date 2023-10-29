@@ -230,7 +230,7 @@
 <h2 style="text-align:center">譜面別リーグ内順位</h2>
 {% for song in LBs %}
     {% if song.song_info_genre %}
-        <span style="font-size:22px;color:gray"><i>{{ song.song_info_genre}}</i></span>
+        <span style="font-size:22px;color:darkgray"><i><strong>{{ song.song_info_genre}}</strong></i></span>
     {% endif %}
     <form method="POST"
           action="{% url 'app:leaderboard' pk=league.pk %}"

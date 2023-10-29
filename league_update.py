@@ -42,21 +42,25 @@ def league_end_process(league, end, time_count):
     playlist.save()
     league.save()
 
-    Headline.objects.create(player=None, time=end + timedelta(seconds=time_count), text=discord_message)
+    Headline.objects.create(player=None, time=end +
+                            timedelta(seconds=time_count), text=discord_message)
     time_count -= 1
     for i, winner in enumerate([league.first, league.second, league.third], start=1):
         if winner is not None:
-            Headline.objects.create(player=winner, time=end + timedelta(seconds=time_count), text=f'{winner} さんが {i} 位！')
+            Headline.objects.create(
+                player=winner, time=end + timedelta(seconds=time_count), text=f'{winner} さんが {i} 位！')
             discord_message += f'\n#{i} {winner} さん'
             time_count -= 1
 
     discord_message_process(discord_message)
+
 
 def get_score_data(player, song):
     name_encode = urllib.parse.quote(player.name)
     url = f'https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={name_encode}'
     res = requests.get(url).json()
     return res
+
 
 def get_beatleader_data(player, song):
     sid = player.sid
@@ -70,6 +74,7 @@ def get_beatleader_data(player, song):
         return beatleader
     return None
 
+
 def update_score_internal(player, song, league, score, rawPP, miss, notes):
     from app.models import Score
     from app.views import score_to_acc, score_to_headline
@@ -81,11 +86,12 @@ def update_score_internal(player, song, league, score, rawPP, miss, notes):
         'miss': miss,
     }
 
-    old_score = Score.objects.filter(player=player, song=song, league=league).first()
+    old_score = Score.objects.filter(
+        player=player, song=song, league=league).first()
     if old_score and score <= old_score.score:
         print('already updated score')
         return
-    
+
     beatleader = get_beatleader_data(player, song)
     if beatleader:
         defaults['beatleader'] = beatleader
@@ -93,7 +99,7 @@ def update_score_internal(player, song, league, score, rawPP, miss, notes):
     new_headline = None
     if league in player.league.all():
         new_headline = score_to_headline(score, song, player, league)
-    
+
     new_score, check = Score.objects.update_or_create(
         player=player,
         song=song,
@@ -125,6 +131,7 @@ def update_score(player, song, league, res):
         update_score_internal(player, song, league, score, rawPP, miss, notes)
         break
 
+
 def create_headline(player, league, position):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
@@ -135,10 +142,13 @@ def create_headline(player, league, position):
         text=f'{player} さんが {league} リーグで {position} 位になりました！'
     )
 
+
 def process_grand_slam(player, league):
     if player.theoretical == 100:
-        valid_name = league.name.lower().replace(' ', '-').translate(str.maketrans("", "", "[]'.")) 
-        discord_message_process_with_channel(f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！', valid_name)
+        valid_name = league.name.lower().replace(
+            ' ', '-').translate(str.maketrans("", "", "[]'."))
+        discord_message_process_with_channel(
+            f'{player} さんがグランドスラム達成！\n全部の有効譜面で 1 位です！', valid_name)
 
 
 def league_update_process():
@@ -180,7 +190,7 @@ def league_update_process():
                     print(score)
                     defaults = {
                         'score': score,
-                        'acc': float(res['accuracy'])*100,
+                        'acc': float(res['accuracy'])*100*int(res['modifiedScore'])/int(res['baseScore']),
                         'rawPP': 0,
                         'miss': int(res['missedNotes'] + int(res['badCuts'])),
                         'beatleader': res['id'],

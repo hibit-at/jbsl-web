@@ -43,9 +43,9 @@ division_colors_transparent = {
 division_borders = {
     0 : 2000,
     1 : 2000,
-    2 : 1100,
-    3 : 900,
-    4 : 700,
+    2 : 1150,
+    3 : 975,
+    4 : 800,
 }
 
 def create_img(year=1000, month=13, div=0):

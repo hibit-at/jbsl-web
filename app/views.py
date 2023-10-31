@@ -124,6 +124,8 @@ def score_to_acc(score: float, notes: int) -> float:
     while notes > 0:
         max_score += 115*8
         notes -= 1
+    if max_score == 0:
+        return 0
     return score/max_score*100
 
 

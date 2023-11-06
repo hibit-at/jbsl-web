@@ -2376,3 +2376,11 @@ def genre_criteria(request):
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
     return render(request, f'genre_criteria.html', context)
+
+
+def api_active_league(request):
+    from django.http import JsonResponse
+    leagues = League.objects.filter(isLive=True,isOpen=True)
+    print(leagues)
+    ans = leagues.values()
+    return JsonResponse(list(ans),safe=False,json_dumps_params={'ensure_ascii': False})

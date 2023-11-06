@@ -6,3 +6,4 @@ discord_manual_message.py
 myenv
 *.dump
 latest*
+bot_test.py

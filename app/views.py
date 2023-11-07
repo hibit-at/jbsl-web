@@ -820,7 +820,7 @@ def playlist(request, pk):
             for i, song in enumerate(playlist.sorted_songs):
                 print(song)
                 songInfo = SongInfo.objects.get(song=song, playlist=playlist)
-                songInfo.order = i
+                songInfo.order = i*2
                 songInfo.save()
 
     # coeditor
@@ -922,13 +922,8 @@ def playlist(request, pk):
             song_pk = post['up']
             song = Song.objects.get(pk=song_pk)
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
-            songInfo.order -= 1
+            songInfo.order -= 3
             songInfo.save()
-            # swap
-            for swapped_song in SongInfo.objects.filter(playlist=playlist, order=songInfo.order):
-                print(swapped_song)
-                swapped_song.order += 1
-                swapped_song.save()
             songInfo.save()
             return redirect('app:playlist', pk=pk)
         if 'down' in post:
@@ -936,12 +931,7 @@ def playlist(request, pk):
             song_pk = post['down']
             song = Song.objects.get(pk=song_pk)
             songInfo = SongInfo.objects.get(song=song, playlist=playlist)
-            songInfo.order += 1
-            # swap
-            for swapped_song in SongInfo.objects.filter(playlist=playlist, order=songInfo.order):
-                print(swapped_song)
-                swapped_song.order -= 1
-                swapped_song.save()
+            songInfo.order += 3
             songInfo.save()
             return redirect('app:playlist', pk=pk)
         if 'add_from_map' in post:
@@ -1003,15 +993,15 @@ def playlist(request, pk):
         if 'genre' in post:
             genre = post['genre']
             song_pk = post['song_id']
-            # print(genre,pk)
+            order = post['order']
             song_info = SongInfo.objects.get(
                 song__pk=song_pk, playlist=playlist)
             if genre != "---":
                 song_info.genre = genre
             else:
                 song_info.genre = None
+            song_info.order = order
             song_info.save()
-            # print(song_info)
             return redirect('app:playlist', pk=pk)
         if 'back_hidden' in post:
             playlist.isHidden = True

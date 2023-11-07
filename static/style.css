@@ -526,3 +526,11 @@ pre {
         transform: translate(0px, 0px) rotateZ(0deg)
     }
 }
+
+
+/* ナビゲーションバーの高さが50pxの場合 */
+
+html {
+    scroll-padding-top: 50px;
+    /* ナビゲーションバーの高さに合わせる */
+}

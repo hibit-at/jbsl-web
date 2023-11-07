@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     {% load static %}
-    {% if errorMessage %}
-    <h3 style="color:red">{{ errorMessage }}</h3>
-    {% endif %}
+    {% if errorMessage %}<h3 style="color:red">{{ errorMessage }}</h3>{% endif %}
     <h3>
         {{ playlist }}
         <a href="{% url 'app:download_playlist' pk=playlist.pk %}"
@@ -166,11 +164,14 @@
                             <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
                             <button class="btn" name="up" value="{{ song.pk }}">▲</button>
                             <button class="btn" name="down" value="{{ song.pk }}">▼</button>
-                            {{ song.order }}
+                            <input type="text"
+                                   name="order"
+                                   value="{{ song.order }}"
+                                   style="width: 50px;">
                             <input type="hidden" name="song_id" value="{{ song.pk }}">
                             <select name="genre">
                                 {% for genre_value in genres %}
-                                    <option value="{{ genre_value }}">
+                                    <option value="{{ genre_value }}" {% if genre_value == song.genre %}selected{% endif %}>
                                         {{ genre_value }}
                                     </option>
                                 {% endfor %}
@@ -184,7 +185,9 @@
     </tbody>
 </table>
 {% if isEditor and playlist.isEditable %}
-    <h3>エディター用：譜面追加</h3>
+    <h3>
+        エディター用：譜面追加
+    </h3>
     <form method="post">
         {% csrf_token %}
         <p>
@@ -193,7 +196,9 @@
         </p>
         <input type="text" size="100px" name="add_song"/>
         <input type="text" size="10px" name="sort_index" />
-        <button class="btn" type="submit">追加</button>
+        <button class="btn" type="submit">
+            追加
+        </button>
         ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
     </form>
 {% endif %}
@@ -253,10 +258,7 @@
                     {% if isEditor %}
                         <form method="post">
                             {% csrf_token %}
-                            <button class="danger"
-                                    type="submit"
-                                    name="remove_recommend"
-                                    value="{{ song.lid }}">
+                            <button class="danger" type="submit" name="remove_recommend" value="{{ song.lid }}">
                                 却下
                             </button>
                         </form>
@@ -338,5 +340,17 @@
             deleteButton.disabled = true;
         }
     }
+
+    // スクロールイベントをリスンし、現在のスクロール位置をセッションストレージに保存する
+    window.addEventListener('scroll', () => {
+        sessionStorage.setItem('scrollPosition', window.scrollY || window.pageYOffset);
+    });
+    
+    // ページロード時にセッションストレージからスクロール位置を読み込み、その位置にスクロールする
+    window.addEventListener('load', () => {
+        if (sessionStorage.getItem('scrollPosition')) {
+        window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
+        }
+  });
 </script>
 {% endblock content %}

@@ -184,7 +184,9 @@
         {% for t in top10 %}
             <tr>
                 <td>
+                    <a href="https://scoresaber.com/leaderboard/{{ t.song.lid }}">
                     <img class="mid-thumb" src="{{ t.song.imageURL }}"/>
+                    </a>
                 </td>
                 <td>
                     <span>{{ t.song.title|truncatechars:50 }}</span>

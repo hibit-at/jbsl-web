@@ -736,7 +736,7 @@ def playlists(request, page=1):
     # ユーザーが認証されている場合
     if user.is_authenticated:
         playlists = playlists.order_by('-pk').filter(
-            Q(isHidden=False) | Q(editor=user.player) | Q(coeditor=user.player)
+            Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player)
         ).distinct()[start:end]
     # ユーザーが認証されていない場合
     else:

@@ -168,14 +168,16 @@ def get_love_pair_context(active_players) -> Dict[str, Any]:
 def get_headline_and_league_context() -> Dict[str, Any]:
     context = {}
     score_prefetch = Prefetch('score__league')
+    league_prefetch = Prefetch('score__league')
+    song_prefetch = Prefetch('score__song')
     # score_prefetch = Prefetch('score__league',queryset=League.objects.all()) # これでも同じだが、カスタマイズ可能。いつかこの知識が高速化に役立つかもしれない
-    headlines = Headline.objects.prefetch_related(score_prefetch).select_related('player').all()
+    headlines = Headline.objects.prefetch_related(league_prefetch,song_prefetch).select_related('player').all()
     headlines = headlines.order_by('-time')[:8]
     context['headlines'] = headlines
     active_leagues = League.objects.filter(
         isOpen=True, isLive=True
     ).select_related(
-        'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
+        'owner', 'first', 'second', 'third', 'playlist'  # ForeignKey フィールドの名称に基づく
     ).order_by('-isOfficial', 'end', '-pk')
     context['active_leagues'] = active_leagues
     return context
@@ -731,7 +733,7 @@ def playlists(request, page=1):
 
     from django.db.models import Q
 
-    playlists = Playlist.objects.prefetch_related('songs')
+    playlists = Playlist.objects.prefetch_related('songs').select_related('editor')
 
     # ユーザーが認証されている場合
     if user.is_authenticated:
@@ -759,18 +761,38 @@ def playlists(request, page=1):
     return render(request, 'playlists.html', context)
 
 
+# def make_sorted_playlist(playlist: Playlist):
+#     from operator import attrgetter
+#     sorted_songs = []
+
+#     for song in playlist.songs.all():
+#         songinfo, created = SongInfo.objects.get_or_create(
+#             song=song, playlist=playlist)
+#         song.order = songinfo.order if not created else 0
+#         song.genre = songinfo.genre if not created else None
+#         sorted_songs.append(song)
+
+#     sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
+#     playlist.sorted_songs = sorted_songs
+
+#     return playlist
+
 def make_sorted_playlist(playlist: Playlist):
     from operator import attrgetter
     sorted_songs = []
+    song_infos = {song_info.song_id: song_info for song_info in SongInfo.objects.filter(playlist=playlist)}
 
     for song in playlist.songs.all():
-        songinfo, created = SongInfo.objects.get_or_create(
-            song=song, playlist=playlist)
-        song.order = songinfo.order if not created else 0
-        song.genre = songinfo.genre if not created else None
+        song_info = song_infos.get(song.id)
+        if song_info:
+            song.order = song_info.order
+            song.genre = song_info.genre
+        else:
+            song.order = 0
+            song.genre = None
         sorted_songs.append(song)
 
-    sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
+    sorted_songs.sort(key=attrgetter('order'))
     playlist.sorted_songs = sorted_songs
 
     return playlist

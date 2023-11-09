@@ -87,7 +87,7 @@ class Playlist(models.Model):
 
 
 class SongInfo(models.Model):
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='info')
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
     order = models.IntegerField(default=0)
     genre = models.CharField(max_length=100,null=True,blank=True)

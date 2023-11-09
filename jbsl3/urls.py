@@ -6,3 +6,9 @@ urlpatterns = [
     path('',include('app.urls')),
     path('accounts/', include('allauth.urls')),
 ]
+
+import os
+
+if os.path.exists('local.py'):
+    import debug_toolbar
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]

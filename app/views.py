@@ -11,7 +11,7 @@ import requests
 from PIL import Image
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q, Max
+from django.db.models import Count, Q, Max, Prefetch
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -167,10 +167,16 @@ def get_love_pair_context(active_players) -> Dict[str, Any]:
 
 def get_headline_and_league_context() -> Dict[str, Any]:
     context = {}
-    headlines = Headline.objects.all().order_by('-time')[:8]
+    score_prefetch = Prefetch('score__league')
+    # score_prefetch = Prefetch('score__league',queryset=League.objects.all()) # これでも同じだが、カスタマイズ可能。いつかこの知識が高速化に役立つかもしれない
+    headlines = Headline.objects.prefetch_related(score_prefetch).select_related('player').all()
+    headlines = headlines.order_by('-time')[:8]
     context['headlines'] = headlines
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
+        isOpen=True, isLive=True
+    ).select_related(
+        'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
+    ).order_by('-isOfficial', 'end', '-pk')
     context['active_leagues'] = active_leagues
     return context
 
@@ -725,14 +731,20 @@ def playlists(request, page=1):
 
     from django.db.models import Q
 
+    playlists = Playlist.objects.prefetch_related('songs')
+
+    # ユーザーが認証されている場合
     if user.is_authenticated:
-        playlists = Playlist.objects.all().order_by('-pk').filter(
-            Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player)).distinct()[start:end]
+        playlists = playlists.order_by('-pk').filter(
+            Q(isHidden=False) | Q(editor=user.player) | Q(coeditor=user.player)
+        ).distinct()[start:end]
+    # ユーザーが認証されていない場合
     else:
-        playlists = Playlist.objects.all().order_by(
-            '-pk').filter(isHidden=False)[start:end]
-    archives = Playlist.objects.all().order_by(
-        '-pk').filter(isHidden=False)[start:end]
+        playlists = playlists.order_by(
+            '-pk'
+        ).filter(isHidden=False)[start:end]
+    # archives = Playlist.objects.all().order_by(
+    #     '-pk').filter(isHidden=False)[start:end]
     # playlists = make_sorted_playlists(playlists)
     weekly = Playlist.objects.get(title='JP Weekly')
     biweekly = Playlist.objects.get(title='JP Biweekly')
@@ -741,7 +753,7 @@ def playlists(request, page=1):
     context['biweekly'] = biweekly
     context['latest'] = latest
     context['playlists'] = playlists
-    context['archives'] = archives
+    # context['archives'] = archives
     context['page'] = page
     context['limit'] = limit
     return render(request, 'playlists.html', context)
@@ -1069,9 +1081,17 @@ def leagues(request):
     social = user.socialaccount_set.first() if user.is_authenticated else None
 
     active_leagues = League.objects.filter(
-        isOpen=True, isLive=True).order_by('-isOfficial', 'end', '-pk')
+        isOpen=True, isLive=True
+    ).select_related(
+        'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
+    ).order_by('-isOfficial', 'end', '-pk')
+
     end_leagues = League.objects.filter(
-        isOpen=True, isLive=False).order_by('-end', '-pk')
+        isOpen=True, isLive=False
+    ).select_related(
+        'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
+    ).order_by('-end', '-pk')
+
 
     context = {
         'social': social,
@@ -1216,6 +1236,7 @@ def leaderboard(request, pk):
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
         player = Player.objects.get(user=user)
+        
     league = League.objects.get(pk=pk)
     context['league'] = league
 
@@ -1514,7 +1535,10 @@ def players(request, sort='borderPP', page=1):
             invitations = player.invite.all()
             context['invitations'] = invitations
     active_players = Player.objects.filter(
-        isActivated=True).order_by(f'-{sort}', '-borderPP')
+        isActivated=True
+    ).prefetch_related(
+        'badges'  # related_nameに指定された値を使用
+    ).order_by(f'-{sort}', '-borderPP')
     for i, active in enumerate(active_players):
         setattr(active, 'rank', i+1)
     print(active_players)
@@ -1837,7 +1861,8 @@ def playlist_archives(request):
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
-    archives = Playlist.objects.all().order_by('-pk').exclude(isHidden=True)
+    playlists = Playlist.objects.prefetch_related('songs').select_related('editor')
+    archives = playlists.order_by('-pk').exclude(isHidden=True)
     cnt = 0
     for archive in archives:
         print(archive)

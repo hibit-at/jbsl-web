@@ -1,6 +1,7 @@
 django==3.2
 django-heroku
 django-allauth==0.58.1
+django-debug-toolbar
 psycopg2
 gunicorn
 requests

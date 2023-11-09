@@ -31,7 +31,7 @@
         {% for playlist in playlists %}
             <tr {% if playlist.isHidden %}style="background-color:gray"{% endif %}>
                 <td>
-                    <a href={% url 'app:playlist' pk=playlist.pk %}>
+                    <a href="{% url 'app:playlist' pk=playlist.pk %}">
                         <img class="thumb" src=" {{ playlist.image }}" />
                     </a>
                 </td>

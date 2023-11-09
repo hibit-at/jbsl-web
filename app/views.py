@@ -13,7 +13,7 @@ from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, Max, Prefetch
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -2416,8 +2416,12 @@ def genre_criteria(request):
 
 
 def api_active_league(request):
-    from django.http import JsonResponse
     leagues = League.objects.filter(isLive=True,isOpen=True)
     print(leagues)
     ans = leagues.values()
     return JsonResponse(list(ans),safe=False,json_dumps_params={'ensure_ascii': False})
+
+def api_song_info(request,pk):
+    playlist = Playlist.objects.get(pk=pk)
+    res = playlist.songs.all().values()
+    return JsonResponse(list(res), safe=False, json_dumps_params={'ensure_ascii':False})

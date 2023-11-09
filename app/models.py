@@ -50,6 +50,8 @@ class Song(models.Model):
     color = models.CharField(default='white', max_length=20)
     imageURL = models.CharField(default='', max_length=100)
     bid = models.CharField(default='', max_length=50, blank=True, null=True)
+    isApplied = models.BooleanField(default=False)
+    isUsed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.title} ({self.diff}) by {self.author}'

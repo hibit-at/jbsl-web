@@ -16,13 +16,13 @@
     {% for league in leagues %}
         <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
             <td>
-                <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name }}
+                <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name|truncatechars:20 }}
                     {% if league.isOfficial %}
                         <img src="{% static 'Check.png' %}" height="25px"/>
                     {% endif %}
                 </a>
             </td>
-            <td>{{ league.description|truncatechars:50 }}</td>
+            <td>{{ league.description|truncatechars:20 }}</td>
             <td>
                 {% if league.isPublic %}
                     {% if league.limit == 2000 %}

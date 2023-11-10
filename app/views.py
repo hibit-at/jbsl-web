@@ -2424,14 +2424,18 @@ def api_active_league(request):
 def api_song_info(request, pk):
     from django.forms.models import model_to_dict
     playlist = Playlist.objects.get(pk=pk)
-    song_infos = SongInfo.objects.prefetch_related('song').filter(playlist=playlist).order_by('order')
+    # song_infos = SongInfo.objects.filter(playlist=playlist).order_by('order')
 
     # SongInfoと関連するSongのデータを辞書のリストとして構築
-    infos_data = []
-    for info in song_infos:
-        info_data = model_to_dict(info)  # SongInfoのインスタンスを辞書に変換
-        info_data['song'] = model_to_dict(info.song)  # 関連するSongのインスタンスも辞書に変換
-        infos_data.append(info_data)
+    # infos_data = []
+    # for info in song_infos:
+    #     info_data = model_to_dict(info)  # SongInfoのインスタンスを辞書に変換
+    #     info_data['song'] = model_to_dict(info.song)  # 関連するSongのインスタンスも辞書に変換
+    #     infos_data.append(info_data)
 
-    return JsonResponse(infos_data, safe=False, json_dumps_params={'ensure_ascii': False})
-    # return JsonResponse(list(playlist.songs.all().values()),safe=False)
+    # return JsonResponse(infos_data, safe=False, json_dumps_params={'ensure_ascii': False})
+    # この方法は一旦登録した info を消せないからダメ
+    # 見えているプレイリストと一致するとは限らない
+    # スコセイ用とビートリーダー用で分かれている場合は手動で確認＆調整
+    
+    return JsonResponse(list(playlist.songs.all().values()),safe=False)

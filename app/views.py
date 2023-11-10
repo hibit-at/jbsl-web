@@ -2440,7 +2440,7 @@ def api_song_info(request, pk):
     songs = playlist.songs.all()
     songs_data = []  # JSONに変換するためのリスト
     for song in songs:
-        info = song.info.first()  # 各曲に対する最初のSongInfoを取得
+        info = song.info.filter(playlist=playlist).first()  # 各曲に対する最初のSongInfoを取得
         song_data = model_to_dict(song)  # Songインスタンスを辞書に変換
         song_data['genre'] = info.genre if info else None  # genreを追加
         songs_data.append(song_data)  # リストに追加

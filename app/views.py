@@ -2283,6 +2283,8 @@ def api_match(request, pk):
     context = {}
     match = Match.objects.get(pk=pk)
     context['match'] = match
+    info = SongInfo.objects.filter(song=match.now_playing,playlist=match.playlist).first()
+    # print(info)
     ans = {}
     ans['title'] = match.title
     ans['player1'] = match.player1.name
@@ -2295,6 +2297,8 @@ def api_match(request, pk):
     ans['retry2'] = match.retry2
     ans['imageURL'] = match.now_playing.imageURL
     ans['map-info1'] = match.now_playing.title
+    if info.genre:
+        ans['map-info1'] += f'({info.genre})'
     ans['map-info2'] = match.now_playing.author
     ans['map-info3'] = match.now_playing.diff
     ans['map-info3-color'] = match.now_playing.color

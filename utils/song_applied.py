@@ -9,7 +9,13 @@ def process():
     django.setup()
     from app.models import Playlist, Player, Song
     playlist_ids_str = input('input playlist ids\n')
-    playlist_ids = [int(pid) for pid in playlist_ids_str.split(',')]
+    playlist_ids = []
+    for item in playlist_ids_str.split(','):
+        if '-' in item:
+            start, end = item.split('-')
+            playlist_ids.extend(range(int(start), int(end) + 1))
+        else:
+            playlist_ids.append(int(item))
     matching_playlists = Playlist.objects.filter(pk__in=playlist_ids)
     for playlist in matching_playlists:
         print(playlist)

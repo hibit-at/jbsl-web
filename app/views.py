@@ -2445,4 +2445,4 @@ def api_song_info(request, pk):
         song_data['genre'] = info.genre if info else None  # genreを追加
         songs_data.append(song_data)  # リストに追加
 
-    return JsonResponse(songs_data, safe=False)
+    return JsonResponse(songs_data, safe=False, json_dumps_params={'ensure_ascii' : False})

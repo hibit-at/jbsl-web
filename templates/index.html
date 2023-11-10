@@ -11,11 +11,11 @@
             <p>
                 <a href="https://discord.gg/CqQ6ZD8KRn">
                     <img src="{% static 'Discord.png' %}"
-                        height
-                        200
-                        width
-                        200
-                        style="filter:invert()">
+                         height
+                         200
+                         width
+                         200
+                         style="filter:invert()">
                 </a>
             </p>
         </div>
@@ -40,35 +40,49 @@
     <div style="text-align:center">
         <h3>Welcome to JBSL-Web!</h3>
         {% if not user.is_authenticated %}
-        <h3>
-            <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
-        </h3>
+            <h3>
+                <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
+            </h3>
         {% endif %}
     </div>
     <div style="width:300px;margin:auto">
         <details>
-        <summary>
-            ！！JBSL 6 開催中！！　<a href="https://twitter.com/115_jbsl/status/1702940385419628789" style="color:orange">告知ツイート</a>
-        </summary>
-        <li>10/28～11/5 J1,J2,J3,J4 予選</li>
-        <li>11/11 J4 前半,J3 前半</li>
-        <li>11/12 J2 前半,J1 前半</li>
-        <li>11/18 J4 後半,J3 後半</li>
-        <li>11/19 J2 後半,J1 後半</li>
-        <li>11/25 打ち上げ</li>
-    </ul>
-    </details>
-</div>
-<h3>Headlines</h3>
-{% for headline in headlines %}
-    <ul>
-        {% include 'headline_object.html' %}
-    </ul>
-{% endfor %}
-<p>
-    <form action="{% url 'app:headlines' page=1 %}">
-        <button class="btn">All Headlines</button>
-    </form>
-</p>
-{% include "live_leagues.html" with leagues=active_leagues %}
+            <summary>
+                ！！JBSL 6 開催中！！　<a href="https://twitter.com/115_jbsl/status/1702940385419628789"
+　   style="color:orange">告知ツイート</a>
+            </summary>
+            <ul>
+                <li>10/28～11/5 J1,J2,J3,J4 予選</li>
+                <li>11/11 J4 前半,J3 前半</li>
+                <li>11/12 J2 前半,J1 前半</li>
+                <li>11/18 J4 後半,J3 後半</li>
+                <li>11/19 J2 後半,J1 後半</li>
+                <li>11/25 打ち上げ</li>
+            </ul>
+        </details>
+        <details>
+            <summary>
+               <span style="color:red">！！11/11～11/20 本戦開催中！！</span>
+            </summary>
+            <ul style="color:orange">
+                <li><a href="https://www.twitch.tv/jbsl115">配信会場</a></li>
+                <li><a href="https://challonge.com/ja/r342ui5j">J1 トーナメント表</a></li>
+                <li><a href="https://challonge.com/ja/g8pw2hez">J2 トーナメント表</a></li>
+                <li><a href="https://challonge.com/ja/1xklaebx">J3 トーナメント表</a></li>
+                <li><a href="https://challonge.com/ja/9op4xsr2">J4 トーナメント表</a></li>
+            </ul>
+        </details>
+    </div>
+    <h3>Headlines</h3>
+    {% for headline in headlines %}
+        <ul>
+            {% include 'headline_object.html' %}
+        </ul>
+    {% endfor %}
+    <p>
+        <form action="{% url 'app:headlines' page=1 %}">
+            <button class="btn">All Headlines</button>
+        </form>
+    </p>
+    {% include "live_leagues.html" with leagues=active_leagues %}
 {% endblock %}

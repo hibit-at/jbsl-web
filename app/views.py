@@ -2423,5 +2423,6 @@ def api_active_league(request):
 
 def api_song_info(request,pk):
     playlist = Playlist.objects.get(pk=pk)
+    playlist = make_sorted_playlist(playlist)
     res = playlist.songs.all().values()
     return JsonResponse(list(res), safe=False, json_dumps_params={'ensure_ascii':False})

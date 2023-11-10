@@ -2437,5 +2437,12 @@ def api_song_info(request, pk):
     # この方法は一旦登録した info を消せないからダメ
     # 見えているプレイリストと一致するとは限らない
     # スコセイ用とビートリーダー用で分かれている場合は手動で確認＆調整
-    
-    return JsonResponse(list(playlist.songs.all().values()),safe=False)
+    songs = playlist.songs.all()
+    songs_data = []  # JSONに変換するためのリスト
+    for song in songs:
+        info = song.info.first()  # 各曲に対する最初のSongInfoを取得
+        song_data = model_to_dict(song)  # Songインスタンスを辞書に変換
+        song_data['genre'] = info.genre if info else None  # genreを追加
+        songs_data.append(song_data)  # リストに追加
+
+    return JsonResponse(songs_data, safe=False)

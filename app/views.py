@@ -2058,7 +2058,7 @@ def short_leaderboard(request, pk=0):
                 setattr(song, 'additional_score', additional_score)
 
     context['participants'] = Participant.objects.filter(
-        league=league).order_by('-count_pos')
+        league=league).order_by('-count_pos','-count_acc')
     durtaion = time() - duration_start
     context['duration'] = durtaion * 1000
 
@@ -2163,6 +2163,9 @@ def match(request, pk=1):
     context['isEditor'] = False
     context['playlists'] = playlists
     context['leagues'] = leagues
+    
+
+    
     user = request.user
     if user.is_authenticated:
         player = Player.objects.get(user=user)
@@ -2223,13 +2226,20 @@ def match(request, pk=1):
         if 'league' in post:
             pk = post['league']
             league = League.objects.get(pk=pk)
-            if league.player.all().count() >= 2:
-                print(league)
-                match.league = league
-                match.player1 = league.player.all()[0]
-                match.player2 = league.player.all()[1]
-                match.save()
-
+            # if league.player.all().count() >= 2:
+            #     print(league)
+            #     match.league = league
+            #     match.player1 = league.player.all()[0]
+            #     match.player2 = league.player.all()[1]
+            
+            participants = Participant.objects.filter(league=league).order_by('-count_pos','-count_acc')
+            
+            if participants.count() >= 2:
+                match.player1 = participants[0].player
+                match.player2 = participants[1].player
+            
+            match.league = league
+            match.save()
         if 'player1_win' in post:
             if post['highest1'] != '':
                 match.highest_acc = float(post['highest1'])
@@ -2271,6 +2281,13 @@ def match(request, pk=1):
                 match.result2 += 1
             match.state = 0
             match.save()
+
+    # sorted_player
+    participants = Participant.objects.filter(league=match.league).order_by('-count_pos','-count_acc')[:match.league.border_line]
+    players = [participant.player for participant in participants]
+    for player in players:
+        print(player)
+    context['players'] = players
 
     context['highest'] = match.highest_acc
     context['state'] = state_dict[match.state]

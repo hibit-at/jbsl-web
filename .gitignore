@@ -7,3 +7,4 @@ myenv
 *.dump
 latest*
 bot_test.py
+staticfiles

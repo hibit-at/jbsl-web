@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'jbsl3.wsgi.application'
 import dj_database_url
 
 if os.path.exists('local.py'):
-    DEBUG = True
+    DEBUG = False
     ALLOWED_HOSTS = ['*']
     from local import SK,LOCAL_DATABASE_NAME,LOCAL_DATABASE_USER,LOCAL_DATABASE_PASSWORD
     SECRET_KEY = SK

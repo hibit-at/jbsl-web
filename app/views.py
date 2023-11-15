@@ -2467,3 +2467,9 @@ def api_song_info(request, pk):
         songs_data.append(song_data)  # リストに追加
 
     return JsonResponse(songs_data, safe=False, json_dumps_params={'ensure_ascii' : False})
+
+def api_playlist(request, pk):
+    playlist = Playlist.objects.filter(pk=pk)
+    ans = playlist.values()
+    return JsonResponse(list(ans)[0],safe=False,json_dumps_params={'ensure_ascii': False})
+    

@@ -46,4 +46,5 @@ urlpatterns = [
     path('genre_criteria',views.genre_criteria, name='genre_criteria'),
     path('api/active_league', views.api_active_league, name='api_active_league'),
     path('api/playlist_songs/<int:pk>',views.api_song_info, name='api_song_info'),
+    path('api/playlist/<int:pk>', views.api_playlist, name='api_playlist'),
 ]

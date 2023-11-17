@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'jbsl3.wsgi.application'
 import dj_database_url
 
 if os.path.exists('local.py'):
-    DEBUG = True
+    DEBUG = False
     ALLOWED_HOSTS = ['*']
     from local import SK,LOCAL_DATABASE_NAME,LOCAL_DATABASE_USER,LOCAL_DATABASE_PASSWORD
     SECRET_KEY = SK
@@ -179,3 +179,19 @@ ACCOUNT_ADAPTER = 'jbsl3.users.adapter.MyAccountAdapter'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+        },
+    },
+}

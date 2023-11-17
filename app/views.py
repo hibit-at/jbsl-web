@@ -853,7 +853,7 @@ def playlist(request, pk):
             playlist = make_sorted_playlist(playlist)
             for i, song in enumerate(playlist.sorted_songs):
                 print(song)
-                songInfo = SongInfo.objects.get(song=song, playlist=playlist)
+                songInfo, _ = SongInfo.objects.get_or_create(song=song, playlist=playlist)
                 songInfo.order = i*2
                 songInfo.save()
 

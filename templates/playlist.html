@@ -159,25 +159,32 @@
                 </td>
                 <td>
                     {% if isEditor and playlist.isEditable %}
-                        <form method="post">
-                            {% csrf_token %}
-                            <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
-                            <button class="btn" name="up" value="{{ song.pk }}">▲</button>
-                            <button class="btn" name="down" value="{{ song.pk }}">▼</button>
-                            <input type="text"
-                                   name="order"
-                                   value="{{ song.order }}"
-                                   style="width: 50px;">
-                            <input type="hidden" name="song_id" value="{{ song.pk }}">
-                            <select name="genre">
-                                {% for genre_value in genres %}
-                                    <option value="{{ genre_value }}" {% if genre_value == song.genre %}selected{% endif %}>
-                                        {{ genre_value }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <input class="btn" type="submit" value="Genre">
-                        </form>
+                        <div style="display:flex">
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <button class="btn" name="up" value="{{ song.pk }}">▲</button>
+                                <button class="btn" name="down" value="{{ song.pk }}">▼</button>
+                                <input type="text"
+                                       name="order"
+                                       value="{{ song.order }}"
+                                       style="width: 50px;">
+                                <input type="hidden" name="song_id" value="{{ song.pk }}">
+                                <select name="genre">
+                                    {% for genre_value in genres %}
+                                        <option value="{{ genre_value }}"
+                                                {% if genre_value == song.genre %}selected{% endif %}>
+                                            {{ genre_value }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <input class="btn" type="submit" value="Genre">
+                            </form>
+                            <form method="post" style="margin-left:20px">
+                                {% csrf_token %}
+                                <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
+                            </form>
+                        </div>
                     {% endif %}
                 </td>
             </tr>
@@ -185,9 +192,7 @@
     </tbody>
 </table>
 {% if isEditor and playlist.isEditable %}
-    <h3>
-        エディター用：譜面追加
-    </h3>
+    <h3>エディター用：譜面追加</h3>
     <form method="post">
         {% csrf_token %}
         <p>

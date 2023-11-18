@@ -71,11 +71,13 @@
         PP : {{ player.pp | intcomma }} (有効 PP : {{ player.borderPP | floatformat:2 | intcomma }})
     </p>
     <p>
+        {% if player.hmd %}
         HMD : {{ player.hmd }}
         <img width="40px"
              height="40px"
              src="{% static 'hmd/'|add:player.hmd|add:'.png' %}"
              style="filter:invert()">
+        {% endif %}
     </p>
     {% if user.player == player %}
         <div class="info-submit">

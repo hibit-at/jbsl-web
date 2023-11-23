@@ -377,7 +377,8 @@ def create_song_by_hash(hash, diff_num, char, lid):
         return None
     bsr = res['id']
     title = res['name']
-    author = res['uploader']['name']
+    # author = res['uploader']['name']
+    author = res['metadata']['levelAuthorName']
     versions = res['versions']
     latest = versions[0]
     diffs = latest['diffs']

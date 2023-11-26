@@ -2478,7 +2478,7 @@ def koharu_graph(request, filename):
     if os.path.exists('local.py'):
         from local import GRAPH_URL
     else:
-        os.environ['GRAPH_URL']
+        GRAPH_URL = os.environ['GRAPH_URL']
     image_url = f'{GRAPH_URL}{filename}.png'
     # 外部URLから画像を取得
     response = requests.get(image_url)

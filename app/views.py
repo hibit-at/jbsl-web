@@ -2473,4 +2473,18 @@ def api_playlist(request, pk):
     playlist = Playlist.objects.filter(pk=pk)
     ans = playlist.values()
     return JsonResponse(list(ans)[0],safe=False,json_dumps_params={'ensure_ascii': False})
-    
+
+def koharu_graph(request, filename):
+    if os.path.exists('local.py'):
+        from local import GRAPH_URL
+    else:
+        os.environ['GRAPH_URL']
+    image_url = f'{GRAPH_URL}{filename}.png'
+    # 外部URLから画像を取得
+    response = requests.get(image_url)
+    # リクエストが成功した場合は画像データを返す
+    if response.status_code == 200:
+        return HttpResponse(response.content, content_type='image/png')
+    else:
+        # リクエストが失敗した場合は404エラーを返す
+        return HttpResponse('Not Found', status=404)

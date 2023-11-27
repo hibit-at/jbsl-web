@@ -8,7 +8,7 @@
         {{ headline.text }}
     {% endif %}
     {% if headline.score != None %}
-        <a href="{% url 'app:leaderboard' pk=headline.score.league.id%}#{{headline.score.song.lid}}" style="color:orange"> {{headline.score.league.name}} </a>
+        <a href="{% url 'app:leaderboard' pk=headline.score.league.id%}#{{headline.score.song.pk}}" style="color:orange"> {{headline.score.league.name}} </a>
         {% if headline.score.beatleader != '' %}
             <a href="https://replay.beatleader.xyz/?scoreId={{ headline.score.beatleader }}"
                 target="blank">

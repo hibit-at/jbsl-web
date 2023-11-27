@@ -10,7 +10,7 @@
         </p>
         {% for song in LBs %}
             <p>
-                <a class="trans" href="#{{ song.lid }}">{{ song.title | truncatechars:15 }}</a>
+                <a class="trans" href="#{{ song.pk }}">{{ song.title | truncatechars:15 }}</a>
             </p>
         {% endfor %}
     </div>
@@ -46,6 +46,7 @@
                 </a>
             {% endif %}
         </h3>
+        <p> {{ league.description }} </p>
         <h3>
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
@@ -266,7 +267,7 @@
             <button type="submit" class="btn btn-danger" style="background:red">除外</button>
         {% endif %}
     </form>
-    <div id="{{ song.lid }}"
+    <div id="{{ song.pk }}"
          class="top5-target"
          style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
         <div style="display:flex">

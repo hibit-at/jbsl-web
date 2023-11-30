@@ -265,11 +265,12 @@ def add_songs_to_playlist(playlist, songs):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Song
-    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv
+    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv, create_song_by_beatleader
     for song in playlist.songs.all():
         playlist.songs.remove(song)
 
     for song in songs:
+        print(song)
         dif_num = diff_label_inv[song.diff]
         if song.char == 'Lightshow':
             continue
@@ -282,7 +283,30 @@ def add_songs_to_playlist(playlist, songs):
             lid = Song.objects.get(
                 hash=song.hash, diff=song.diff, char=song.char).lid
         new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
-        playlist.songs.add(new_song)
+        if new_song is None:
+            hash = song.hash
+            dif = song.diff
+            char = song.char
+            # beatleader id list-up
+            url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
+            res = requests.get(url).json()
+            print(res)
+            bid = -1
+            for r in res['leaderboards']:
+                # print(r['id'])
+                bid = r['id']
+                res_diff = r['difficulty']['difficultyName']
+                res_mode = r['difficulty']['modeName']
+                print(res_diff, res_mode)
+                print(dif, char)
+                if res_diff == dif and res_mode == char:
+                    break
+            if bid == -1:
+                print('bid detection failed')
+                continue
+            new_song = create_song_by_beatleader(hash, char, dif, bid)
+        if new_song:
+            playlist.songs.add(new_song)
 
 
 def create_playlist(title, days):

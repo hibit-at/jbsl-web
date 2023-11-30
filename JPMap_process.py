@@ -145,6 +145,7 @@ def create_league(songs, start, last, division, superuser):
                 continue
             gameMode = char_dict_inv[song.char]
             print(gameMode)
+            new_song = None
             if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
                 lid = search_lid(song.hash, gameMode, dif_num)
                 if lid == None:

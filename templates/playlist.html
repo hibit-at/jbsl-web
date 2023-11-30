@@ -144,113 +144,116 @@
         {% for song in playlist.sorted_songs %}
             <tr>
                 <td>
-                    <a href="https://scoresaber.com/leaderboard/{{ song.lid }}">
-                        <img class="mid-thumb" src="{{ song.imageURL }}"/>
-                    </a>
-                </td>
-                <td>{{ song.title|truncatechars:50 }}</td>
-                <td>{{ song.author }}</td>
-                <td>
-                    <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                    {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
-                </td>
-                <td>
-                    {% if song.genre != None %}{{ song.genre }}{% endif %}
-                </td>
-                <td>
-                    {% if isEditor and playlist.isEditable %}
-                        <div style="display:flex">
-
-                            <form method="post">
-                                {% csrf_token %}
-                                <button class="btn" name="up" value="{{ song.pk }}">▲</button>
-                                <button class="btn" name="down" value="{{ song.pk }}">▼</button>
-                                <input type="text"
-                                       name="order"
-                                       value="{{ song.order }}"
-                                       style="width: 50px;">
-                                <input type="hidden" name="song_id" value="{{ song.pk }}">
-                                <select name="genre">
-                                    {% for genre_value in genres %}
-                                        <option value="{{ genre_value }}"
-                                                {% if genre_value == song.genre %}selected{% endif %}>
-                                            {{ genre_value }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <input class="btn" type="submit" value="Genre">
-                            </form>
-                            <form method="post" style="margin-left:20px">
-                                {% csrf_token %}
-                                <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
-                            </form>
-                        </div>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% if isEditor and playlist.isEditable %}
-    <h3>エディター用：譜面追加</h3>
-    <form method="post">
-        {% csrf_token %}
-        <p>
-            譜面を追加（記入例：https://beatsaver.com/maps/2543f）
-            <span style="color:red">※ 2023年10月20日より、ScoreSaberではなく<u>BeatSaverの</u>URLを記入する方式に変更しました</span>
-        </p>
-        <input type="text" size="100px" name="add_song"/>
-        <input type="text" size="10px" name="sort_index" />
-        <button class="btn" type="submit">
-            追加
-        </button>
-        ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
-    </form>
-{% endif %}
-{% if isEditor %}
-    <hr style="height:5px; background-color:saddlebrown;">
-    {% if playlist.isEditable %}
-        {% if not league_used %}
-            <h3>
-                プレイリストの削除
-            </h3>
-            <form method="post" onSubmit="return delete_check()">
-                {% csrf_token %}
-                <Label>
-                    Title :
-                </Label>
-                <input type="text"
-                       size="40px"
-                       name="remove_playlist"
-                       onkeyup="checkValue()"
-                       id="inputTitle"/>
-                <button class="btn danger"
-                        type="submit"
-                        name="confirm"
-                        value="{{ playlist.title }}"
-                        id="deleteButton"
-                        disabled>
-                    削除
-                </button>
-                <p>
-                    誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
+                    {% if song.lid %}
+                        <a href="https://scoresaber.com/leaderboard/{{ song.lid }}">
+                        {% else %}
+                            <a href="https://www.beatleader.xyz/leaderboard/global/{{ song.bid }}">
+                            {% endif %}
+                            <img class="mid-thumb" src="{{ song.imageURL }}"/>
+                        </a>
+                    </td>
+                    <td>{{ song.title|truncatechars:50 }}</td>
+                    <td>{{ song.author }}</td>
+                    <td>
+                        <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
+                        {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
+                    </td>
+                    <td>
+                        {% if song.genre != None %}{{ song.genre }}{% endif %}
+                    </td>
+                    <td>
+                        {% if isEditor and playlist.isEditable %}
+                            <div style="display:flex">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button class="btn" name="up" value="{{ song.pk }}">▲</button>
+                                    <button class="btn" name="down" value="{{ song.pk }}">▼</button>
+                                    <input type="text"
+                                           name="order"
+                                           value="{{ song.order }}"
+                                           style="width: 50px;">
+                                    <input type="hidden" name="song_id" value="{{ song.pk }}">
+                                    <select name="genre">
+                                        {% for genre_value in genres %}
+                                            <option value="{{ genre_value }}"
+                                                    {% if genre_value == song.genre %}selected{% endif %}>
+                                                {{ genre_value }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <input class="btn" type="submit" value="Genre">
+                                </form>
+                                <form method="post" style="margin-left:20px">
+                                    {% csrf_token %}
+                                    <button class="danger" type="submit" name="remove_song" value="{{ song.pk }}">削除</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if isEditor and playlist.isEditable %}
+        <h3>エディター用：譜面追加</h3>
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                譜面を追加（記入例：https://beatsaver.com/maps/2543f）
+                <span style="color:red">※ 2023年10月20日より、ScoreSaberではなく<u>BeatSaverの</u>URLを記入する方式に変更しました</span>
+            </p>
+            <input type="text" size="100px" name="add_song"/>
+            <input type="text" size="10px" name="sort_index" />
+            <button class="btn" type="submit">
+                追加
+            </button>
+            ※2つ目のフォームはソート番号です（空欄であれば末尾に追加）
+        </form>
+    {% endif %}
+    {% if isEditor %}
+        <hr style="height:5px; background-color:saddlebrown;">
+        {% if playlist.isEditable %}
+            {% if not league_used %}
+                <h3>
+                    プレイリストの削除
+                </h3>
+                <form method="post" onSubmit="return delete_check()">
+                    {% csrf_token %}
+                    <Label>
+                        Title :
+                    </Label>
+                    <input type="text"
+                           size="40px"
+                           name="remove_playlist"
+                           onkeyup="checkValue()"
+                           id="inputTitle"/>
+                    <button class="btn danger"
+                            type="submit"
+                            name="confirm"
+                            value="{{ playlist.title }}"
+                            id="deleteButton"
+                            disabled>
+                        削除
+                    </button>
+                    <p>
+                        誤操作を防ぐために、タイトルと同じ文字を上のフォームに記入してください。
+                    </p>
+                </form>
+            {% else %}
+                <p style="color:red">
+                    <button class="btn danger" disabled>
+                        削除
+                    </button>
+                    ※リーグ開催中のプレイリストを削除することはできません
                 </p>
-            </form>
+            {% endif %}
         {% else %}
-            <p style="color:red">
-                <button class="btn danger" disabled>
-                    削除
-                </button>
-                ※リーグ開催中のプレイリストを削除することはできません
+            <p>
+                更新不可能にしたプレイリストを削除することはできません
             </p>
         {% endif %}
-    {% else %}
-        <p>
-            更新不可能にしたプレイリストを削除することはできません
-        </p>
     {% endif %}
-{% endif %}
-<script>
+    <script>
     function check(){
         if(window.confirm('プレイリストを固定化しますか？　編集・削除ができなくなります。')){ // 確認ダイアログを表示
             return true; // 「OK」時は送信を実行
@@ -291,5 +294,5 @@
         window.scrollTo(0, sessionStorage.getItem('scrollPosition'));
         }
   });
-</script>
+    </script>
 {% endblock content %}

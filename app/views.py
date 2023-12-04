@@ -1940,6 +1940,9 @@ def badge_adding(request, sid, badge_name):
 def pos_acc_update(pk):
     league = League.objects.get(pk=pk)
     print(league)
+    if league.playlist == None:
+        print('invalid league')
+        return
     # リーグ内プレイヤーの人数
     base = league.player.count() + 3
     # リーグ内マップ
@@ -1987,7 +1990,9 @@ def pos_acc_update(pk):
         max_pos = league.max_valid * (base + slope(1))
         count_pos = sum([s.pos for s in score_list])
         count_weight_acc = sum([s.weight_acc for s in score_list])
-        theoretical = count_pos / max_pos * 100
+        theoretical = 0
+        if max_pos > 0:
+            theoretical = count_pos / max_pos * 100
         count_acc = 0
         if valid_count > 0:
             count_acc = sum([s.acc for s in score_list])/valid_count

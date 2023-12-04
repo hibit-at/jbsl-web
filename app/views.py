@@ -1785,7 +1785,7 @@ def score_comment(request):
             score.save()
             redirect_url = reverse('app:leaderboard', args=[score.league.pk])
             print(redirect_url)
-            return redirect(f'{redirect_url}#{score.song.lid}')
+            return redirect(f'{redirect_url}#{score.song.pk}')
         print(score)
         context['score'] = score
         return render(request, 'score_comment.html', context)

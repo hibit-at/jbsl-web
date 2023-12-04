@@ -1487,15 +1487,13 @@ def rivalpage(request):
 
     d = defaultdict(compared_score)
 
-    for league in League.objects.filter(player=player):
-        for score in Score.objects.filter(league=league, player=player):
-            song = score.song
-            d[song].set_my_acc(score.acc)
+    for score in Score.objects.filter(player=player).prefetch_related('song'):
+        song = score.song
+        d[song].set_my_acc(score.acc)
 
-    for league in League.objects.filter(player=player.rival):
-        for score in Score.objects.filter(league=league, player=player.rival):
-            song = score.song
-            d[song].set_rival_acc(score.acc)
+    for score in Score.objects.filter(player=player.rival).prefetch_related('song'):
+        song = score.song
+        d[song].set_rival_acc(score.acc)
 
     for key, val in d.items():
         if val.my_acc > 0 and val.rival_acc > 0:

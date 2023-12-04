@@ -1535,7 +1535,8 @@ def headlines(request, page=1):
         context['social'] = social
     start = (page-1) * 100
     end = page * 100
-    headlines = Headline.objects.all().order_by('-time')[start:end]
+    league_prefetch = Prefetch('score', queryset=Score.objects.select_related('league','song'))
+    headlines = Headline.objects.prefetch_related('player',league_prefetch).order_by('-time')[start:end]
     context['headlines'] = headlines
     context['page'] = page
     context['limit'] = (Headline.objects.all().count() + 99)//100

@@ -193,16 +193,18 @@
             }
           }
           function loadSnowState() {
-            var snowVisible = localStorage.getItem("snowVisible") === "true";
+            var snowVisible = localStorage.getItem("snowVisible");
             var snow1 = document.getElementById("snow1");
             var snow2 = document.getElementById("snow2");
           
-            if (snowVisible) {
-              snow1.style.display = "block";
-              snow2.style.display = "block";
-            } else {
+            if (snowVisible === "false") {
+              // 雪を非表示にする
               snow1.style.display = "none";
               snow2.style.display = "none";
+            } else {
+              // 雪を表示する (デフォルト)
+              snow1.style.display = "block";
+              snow2.style.display = "block";
             }
           }
 

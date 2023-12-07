@@ -1,174 +1,214 @@
 {% load static %}
 <html lang="ja">
-<head>
-    <link rel="shortcut icon" type="image/png" href="{% static 'icon.png' %}">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>JBSL-Web</title>
-    <meta property="og:title" content="JapanBeatSaberLeague" />
-    <meta property="og:type" content="website" />
-    <meta property="og:description"
-          content="日本のプレイヤー同士でビートセイバーの総合的な実力を競い合う大会です！"/>
-    <meta property="og:site_name" content="JapanBeatSaberLeague" />
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    <meta property="og:image" content="{% static 'card.png' %}" />
-    <meta name="twitter:card" content="{% static 'card.png' %}">
-    <meta name="twitter:site" content="@115_jbsl">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R8KCWW381S"></script>
-    <script>
+    <head>
+        <link rel="shortcut icon" type="image/png" href="{% static 'icon.png' %}">
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+              integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <title>JBSL-Web</title>
+        <meta property="og:title" content="JapanBeatSaberLeague" />
+        <meta property="og:type" content="website" />
+        <meta property="og:description"
+              content="日本のプレイヤー同士でビートセイバーの総合的な実力を競い合う大会です！"/>
+        <meta property="og:site_name" content="JapanBeatSaberLeague" />
+        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+        <meta property="og:image" content="{% static 'card.png' %}" />
+        <meta name="twitter:card" content="{% static 'card.png' %}">
+        <meta name="twitter:site" content="@115_jbsl">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-R8KCWW381S"></script>
+        <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-R8KCWW381S');
-    </script>
-</head>
-<body class="back">
-    <div class="snow">●</div>
-    <div class="snow snow2nd">●</div>
-    <id="top">
-    <div class="navbar">
-        <h3>
-            <a href="/" style="color:white">JBSL-Web</a>
-        </h3>
-        <h4>
-            <a href="{% url 'app:playlists' %}">
-                <img height="35px" width="35px" src= "{% static 'pict_playlist.png' %}" />
-                Playlists
-            </a>
-        </h4>
-        <h4>
-            <a href={% url 'app:leagues' %}>
-                <img height="35px" width="35px" src= "{% static 'pict_league.png' %}" />
-                Leagues
-            </a>
-        </h4>
-        <h4>
-            <a href={% url 'app:players' %}>
-                <img height="40px" width="40px" src= "{% static 'pict_player.png' %}" />
-                Players
-            </a>
-        </h4>
-        <h4 class="pos-fix">
-            <div class="dropdown">
-                <a class="btn btn-secondary dropdown-toggle"
-                   href="#"
-                   role="button"
-                   id="dropdownMenuLink"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false"
-                   style="border-style:None">
-                    <h4>
-                        <img src = "{% static 'pict_gear.png' %}" height="35px" width="35px">
-                        Others
-                    </h4>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li style="text-align:center;margin-top:5px">
-                        <i>
-                            about JBSL-Web
-                        </i>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=1 %}">JBSL とは？</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=2 %}">JBSL-Web とは？</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=3 %}">登録してみよう</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=4 %}">リーグに参加しよう</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=5 %}">プレイリストを作ろう</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:info' pk=6 %}">リーグを開催しよう</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:archive' %}">JBSL Archive</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:genre_criteria' %}">JBSL Genre Criteria</a>
-                    </li>
-                    <li style="text-align:center;margin-top:5px">
-                        <i>
-                            Tools
-                        </i>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'app:bsr_checker' %}">!bsr checker</a>
-                    </li>
-                    <li style="text-align:center;margin-top:5px">
-                        <i>
-                            Social
-                        </i>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="https://discord.gg/CqQ6ZD8KRn">
-                            <img src="{% static 'Discord.png' %}" height="30px" width="30px">
-                            Our Discord
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="https://twitch.tv/jbsl115">
-                            <img src="{% static 'twitch.png' %}" height="30px" width="30px">
-                            Our Twitch
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="https://twitter.com/115_jbsl">
-                            <img src="{% static 'twitter.png' %}" height="30px" width="30px">
-                            Our Twitter
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </h4>
-        {% if user.is_authenticated %}
+        </script>
+    </head>
+    <body class="back">
+        <div id="snow1" class="snow">●</div>
+        <div id="snow2" class="snow snow2nd">●</div>
+        <id="top">
+        <div class="navbar">
+            <h3>
+                <a href="/" style="color:white">JBSL-Web</a>
+            </h3>
             <h4>
-                <a href="{% url 'app:mypage' %}">
-                    <img class="icon"
-                         src="https://cdn.discordapp.com/avatars/{{ social.uid }}/{{ social.extra_data.avatar }}">
-                    {{ user }}
+                <a href="{% url 'app:playlists' %}">
+                    <img height="35px" width="35px" src= "{% static 'pict_playlist.png' %}" />
+                    Playlists
                 </a>
-                /
-                <a href="{% url 'app:logout' %}">ログアウト</a>
             </h4>
-        {% else %}
-            <p>
-                <div class="pos-fix">
-                    <form method="post" action="{% url 'discord_login' %}">
-                        {% csrf_token %}
-                        <button class = "dl_link">ログイン（Discord認証）</button>
-                    </form>
+            <h4>
+                <a href={% url 'app:leagues' %}>
+                    <img height="35px" width="35px" src= "{% static 'pict_league.png' %}" />
+                    Leagues
+                </a>
+            </h4>
+            <h4>
+                <a href={% url 'app:players' %}>
+                    <img height="40px" width="40px" src= "{% static 'pict_player.png' %}" />
+                    Players
+                </a>
+            </h4>
+            <h4 class="pos-fix">
+                <div class="dropdown">
+                    <a class="btn btn-secondary dropdown-toggle"
+                       href="#"
+                       role="button"
+                       id="dropdownMenuLink"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false"
+                       style="border-style:None">
+                        <h4>
+                            <img src = "{% static 'pict_gear.png' %}" height="35px" width="35px">
+                            Others
+                        </h4>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li style="text-align:center;margin-top:5px">
+                            <i>
+                                about JBSL-Web
+                            </i>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=1 %}">JBSL とは？</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=2 %}">JBSL-Web とは？</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=3 %}">登録してみよう</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=4 %}">リーグに参加しよう</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=5 %}">プレイリストを作ろう</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:info' pk=6 %}">リーグを開催しよう</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:archive' %}">JBSL Archive</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:genre_criteria' %}">JBSL Genre Criteria</a>
+                        </li>
+                        <li style="text-align:center;margin-top:5px">
+                            <i>
+                                Tools
+                            </i>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'app:bsr_checker' %}">!bsr checker</a>
+                        </li>
+                        <li style="text-align:center;margin-top:5px">
+                            <i>
+                                Social
+                            </i>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="https://discord.gg/CqQ6ZD8KRn">
+                                <img src="{% static 'Discord.png' %}" height="30px" width="30px">
+                                Our Discord
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="https://twitch.tv/jbsl115">
+                                <img src="{% static 'twitch.png' %}" height="30px" width="30px">
+                                Our Twitch
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="https://twitter.com/115_jbsl">
+                                <img src="{% static 'twitter.png' %}" height="30px" width="30px">
+                                Our Twitter
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </p>
-        {% endif %}
-    </h4>
-</div>
-<div style="margin:50px;margin-top:150px">
-    {% block content %}
-    {% endblock content %}
-    <hr style="height:5px; background-color:saddlebrown;">
-    <id="down">
-    <h3>
-        <a class="under" href="/">
-            <img src="{% static 'icon.png' %}"
-                 style="height:20px;
-                        width:20px;
-                        transform:rotate(90deg);">
-            Top Page
-        </a>
-    </h3>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script src="{% static 'jbsl2.js' %}"></script>
+            </h4>
+            {% if user.is_authenticated %}
+                <h4>
+                    <a href="{% url 'app:mypage' %}">
+                        <img class="icon"
+                             src="https://cdn.discordapp.com/avatars/{{ social.uid }}/{{ social.extra_data.avatar }}">
+                        {{ user }}
+                    </a>
+                    /
+                    <a href="{% url 'app:logout' %}">ログアウト</a>
+                </h4>
+            {% else %}
+                <p>
+                    <div class="pos-fix">
+                        <form method="post" action="{% url 'discord_login' %}">
+                            {% csrf_token %}
+                            <button class = "dl_link">ログイン（Discord認証）</button>
+                        </form>
+                    </div>
+                </p>
+            {% endif %}
+        </h4>
+    </div>
+    <div style="margin:50px;margin-top:150px">
+        {% block content %}
+        {% endblock content %}
+        <hr style="height:5px; background-color:saddlebrown;">
+        <id="down">
+        <h3>
+            <a class="under" href="/">
+                <img src="{% static 'icon.png' %}"
+                     style="height:20px;
+                            width:20px;
+                            transform:rotate(90deg);">
+                Top Page
+            </a>
+        </h3>
+        <button class="btn"
+                onclick="toggleSnow()"
+                style="color:blue;background-color:white">❄</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="{% static 'jbsl2.js' %}"></script>
+    <script>
+        function toggleSnow() {
+            var snow1 = document.getElementById("snow1");
+            var snow2 = document.getElementById("snow2");
+          
+            var isSnowVisible = snow1.style.display !== "none";
+          
+            if (isSnowVisible) {
+              // 雪を非表示にする
+              snow1.style.display = "none";
+              snow2.style.display = "none";
+              localStorage.setItem("snowVisible", "false");
+            } else {
+              // 雪を表示する
+              snow1.style.display = "block";
+              snow2.style.display = "block";
+              localStorage.setItem("snowVisible", "true");
+            }
+          }
+          function loadSnowState() {
+            var snowVisible = localStorage.getItem("snowVisible");
+            var snow1 = document.getElementById("snow1");
+            var snow2 = document.getElementById("snow2");
+          
+            if (snowVisible === "false") {
+              // 雪を非表示にする
+              snow1.style.display = "none";
+              snow2.style.display = "none";
+            } else {
+              // 雪を表示する (デフォルト)
+              snow1.style.display = "block";
+              snow2.style.display = "block";
+            }
+          }
+
+          window.onload = loadSnowState;
+    </script>
 </body>
 </html>

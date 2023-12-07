@@ -46,7 +46,9 @@
                 </a>
             {% endif %}
         </h3>
-        <p> {{ league.description }} </p>
+        <p>
+            {{ league.description }}
+        </p>
         <h3>
             <a href="{% url 'app:download_playlist' pk=league.playlist.pk %}"
                download="{{ league.playlist.title }}.json">
@@ -231,7 +233,7 @@
 <h2 style="text-align:center">譜面別リーグ内順位</h2>
 {% for song in LBs %}
     {% if song.song_info_genre %}
-        <span style="font-size:22px;color:darkgray"><i><strong>{{ song.song_info_genre}}</strong></i></span>
+        <span style="font-size:22px;color:darkgray"><i><strong>{{ song.song_info_genre }}</strong></i></span>
     {% endif %}
     <form method="POST"
           action="{% url 'app:leaderboard' pk=league.pk %}"
@@ -285,7 +287,9 @@
                             譜面
                         </th>
                         <th width="100px">Accuracy</th>
-                        <th width="100px">Miss</th>
+                        <th width="100px">
+                            Miss
+                        </th>
                         <th width="100px">
                             Replay
                         </th>
@@ -401,6 +405,11 @@
 </p>
 <p>
     順位の計算に要した時間：{{ duration | floatformat:0 }} ms
+</p>
+<p>
+    <a href="{% url "app:koharu_graph" pk=league.pk %}">
+    <button class="btn">Beta 順位変動グラフ</button>
+    </a>
 </p>
 {% comment %} {% if league.isLive and isMember %}
     <form method="POST" action="{% url 'app:beatleader_submission' %}">

@@ -2478,12 +2478,12 @@ def api_playlist(request, pk):
     ans = playlist.values()
     return JsonResponse(list(ans)[0],safe=False,json_dumps_params={'ensure_ascii': False})
 
-def koharu_graph(request, filename):
+def koharu_graph(request, pk):
     if os.path.exists('local.py'):
         from local import GRAPH_URL
     else:
         GRAPH_URL = os.environ['GRAPH_URL']
-    image_url = f'{GRAPH_URL}{filename}.png'
+    image_url = f'{GRAPH_URL}{pk}.png'
     # 外部URLから画像を取得
     response = requests.get(image_url)
     # リクエストが成功した場合は画像データを返す

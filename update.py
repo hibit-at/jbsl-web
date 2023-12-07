@@ -46,7 +46,7 @@ def update_league_player_yurufuwa():
         #     print(participant)
         #     participant.player.yurufuwa += participant.count_pos
         #     participant.player.save()
-        league.owner.yurufuwa += 1
+        # league.owner.yurufuwa += 1
         league.owner.save()
         if league.first != None:
             league.first.yurufuwa += 3

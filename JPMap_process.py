@@ -11,17 +11,6 @@ from django.utils import timezone as django_timezone
 import base64
 
 
-def text_over(img, text, height, fontsize=36, text_color=(0, 0, 0, 0)):
-    file = open("app/.fonts/meiryob.ttc", "rb")
-    bytes_font = BytesIO(file.read())
-    # ttfontname = "/app/.fonts/meiryob.ttc"
-    draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(bytes_font, fontsize)
-    textTopLeft = (30, height)
-    draw.text(textTopLeft, text, fill=text_color, font=font)
-    return img
-
-
 division_colors = {
     0: (0, 0, 0, 255),  # 黒
     1: (200, 50, 200, 255),  # 紫
@@ -48,6 +37,34 @@ division_borders = {
     4 : 800,
 }
 
+
+def setup_django():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    django.setup()
+
+
+def get_division(nps):
+    if nps > 8:
+        return 1
+    elif nps > 6:
+        return 2
+    elif nps > 4:
+        return 3
+    else:
+        return 4
+
+
+def text_over(img, text, height, fontsize=36, text_color=(0, 0, 0, 0)):
+    file = open("app/.fonts/meiryob.ttc", "rb")
+    bytes_font = BytesIO(file.read())
+    # ttfontname = "/app/.fonts/meiryob.ttc"
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype(bytes_font, fontsize)
+    textTopLeft = (30, height)
+    draw.text(textTopLeft, text, fill=text_color, font=font)
+    return img
+
+
 def create_img(year=1000, month=13, div=0):
     canvasSize = (256, 256)
     backgroundRGB = (255, 255, 255, 255)
@@ -65,43 +82,10 @@ def pil_to_base64(img, format="png"):
     img_str = base64.b64encode(buffer.getvalue()).decode("ascii")
     return img_str
 
-
-def collect_maps(mapper, player=None):
+def collect_by_player(player):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.models import JPMap
-    if mapper == 0:
-        return
-    print(f'collect {player}')
-    url = f'https://api.beatsaver.com/maps/uploader/{mapper}/0'
-    res = requests.get(url).json()['docs']
-
-    for r in res:
-        name, bsr, hash, createdAt = r['name'], r['id'], r['versions'][0]['hash'], r['createdAt']
-        try:
-            time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError:
-            time = datetime.strptime(createdAt, "%Y-%m-%dT%H:%M:%SZ")
-
-        for d in r['versions'][0]['diffs']:
-            nps, char, dif = d['nps'], d['characteristic'], d['difficulty']
-
-            if not JPMap.objects.filter(hash=hash, diff=dif, char=char).exists():
-                new_jpmap = JPMap.objects.create(
-                    uploader=player,
-                    name=name,
-                    bsr=bsr,
-                    hash=hash,
-                    char=char,
-                    diff=dif,
-                    nps=nps,
-                    createdAt=time,
-                )
-                print(new_jpmap)
-
-    print(f'finished {player}')
-
-def collect_by_player(player):
+    from app.operations import collect_maps
     collect_maps(player.mapper, player)
 
 
@@ -109,6 +93,7 @@ def collection():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Player
+    from app.operations import collect_maps
     print('collection')
     for player in Player.objects.filter(mapper__gt=0):
         collect_maps(player.mapper, player)
@@ -124,7 +109,8 @@ def create_league(songs, start, last, division, superuser):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
     from app.models import Playlist, Song, League
-    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv, create_song_by_beatleader
+    from app.operations import create_song_by_hash, search_lid, create_song_by_beatleader, get_beatleader_bid
+    from app.utils import diff_label_inv, char_dict_inv
     if len(songs) > 0:
         title = f"JP Monthly {start.year}-{start.month} Div.{division}"
         description = f'{start.year}-{start.month} の新着マップを自動収集したものです。'
@@ -156,19 +142,7 @@ def create_league(songs, start, last, division, superuser):
                     dif = song.diff
                     char = song.char
                     # beatleader id list-up
-                    url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
-                    res = requests.get(url).json()
-                    print(res)
-                    bid = -1
-                    for r in res['leaderboards']:
-                        # print(r['id'])
-                        bid = r['id']
-                        res_diff = r['difficulty']['difficultyName']
-                        res_mode = r['difficulty']['modeName']
-                        print(res_diff, res_mode)
-                        print(dif, char)
-                        if res_diff == dif and res_mode == char:
-                            break
+                    bid = get_beatleader_bid(hash, dif, char)
                     if bid == -1:
                         print('bid detection failed')
                         continue
@@ -207,21 +181,7 @@ def create_league(songs, start, last, division, superuser):
         )
 
 
-
-def get_division(nps):
-    if nps > 8:
-        return 1
-    elif nps > 6:
-        return 2
-    elif nps > 4:
-        return 3
-    else:
-        return 4
-
-
 def monthly():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import JPMap, Player
     import pytz
     from django.conf import settings
@@ -231,8 +191,8 @@ def monthly():
     pre = now - timedelta(days=26)
     start = pre.replace(day=1, hour=0, minute=0)
     start_end = get_last_date(start)
-    songs = {i: [] for i in range(1, 5)}
-    song_hashes = {i: {} for i in range(1, 5)}
+    songs = {i: [] for i in range(4, 0, -1)}
+    song_hashes = {i: {} for i in range(4, 0, -1)}
 
     for song in JPMap.objects.filter(createdAt__gte=start, createdAt__lte=start_end).order_by('-nps'):
         division = get_division(song.nps)
@@ -245,13 +205,11 @@ def monthly():
     last = get_last_date(now)
     print(last)
 
-    for i in range(1, 5):
+    for i in range(4, 0, -1):
         create_league(songs[i], start, last, i, superuser)
 
 
 def get_filtered_songs(start):
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import JPMap
     hashes = {}
     filtered_songs = []
@@ -263,45 +221,31 @@ def get_filtered_songs(start):
 
 
 def add_songs_to_playlist(playlist, songs):
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import Song
-    from app.views import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv, create_song_by_beatleader
+    from app.operations import create_song_by_hash, search_lid, diff_label_inv, char_dict_inv, create_song_by_beatleader, get_beatleader_bid
     for song in playlist.songs.all():
         playlist.songs.remove(song)
 
     for song in songs:
         print(song)
-        dif_num = diff_label_inv[song.diff]
+        diff_num = diff_label_inv[song.diff]
         if song.char == 'Lightshow':
             continue
         gameMode = char_dict_inv[song.char]
         if not Song.objects.filter(hash=song.hash, diff=song.diff, char=song.char).exists():
-            lid = search_lid(song.hash, gameMode, dif_num)
+            lid = search_lid(song.hash, gameMode, diff_num)
             if lid is None:
                 continue
         else:
             lid = Song.objects.get(
                 hash=song.hash, diff=song.diff, char=song.char).lid
-        new_song = create_song_by_hash(song.hash, dif_num, song.char, lid)
+        new_song = create_song_by_hash(song.hash, diff_num, song.char, lid)
         if new_song is None:
             hash = song.hash
             dif = song.diff
             char = song.char
             # beatleader id list-up
-            url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
-            res = requests.get(url).json()
-            print(res)
-            bid = -1
-            for r in res['leaderboards']:
-                # print(r['id'])
-                bid = r['id']
-                res_diff = r['difficulty']['difficultyName']
-                res_mode = r['difficulty']['modeName']
-                print(res_diff, res_mode)
-                print(dif, char)
-                if res_diff == dif and res_mode == char:
-                    break
+            bid = get_beatleader_bid(hash,dif,char)
             if bid == -1:
                 print('bid detection failed')
                 continue
@@ -311,8 +255,6 @@ def add_songs_to_playlist(playlist, songs):
 
 
 def create_playlist(title, days):
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import Playlist
     now = django_timezone.now()
     start = now - timedelta(days=days)
@@ -325,20 +267,15 @@ def create_playlist(title, days):
 def weekly():
     create_playlist('JP Weekly', 7)
 
-
 def biweekly():
     create_playlist('JP Biweekly', 14)
 
-
 def latest():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import JPMap, Playlist, Player, Song, SongInfo
-    from app.views import search_lid, create_song_by_hash, diff_label_inv, char_dict_inv, create_song_by_beatleader
+    from app.operations import diff_label_inv, char_dict_inv
+    from app.operations import search_lid, create_song_by_hash, create_song_by_beatleader, get_beatleader_bid
     playlist = Playlist.objects.get(title='JP Latest')
-
     playlist.songs.clear()
-
     song_order = 0
 
     for player in Player.objects.filter(mapper__gt=0).order_by('mapper_name'):
@@ -346,45 +283,26 @@ def latest():
 
         for jmap in JPMap.objects.filter(uploader=player).order_by('-createdAt', '-char', '-nps'):
             print(jmap)
-            dif_num = diff_label_inv[jmap.diff]
+            hash, dif, char = (jmap.hash, jmap.diff, jmap.char)
+            diff_num = diff_label_inv[jmap.diff]
             if jmap.char == 'Lightshow':
                 continue
             gameMode = char_dict_inv[jmap.char]
-            song = Song.objects.filter(
-                hash=jmap.hash, diff=jmap.diff, char=jmap.char).first()
+            song = Song.objects.filter(hash=hash, diff=dif, char=char).first()
             if song == None:
-                lid = search_lid(jmap.hash, gameMode, dif_num)
+                lid = search_lid(jmap.hash, gameMode, diff_num)
                 if lid is None:
                     print('no lid detected')
                     # try beatleader
-                    hash = jmap.hash
-                    dif = jmap.diff
-                    char = jmap.char
-                    # beatleader id list-up
-                    url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
-                    res = requests.get(url).json()
-                    print(res)
-                    bid = -1
-                    for r in res['leaderboards']:
-                        # print(r['id'])
-                        bid = r['id']
-                        res_diff = r['difficulty']['difficultyName']
-                        res_mode = r['difficulty']['modeName']
-                        print(res_diff, res_mode)
-                        print(dif, char)
-                        if res_diff == dif and res_mode == char:
-                            break
-                    if bid == -1:
-                        print('bid detection failed')
-                        continue
+                    bid = get_beatleader_bid(hash,dif,char)
                     print(bid)
-                    new_song = create_song_by_beatleader(hash=hash,char=char,dif=dif,bid=bid)
+                    new_song = create_song_by_beatleader(hash,char,dif,bid)
                     print(new_song)
                     if new_song == None:
                         continue
                     song = new_song
                 else:
-                    song = create_song_by_hash(jmap.hash, dif_num, jmap.char, lid)
+                    song = create_song_by_hash(hash,diff_num,char,lid)
                     print(song)
             playlist.songs.add(song)
             defaults = {'order': song_order}
@@ -398,6 +316,7 @@ def latest():
 
 
 if __name__ == '__main__':
+    setup_django()
     if len(sys.argv) > 1:
         eval(f'{sys.argv[1]}()')
     else:

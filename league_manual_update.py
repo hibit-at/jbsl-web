@@ -7,8 +7,8 @@ def process():
     sys.path.append(cwd)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
     django.setup()
-    from app.views import pos_acc_update
-    from app.models import Playlist, Player, Song, League
+    from app.operations import pos_acc_update
+    from app.models import League
 
     league_ids_str = input('input league ids or type "all"\n')
     if league_ids_str == 'all':

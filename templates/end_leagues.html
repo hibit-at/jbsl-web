@@ -16,7 +16,7 @@
     {% for league in leagues %}
         <tr style="background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));">
             <td>
-                <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name|truncatechars:20 }}
+                <a href= {% url 'app:leaderboard' pk=league.pk %} style="color:black">{{ league.name|truncatechars:40 }}
                     {% if league.isOfficial %}
                         <img src="{% static 'Check.png' %}" height="25px"/>
                     {% endif %}

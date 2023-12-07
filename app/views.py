@@ -5,183 +5,23 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from time import time
-from typing import Dict, List, Any
 
 import requests
 from PIL import Image
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, Max, Prefetch
-from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone as django_timezone
 
 from .models import League, Participant, Player, Playlist, Song, Score, Headline, SongInfo, Badge, Match, DGA, User
-
-
-diff_label = {
-    1: 'Easy',
-    3: 'Normal',
-    5: 'Hard',
-    7: 'Expert',
-    9: 'ExpertPlus',
-}
-
-diff_label_inv = {
-    'Easy': 1,
-    'Normal': 3,
-    'Hard': 5,
-    'Expert': 7,
-    'ExpertPlus': 9,
-}
-
-char_dict = {
-    'SoloStandard': 'Standard',
-    'SoloLawless': 'Lawless',
-    'SoloOneSaber': 'OneSaber',
-    'Solo90Degree': '90Degree',
-    'Solo360Degree': '360Degree',
-    'SoloNoArrows': 'NoArrows',
-}
-
-char_dict_inv = {
-    'Standard': 'SoloStandard',
-    'Lawless': 'SoloLawless',
-    'OneSaber': 'SoloOneSaber',
-    '90Degree': 'Solo90Degree',
-    '360Degree': 'Solo360Degree',
-    'NoArrows': 'SoloNoArrows',
-}
-
-col_dict = {
-    1: 'rgba(130,211,255,.8)',
-    3: 'rgba(128,255,128,.8)',
-    5: 'rgba(255,128,60,.8)',
-    7: 'rgba(255,128,128,.8)',
-    9: 'rgba(220,130,250,.8)',
-}
-
-hmd_dict = {
-    0: 'Unknown',
-    1: 'Oculus Rift CV1',
-    2: 'Vive',
-    4: 'Vive Pro',
-    8: 'Windows Mixed Reality',
-    16: 'Rift S',
-    32: 'Oculus Quest',
-    61: 'Quest Pro',
-    64: 'Valve Index',
-    128: 'Vive Cosmos',
-    256: 'Quest 2',
-}
-
-league_colors = [
-    {'value': 'rgba(130,211,255,.8)', 'text': 'Blue'},
-    {'value': 'rgba(128,255,128,.8)', 'text': 'Green'},
-    {'value': 'rgba(255,128,60,.8)', 'text': 'Orange'},
-    {'value': 'rgba(255,128,128,.8)', 'text': 'Red'},
-    {'value': 'rgba(220,130,250,.8)', 'text': 'Purple'},
-    {'value': 'rgba(255,255,128,.8)', 'text': 'Yellow'},
-]
-
-
-def get_decorate(acc: float) -> str:
-    if acc < 50:
-        return 'color:dimgray'
-    if 95 <= acc < 96:
-        return 'font-weight:bold;text-shadow: 1px 1px 0 deepskyblue'
-    if 96 <= acc < 97:
-        return 'font-weight:bold;text-shadow: 1px 1px 0 mediumseagreen'
-    if 97 <= acc < 98:
-        return 'font-weight:bold;text-shadow: 1px 1px 0 orange'
-    if 98 <= acc < 99:
-        return 'font-weight:bold;text-shadow: 1px 1px 0 tomato'
-    if 99 <= acc <= 100:
-        return 'font-weight:bold;text-shadow: 1px 1px 0 violet'
-    return 'None'
-
-
-def score_to_acc(score: float, notes: int) -> float:
-    max_score = 0
-    multiply_count = 1
-    while notes > 0 and multiply_count > 0:
-        max_score += 115
-        notes -= 1
-        multiply_count -= 1
-    multiply_count = 4
-    while notes > 0 and multiply_count > 0:
-        max_score += 115*2
-        notes -= 1
-        multiply_count -= 1
-    multiply_count = 8
-    while notes > 0 and multiply_count > 0:
-        max_score += 115*4
-        notes -= 1
-        multiply_count -= 1
-    while notes > 0:
-        max_score += 115*8
-        notes -= 1
-    if max_score == 0:
-        return 0
-    return score/max_score*100
-
-
-def slope(n: int) -> int:
-    if n == 1:
-        return 0
-    if n == 2:
-        return -3
-    return -(n+2)
-
-
-def validation(s: str) -> str:
-    ans = ''
-    for c in s:
-        if b'\xc2\x80' <= c.encode('utf-8') and c.encode('utf-8') <= b'\xd4\xbf':
-            continue
-        ans += c
-    return ans
-
-
-def get_love_pair_context(active_players) -> Dict[str, Any]:
-    context = {}
-    love_pair = 0
-    love_sort = defaultdict(int)
-    love_max = 0
-    for player in active_players:
-        if player.rival != None:
-            love_sort[player.rival] += 1
-            love_max = max(love_max, love_sort[player.rival])
-            if player.rival.rival == player:
-                love_pair += 1
-    love_pair = int(love_pair/2)
-    love_sort = [k for k, v in love_sort.items() if v == love_max]
-    context['love_max'] = love_max
-    context['love_pair'] = love_pair
-    context['love_sort'] = love_sort
-    return context
-
-
-def get_headline_and_league_context() -> Dict[str, Any]:
-    context = {}
-    score_prefetch = Prefetch('score__league')
-    league_prefetch = Prefetch('score__league')
-    song_prefetch = Prefetch('score__song')
-    # score_prefetch = Prefetch('score__league',queryset=League.objects.all()) # これでも同じだが、カスタマイズ可能。いつかこの知識が高速化に役立つかもしれない
-    headlines = Headline.objects.prefetch_related(league_prefetch,song_prefetch).select_related('player').all()
-    headlines = headlines.order_by('-time')[:8]
-    context['headlines'] = headlines
-    active_leagues = League.objects.filter(
-        isOpen=True, isLive=True
-    ).select_related(
-        'owner', 'first', 'second', 'third', 'playlist'  # ForeignKey フィールドの名称に基づく
-    ).order_by('-isOfficial', 'end', '-pk')
-    context['active_leagues'] = active_leagues
-    return context
-
+from .utils import ComparedScore, Results
+from .utils import score_to_acc, validation
+from .utils import diff_label_inv, char_dict_inv, league_colors, state_dict, genres, join_comment
+from .operations import create_song_by_hash, top_score_registration, make_sorted_playlist, calculate_scoredrank_LBs, create_headline, score_to_headline, process_mapper
+from .operations import get_headline_and_league_context, search_lid, add_playlist, create_song_by_beatleader, check_membership_and_ownership, get_join_state
 
 def index(request) -> HttpResponse:
     context = {}
@@ -202,9 +42,6 @@ def index(request) -> HttpResponse:
                     continue
                 invitations.append(league)
             context['invitations'] = invitations
-    # active_players = Player.objects.filter(
-    #     isActivated=True).order_by('-borderPP')
-    # context['active_players'] = active_players
     if request.method == 'POST':
         post = request.POST
         print(post)
@@ -220,28 +57,7 @@ def index(request) -> HttpResponse:
             league.invite.remove(player)
             return redirect('app:index')
     context.update(get_headline_and_league_context())
-    # context.update(get_love_pair_context(context['active_players']))
     return render(request, 'index.html', context)
-
-
-def process_mapper(post, player: Player, context):
-    mapper_id = post['mapper']
-    if mapper_id == '':
-        player.mapper = 0
-        player.mapper_name = ''
-    elif Player.objects.filter(mapper=mapper_id).exists():
-        context['mapper_error'] = '! 既にマッパーとして登録されています。もし自分以外のプレイヤーがなりすましている場合は、管理者 hibit までお知らせください。 !'
-    else:
-        url = f'https://api.beatsaver.com/users/id/{mapper_id}'
-        mapper_name = requests.get(url).json()['name']
-        player.mapper = int(mapper_id)
-        player.mapper_name = mapper_name
-        player.save()
-        import sys
-        sys.path.append('../')
-        import JPMap_process
-        JPMap_process.collect_by_player(player)
-
 
 def userpage(request, sid=0):
     context = {}
@@ -286,7 +102,7 @@ def userpage(request, sid=0):
 
     eyebeam_count = Player.objects.filter(rival=player).count()
     top10_scores = Score.objects.filter(
-        player=player, league__name='Top10').order_by('-rawPP')
+        player=player, league__name='Top10').order_by('-rawPP').prefetch_related('song')
     player_badges = Badge.objects.filter(player=player)
 
     context.update({
@@ -364,161 +180,6 @@ def mypage(request):
     player = user.player
     return redirect('app:userpage', sid=player.sid)
 
-
-def create_song_by_hash(hash, diff_num, char, lid):
-    if lid == None:
-        return None
-    if Song.objects.filter(lid=lid).exists():
-        return Song.objects.get(lid=lid)
-    url = f'https://api.beatsaver.com/maps/hash/{hash}'
-    res = requests.get(url).json()
-    if 'error' in res:
-        print('error! in create_song_by_hash')
-        return None
-    bsr = res['id']
-    title = res['name']
-    # author = res['uploader']['name']
-    author = res['metadata']['levelAuthorName']
-    versions = res['versions']
-    latest = versions[0]
-    diffs = latest['diffs']
-    diff = diff_label[diff_num]
-    color = col_dict[diff_num]
-    imageURL = f"https://cdn.scoresaber.com/covers/{str(hash).upper()}.png"
-    notes = 0
-    for diff_data in diffs:
-        if diff_data['difficulty'] == diff and diff_data['characteristic'] == char:
-            notes = diff_data['notes']
-    print(bsr, title, author, diff, notes)
-    Song.objects.create(
-        title=title,
-        author=author,
-        diff=diff,
-        char=char,
-        notes=notes,
-        bsr=bsr,
-        hash=hash,
-        lid=lid,
-        color=color,
-        imageURL=imageURL,
-    )
-    return Song.objects.get(lid=lid)
-
-
-def create_headline(player, title, diff, old_acc=None, new_acc=None):
-    if old_acc is not None:
-        text = f'{player} さんが {title} ({diff}) のスコアを更新！ {old_acc:.2f} -> {new_acc:.2f} %'
-    else:
-        text = f'{player} さんが {title} ({diff}) のスコアを更新！ {new_acc:.2f} %'
-
-    return Headline.objects.create(
-        player=player,
-        time=django_timezone.now(),
-        text=text,
-    )
-
-
-def score_to_headline(new_score, song, player, league):
-    title = song.title[:30] + '...' if len(song.title) > 30 else song.title
-    new_acc = score_to_acc(new_score, song.notes)
-
-    old_score = Score.objects.filter(
-        player=player, song=song, league=league).first()
-
-    if old_score is not None:
-        if new_score > old_score.score:
-            old_acc = old_score.acc
-            return create_headline(player, title, song.diff, old_acc, new_acc)
-    else:
-        return create_headline(player, title, song.diff, None, new_acc)
-
-
-def top_score_registration(player):
-    sid = player.sid
-    # pp
-    url = f'https://scoresaber.com/api/player/{sid}/basic'
-    res = requests.get(url).json()
-    if 'errorMessage' in res:
-        return
-    pp = res['pp']
-    name = res['name']
-    player.pp = pp
-    player.name = name
-    player.save()
-    # top10
-    url = f'https://scoresaber.com/api/player/{sid}/scores?limit=10&sort=top'
-    res = requests.get(url).json()
-    playerScores = res['playerScores']
-    league = League.objects.get(name='Top10')
-
-    # inititalize
-    initialize = False # 普段は False だけど、ナーフがあった時だけ True にして Push
-    # initialize = True
-    if initialize:
-        for score in Score.objects.filter(player=player, league__name='Top10').order_by('-rawPP'):
-            score.delete()
-
-    # add
-    for playerScore in playerScores:
-        leaderboard = playerScore['leaderboard']
-        lid = leaderboard['id']
-        hash = leaderboard['songHash']
-        diff_num = leaderboard['difficulty']['difficulty']
-        gameMode = leaderboard['difficulty']['gameMode']
-        char = char_dict[gameMode]
-        if not Song.objects.filter(lid=lid).exists():
-            create_song_by_hash(hash, diff_num, char, lid)
-        song = Song.objects.get(lid=lid)
-        notes = song.notes
-        score = playerScore['score']['modifiedScore']
-        pp = playerScore['score']['pp']
-        miss = playerScore['score']['missedNotes'] + \
-            playerScore['score']['badCuts']
-        hmd = hmd_dict[playerScore['score']['hmd']]
-        if hmd != 'Unknown' or player.hmd == 'Unknown':
-            player.hmd = hmd
-        defaults = {
-            'score': score,
-            # 'acc': score/(115*8*int(notes)-7245)*100,
-            'acc': score_to_acc(score, notes),
-            'rawPP': pp,
-            'miss': miss,
-        }
-        # score_to_headline(score, song, player, league)
-        # print(defaults)
-        Score.objects.update_or_create(
-            player=player,
-            song=song,
-            league=league,
-            defaults=defaults,
-        )
-    # if over erase
-    top10 = Score.objects.filter(
-        player=player, league__name='Top10').order_by('-rawPP')
-    if len(top10) > 10:
-        print('over')
-        for over_score in top10[10:]:
-            over_score.delete()
-    # border pp calc
-    border_pp = 0
-    for t in top10[1:4]:
-        border_pp += t.rawPP
-    player.borderPP = border_pp
-
-    # beatleader hmd
-    url = f'https://api.beatleader.xyz/player/{player.sid}?stats=true'
-    res = requests.get(url)
-    if res.status_code == 200:
-        res = res.json()
-        if res['scoreStats']['topHMD'] in hmd_dict:
-            hmd = hmd_dict[res['scoreStats']['topHMD']]
-            if hmd != 'Unknown':
-                player.hmd = hmd
-
-    player.save()
-    return
-
-
 @login_required
 def activate_process(request):
     user = request.user
@@ -561,90 +222,6 @@ def activate_process(request):
         top_score_registration(player)
         return redirect('app:mypage')
     return render(request, 'activation.html', context)
-
-
-def search_lid(hash, gameMode, diff_num):
-    url = f'https://scoresaber.com/api/leaderboard/get-difficulties/{hash}'
-    res = requests.get(url).json()
-    if 'errorMessage' in res:
-        return None
-    for r in res:
-        if r['difficulty'] != diff_num:
-            continue
-        if r['gameMode'] != gameMode:
-            continue
-        return r['leaderboardId']
-    return None
-
-
-def add_playlist(playlist, json_data):
-    for song in json_data['songs']:
-        hash = str(song['hash']).upper()
-        print('searched song is', song)
-        difficulty = None
-        gameMode = None
-        char = None
-        if 'difficulties' not in song:
-            url = f'https://api.beatsaver.com/maps/hash/{hash}'
-            res = requests.get(url).json()
-            version = res['versions'][0]
-            dif_idx = -1
-            difficulty = version['diffs'][dif_idx]
-            while difficulty['characteristic'] == 'Lightshow':
-                dif_idx -= 1
-                difficulty = version['diffs'][dif_idx]
-            diff = difficulty['difficulty']
-            char = difficulty['characteristic']
-            gameMode = char_dict_inv[char]
-        else:
-            difficulty = song['difficulties'][0]
-            char = difficulty['characteristic']
-            gameMode = char_dict_inv[char]
-            diff = difficulty['name']
-            diff = diff[0].upper() + diff[1:]
-        print(diff)
-        if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
-            print('song does not exist so create')
-            diff_num = diff_label_inv[diff]
-            print(diff_num)
-            if search_lid(hash, gameMode, diff_num) == None:
-                print('no LID')
-
-                # try beatleader
-
-                # beatleader id list-up
-                url = f'https://api.beatleader.xyz/leaderboards/hash/{hash}'
-                res = requests.get(url).json()
-                bid = -1
-                for r in res['leaderboards']:
-                    # print(r['id'])
-                    bid = r['id']
-                    res_diff = r['difficulty']['difficultyName']
-                    res_mode = r['difficulty']['modeName']
-                    print(res_diff, res_mode)
-                    if res_diff == diff and res_mode == char:
-                        break
-                beatleader_song = create_song_by_beatleader(
-                    hash, char, diff, bid)
-                if beatleader_song != None:
-                    print('add by beatleader', beatleader_song)
-                    playlist.songs.add(beatleader_song)
-
-                continue
-            lid = search_lid(hash, gameMode, diff_num)
-            print(lid)
-            create_song_by_hash(hash, diff_num, char, lid)
-
-        # 作成に失敗した場合は強制終了、基本的には発生しない
-        print(hash, diff, char)
-        if not Song.objects.filter(hash=hash, diff=diff, char=char).exists():
-            print('failed!')
-            continue
-
-        song_object = Song.objects.get(hash=hash, diff=diff, char=char)
-        print('add by scoresaber', song_object)
-        playlist.songs.add(song_object)
-        print(hash, char, diff)
 
 
 @login_required
@@ -724,109 +301,41 @@ def create_playlist(request):
 def playlists(request, page=1):
     context = {}
     user = request.user
+    # ユーザー認証状態の確認
     if user.is_authenticated:
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
-    start = 8*(page-1)
-    end = 8*page
+    # ページネーションの計算
+    start = 8 * (page - 1)
+    end = 8 * page
     limit = (Playlist.objects.all().count() + 7) // 8
     print(limit)
-
     from django.db.models import Q
-
+    # プレイリストの基本クエリセット
     playlists = Playlist.objects.prefetch_related('songs').select_related('editor')
-
-    # ユーザーが認証されている場合
+    # ユーザーが認証されている場合の処理
     if user.is_authenticated:
+        # エディターまたは共同エディターであるか、公開されているプレイリストを選択
         playlists = playlists.order_by('-pk').filter(
             Q(isHidden=False) | Q(editor=user.player) | Q(CoEditor=user.player)
         ).distinct()[start:end]
-    # ユーザーが認証されていない場合
+    # ユーザーが認証されていない場合の処理
     else:
-        playlists = playlists.order_by(
-            '-pk'
-        ).filter(isHidden=False)[start:end]
-    # archives = Playlist.objects.all().order_by(
-    #     '-pk').filter(isHidden=False)[start:end]
-    # playlists = make_sorted_playlists(playlists)
+        # 公開されているプレイリストのみを選択
+        playlists = playlists.order_by('-pk').filter(isHidden=False)[start:end]
+    # 特定のプレイリストを取得
     weekly = Playlist.objects.get(title='JP Weekly')
     biweekly = Playlist.objects.get(title='JP Biweekly')
     latest = Playlist.objects.get(title='JP Latest')
+    # コンテキストに情報を追加
     context['weekly'] = weekly
     context['biweekly'] = biweekly
     context['latest'] = latest
     context['playlists'] = playlists
-    # context['archives'] = archives
     context['page'] = page
     context['limit'] = limit
+    # テンプレートをレンダリングして返す
     return render(request, 'playlists.html', context)
-
-
-# def make_sorted_playlist(playlist: Playlist):
-#     from operator import attrgetter
-#     sorted_songs = []
-
-#     for song in playlist.songs.all():
-#         songinfo, created = SongInfo.objects.get_or_create(
-#             song=song, playlist=playlist)
-#         song.order = songinfo.order if not created else 0
-#         song.genre = songinfo.genre if not created else None
-#         sorted_songs.append(song)
-
-#     sorted_songs = sorted(sorted_songs, key=attrgetter('order'))
-#     playlist.sorted_songs = sorted_songs
-
-#     return playlist
-
-def make_sorted_playlist(playlist: Playlist):
-    from operator import attrgetter
-    sorted_songs = []
-    song_infos = {song_info.song_id: song_info for song_info in SongInfo.objects.filter(playlist=playlist)}
-
-    for song in playlist.songs.all():
-        song_info = song_infos.get(song.id)
-        if song_info:
-            song.order = song_info.order
-            song.genre = song_info.genre
-        else:
-            song.order = 0
-            song.genre = None
-        sorted_songs.append(song)
-
-    sorted_songs.sort(key=attrgetter('order'))
-    playlist.sorted_songs = sorted_songs
-
-    return playlist
-
-
-def create_song_by_beatleader(hash, char, dif, bid):
-    if Song.objects.filter(bid=bid).exists():
-        return Song.objects.get(bid=bid)
-    url = f'https://api.beatleader.xyz/leaderboard/{bid}'
-    res = requests.get(url)
-    if res.status_code != 200:
-        return None
-    res = res.json()
-    bsr = res['song']['id']
-    title = res['song']['name']
-    author = res['song']['mapper']
-    notes = res['difficulty']['notes']
-    imageURL = res['song']['coverImage']
-    color = col_dict[res['difficulty']['value']]
-    print(bsr, title, author, dif, notes, color)
-    return Song.objects.create(
-        title=title,
-        author=author,
-        diff=dif,
-        char=char,
-        notes=notes,
-        bsr=bsr,
-        hash=hash,
-        lid=None,
-        color=color,
-        imageURL=imageURL,
-        bid=bid,
-    )
 
 
 def playlist(request, pk):
@@ -853,7 +362,7 @@ def playlist(request, pk):
         if playlist.editor == user.player:
             playlist = make_sorted_playlist(playlist)
             for i, song in enumerate(playlist.sorted_songs):
-                print(song)
+                # print(song)
                 songInfo, _ = SongInfo.objects.get_or_create(song=song, playlist=playlist)
                 songInfo.order = i*2
                 songInfo.save()
@@ -903,23 +412,6 @@ def playlist(request, pk):
                 context['errorMessage'] = 'URL の解析に失敗しました。'
                 print('error')
                 return render(request, 'playlist.html', context)
-            hash = res['songHash']
-            diff_num = res['difficulty']['difficulty']
-            gameMode = res['difficulty']['gameMode']
-            char = char_dict[gameMode]
-            song = create_song_by_hash(hash, diff_num, char, lid)
-            sort_index = playlist.songs.all().count()
-            if post['sort_index'] != '':
-                sort_index = float(post['sort_index'])
-            if song is not None:
-                playlist.songs.add(song)
-                # if not SongInfo.objects.filter(song=song,playlist=playlist).exists():
-                SongInfo.objects.update_or_create(
-                    song=song,
-                    playlist=playlist,
-                    defaults={'order': sort_index},
-                )
-            return redirect('app:playlist', pk=pk)
         if 'remove_song' in post and post['remove_song'] != '':
             song_pk = post['remove_song']
             song = Song.objects.get(pk=song_pk)
@@ -1051,16 +543,16 @@ def playlist(request, pk):
     context['playlist'] = playlist
 
     # genre
-    genres = [
-        "---",
-        "Acc",
-        "Tech",
-        "Balanced",
-        "FullRange",
-        "Speed",
-        "Stamina",
-        "Concept",
-    ]
+    # genres = [
+    #     "---",
+    #     "Acc",
+    #     "Tech",
+    #     "Balanced",
+    #     "FullRange",
+    #     "Speed",
+    #     "Stamina",
+    #     "Concept",
+    # ]
     context['genres'] = genres
 
     return render(request, 'playlist.html', context)
@@ -1107,15 +599,14 @@ def leagues(request):
         isOpen=True, isLive=True
     ).select_related(
         'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
-    ).order_by('-isOfficial', 'end', '-pk')
+    ).order_by('-isOfficial', 'end', '-pk').prefetch_related('playlist')
 
     end_leagues = League.objects.filter(
         isOpen=True, isLive=False
     ).select_related(
         'owner', 'first', 'second', 'third'  # ForeignKey フィールドの名称に基づく
     ).order_by('-end', '-pk')
-
-
+    
     context = {
         'social': social,
         'active_leagues': active_leagues,
@@ -1123,133 +614,6 @@ def leagues(request):
     }
 
     return render(request, 'leagues.html', context)
-
-
-def calculate_scoredrank_LBs(league, virtual=None, record=False):
-    # リーグ内プレイヤーの人数
-    base = league.player.count() + 3
-    # リーグ内マップ
-    playlist = league.playlist
-    playlist = make_sorted_playlist(playlist)
-    songs = league.playlist.sorted_songs
-    # プレイヤーごとのスコア
-    total_rank = defaultdict(list)
-    # マップごとのプレイヤーランキング
-    for song in songs:
-        query = Score.objects.filter(
-            song=song, league=league).filter(Q(player__league=league) | Q(player=virtual)).order_by('-score').distinct()
-
-        # genre_add
-        try:
-            song_info = SongInfo.objects.get(song=song, playlist=playlist)
-            setattr(song, 'song_info_genre', song_info.genre)
-        except SongInfo.DoesNotExist:
-            # song_infoが存在しない場合の処理（必要に応じて）
-            pass
-
-        for rank, score in enumerate(query):
-            pos = base + slope(rank + 1)
-            setattr(score, 'rank', rank+1)
-            setattr(score, 'pos', pos)
-
-            # 精度により点数を強調
-            decorate = get_decorate(score.acc)
-            setattr(score, 'decorate', decorate)
-
-            player = score.player
-            total_rank[player].append(score)
-        setattr(song, 'scores', query)
-    # 順位点→精度でソート
-
-    for player in total_rank:
-        total_rank[player] = sorted(
-            total_rank[player], key=lambda x: (-x.pos, -x.acc))
-    # 有効範囲の分だけ合算する
-    players = []
-    count_range = league.max_valid
-    for player, score_list in total_rank.items():
-        score_list = score_list[:count_range]
-        for score in score_list:
-            setattr(score, 'valid', 1)
-        valid_count = len(score_list)
-        max_pos = league.max_valid * (base + slope(1))
-        count_pos = sum([s.pos for s in score_list])
-        theoretical = count_pos / max_pos * 100
-        count_acc = sum([s.acc for s in score_list])/valid_count
-
-        # 精度により点数を強調
-        decorate = get_decorate(count_acc)
-        setattr(player, 'decorate', decorate)
-
-        tooltip_pos = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
-        tooltip_valid = '<br>'.join(
-            [f'{score.song.title[:25]}...' for score in score_list])
-        tooltip_acc = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
-        setattr(player, 'count_pos', count_pos)
-        setattr(player, 'theoretical', theoretical)
-        setattr(player, 'count_acc', count_acc)
-        setattr(player, 'valid', valid_count)
-        setattr(player, 'tooltip_pos', tooltip_pos)
-        setattr(player, 'tooltip_valid', tooltip_valid)
-        setattr(player, 'tooltip_acc', tooltip_acc)
-        if Participant.objects.filter(league=league, player=player).exists():
-            comment = Participant.objects.get(
-                league=league, player=player).message
-            setattr(player, 'comment', comment)
-        players.append(player)
-    # 順位点→精度でソート
-    players = sorted(
-        players, key=lambda x: (-x.count_pos, -x.count_acc))
-    for rank, player in enumerate(players):
-        setattr(player, 'rank', rank+1)
-    return players, songs
-
-
-def check_membership_and_ownership(user, league):
-    is_member = False
-    is_owner = False
-    if user.is_authenticated:
-        if user.player in league.player.all():
-            is_member = True
-        if user.player == league.owner:
-            is_owner = True
-    return is_member, is_owner
-
-
-def get_join_state(user: User, is_member, league: League, player: Player, is_close, is_prohibited):
-    join_state = -1
-    if user.is_authenticated:
-        if is_member:
-            join_state = 0
-        elif not league.isLive:
-            join_state = 1
-        elif not league.isPublic:
-            join_state = 2
-        elif player.borderPP > league.limit:
-            join_state = 3
-        elif is_close:
-            join_state = 4
-        elif is_prohibited:
-            join_state = 5
-        else:
-            join_state = 6
-        print(join_state)
-    return join_state
-
-
-join_comment = {
-    -1: '',
-    0: 'あなたはこのリーグに参加しています。',
-    1: '終了したリーグに参加することはできません。',
-    2: '非公開のリーグに参加することはできません。',
-    3: 'あなたは実力が高すぎるため、このリーグには参加できません……。',
-    4: '公式リーグでは、終了 48 時間前を過ぎると参加することはできません。',
-    5: '同時参加不可能なリーグにすでに参加しているため、このリーグには参加できません。',
-    6: '',
-}
-
 
 def leaderboard(request, pk):
     context = {}
@@ -1421,7 +785,6 @@ def virtual_league(request, pk):
             miss = scoreData['badCuts'] + scoreData['missedNotes']
             defaults = {
                 'score': score,
-                # 'acc': score/(115*8*int(notes)-7245)*100,
                 'acc': score_to_acc(score, notes),
                 'rawPP': rawPP,
                 'miss': miss,
@@ -1459,33 +822,7 @@ def rivalpage(request):
     compares = []
     match = 0
     win = 0
-
-    class compared_score:
-
-        my_acc = 0
-        rival_acc = 0
-
-        def __init__(self) -> None:
-            pass
-
-        def set_my_acc(self, acc: float):
-            self.my_acc = max(self.my_acc, acc)
-
-        def set_rival_acc(self, acc: float):
-            self.rival_acc = max(self.rival_acc, acc)
-
-        def win(self) -> bool:
-            return self.my_acc >= self.rival_acc
-
-        def dif(self) -> int:
-            return self.my_acc - self.rival_acc
-
-        def __repr__(self) -> str:
-            return f'{self.my_acc} vs {self.rival_acc}'
-
-    from collections import defaultdict
-
-    d = defaultdict(compared_score)
+    d = defaultdict(ComparedScore)
 
     for score in Score.objects.filter(player=player).prefetch_related('song'):
         song = score.song
@@ -1580,35 +917,6 @@ def players(request, sort='borderPP', page=1):
     print(context)
     return render(request, 'players.html', context)
 
-
-def debug(request):
-    if not request.user.is_staff:
-        return redirect('app:index')
-    active_players = Player.objects.filter(isActivated=True).order_by('-pp')
-    context = {}
-    context['active_players'] = active_players
-    for player in active_players:
-        check = defaultdict(int)
-        # print(player)
-        rivals = []
-        if player.rival == None:
-            continue
-        rival = player
-        while True:
-            check[rival] += 1
-            if check[rival] > 1:
-                rivals.append(rival)
-                break
-            # print('...', rival)
-            rivals.append(rival)
-            if rival.rival == None:
-                break
-            rival = rival.rival
-        setattr(player, 'rivals', rivals[1:])
-
-    return render(request, 'debug.html', context)
-
-
 def api_leaderboard(request, pk):
     context = {}
     league = League.objects.get(pk=pk)
@@ -1666,28 +974,6 @@ def bsr_checker(request):
     if request.method == 'POST':
         post = request.POST
         print(post)
-
-        class Result:
-
-            def __init__(self, text, link) -> None:
-                self.text = text
-                self.link = link
-
-            def __str__(self) -> str:
-                return str(self.text)
-
-        class Results:
-
-            def __init__(self) -> None:
-                self.results = []
-
-            def append(self, text, link=None):
-                append_res = Result(text, link)
-                self.results.append(Result(text, link))
-
-            def __str__(self) -> str:
-                return ','.join(map(str, self.results))
-
         results = Results()
         twitchURL = post['twitchURL']
         twitchID = twitchURL.split('/')[-1]
@@ -1758,7 +1044,7 @@ def bsr_checker(request):
     return render(request, 'bsr_checker.html', context)
 
 
-def info_test(request, pk):
+def info(request, pk):
     print(pk)
     context = {}
     user = request.user
@@ -1922,120 +1208,6 @@ def owner_comment(request):
         return render(request, 'owner_comment.html', context)
     return redirect('app:index')
 
-
-@login_required
-def badge_adding(request, sid, badge_name):
-    if not request.user.is_staff:
-        return redirect('app:index')
-    badge_name = badge_name.replace('_', ' ')
-    badge = Badge.objects.get(name=badge_name)
-    player = Player.objects.get(sid=sid)
-    badge.player = player
-    badge.save()
-    print(badge, player)
-    return redirect('app:index')
-
-
-def pos_acc_update(pk):
-    league = League.objects.get(pk=pk)
-    print(league)
-    if league.playlist == None:
-        print('invalid league')
-        return
-    # リーグ内プレイヤーの人数
-    base = league.player.count() + 3
-    # リーグ内マップ
-    playlist = league.playlist
-    songs = playlist.songs.all()
-    # マップごとのプレイヤーランキング
-    for song in songs:
-        print(song)
-        query = Score.objects.filter(
-            song=song, league=league, player__league=league).order_by('-score')
-        max_score = -1
-        if len(query) > 0:
-            max_score = query[0].score
-        for rank, score in enumerate(query):
-            pos = base + slope(rank + 1)
-            score.rank = rank+1
-            score.pos = pos
-            score.weight_acc = score.score/max_score*100
-
-            print(score.weight_acc)
-
-            decorate = get_decorate(score.acc)
-            score.decorate = get_decorate(score.acc)
-
-            score.save()
-
-    players = Player.objects.filter(league=league)
-    count_range = league.max_valid
-
-    for player in players:
-        participant = None
-        if Participant.objects.filter(league=league, player=player).exists():
-            participant = Participant.objects.get(league=league, player=player)
-        else:
-            participant = Participant.objects.create(
-                league=league, player=player)
-        print(participant)
-        query = Score.objects.filter(
-            league=league, player=player).order_by('-pos', '-acc')
-        for i, score in enumerate(query):
-            score.valid = (i < count_range)
-            score.save()
-        score_list = query[:count_range]
-        valid_count = len(score_list)
-        max_pos = league.max_valid * (base + slope(1))
-        count_pos = sum([s.pos for s in score_list])
-        count_weight_acc = sum([s.weight_acc for s in score_list])
-        theoretical = 0
-        if max_pos > 0:
-            theoretical = count_pos / max_pos * 100
-        count_acc = 0
-        if valid_count > 0:
-            count_acc = sum([s.acc for s in score_list])/valid_count
-
-        decorate = get_decorate(count_acc)
-        participant.decorate = decorate
-
-        tooltip_pos = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.pos})' for score in score_list])
-        tooltip_weight_acc = '<br>'.join(
-            [f'{score.song.title[:25]}...({score.weight_acc:.2f})' for score in score_list])
-        tooltip_valid = '<br>'.join(
-            [f'{score.song.title[:25]}...' for score in score_list])
-        tooltip_acc = '<br>'.join(
-            [f'{score.song.title[:25]}... ({score.acc:.2f})' for score in score_list])
-        participant.count_pos = count_pos
-        participant.count_weight_acc = count_weight_acc
-        participant.theoretical = theoretical
-        participant.count_acc = count_acc
-        participant.valid_count = valid_count
-        participant.tooltip_pos = tooltip_pos
-        participant.tooltip_valid = tooltip_valid
-        participant.tooltip_acc = tooltip_acc
-        participant.tooltip_weight_acc = tooltip_weight_acc
-        participant.save()
-
-    # 順位点→精度でソート
-    participants = Participant.objects.filter(
-        league=league).order_by('-count_pos')
-
-    for rank, participant in enumerate(participants):
-        # setattr(player, 'rank', rank+1)
-        participant.rank = rank+1
-        participant.save()
-
-
-def manual_league_update(request, pk=0):
-    if not request.user.is_staff:
-        return redirect('app:index')
-    pos_acc_update(pk)
-    print('complete')
-    return redirect('app:index')
-
-
 def short_leaderboard(request, pk=0):
     from time import time
 
@@ -2087,58 +1259,6 @@ def song_leaderboard(request, league_pk, song_pk):
     context['song'] = song
     return render(request, 'song_leaderboard.html', context)
 
-
-# @login_required
-# def beatleader_submission(request):
-#     if request.method != 'POST':
-#         return redirect('app:index')
-#     player = request.user.player
-#     # print(player)
-#     post = request.POST
-#     # print(post)
-#     league_pk = int(post['league_pk'])
-#     league = League.objects.get(pk=league_pk)
-#     # print(league)
-#     playlist = league.playlist
-#     songs = playlist.songs.all()
-#     context = {}
-#     results = []
-#     print(songs)
-#     for song in songs:
-#         updated = False
-#         url = f'https://api.beatleader.xyz/score/{player.sid}/{song.hash}/{song.diff}/{song.char}'
-#         # print(url)
-#         res = requests.get(url)
-#         status_code = res.status_code
-#         if status_code != 200:
-#             continue
-#         res = res.json()
-#         # print(res)
-#         score = int(res['modifiedScore'])
-#         print(score)
-#         defaults = {
-#             'score': score,
-#             'acc': float(res['accuracy'])*100,
-#             'rawPP': 0,
-#             'miss': int(res['missedNotes'] + int(res['badCuts'])),
-#             'beatleader': res['id'],
-#         }
-#         score_to_headline(score, song, player, league)
-#         score_obj = Score.objects.update_or_create(
-#             player=player,
-#             song=song,
-#             league=league,
-#             defaults=defaults,
-#         )[0]
-#         result = f'score found {song} {score} ({score_obj.acc:.2f}) %'
-#         if updated:
-#             result += ' ... UPDATED!'
-#         results.append(result)
-#     context['league'] = league
-#     context['results'] = results
-#     return render(request, 'beatleader_submission.html', context)
-
-
 def archive(request):
     context = {}
     user = request.user
@@ -2146,16 +1266,6 @@ def archive(request):
         social = SocialAccount.objects.get(user=user)
         context['social'] = social
     return render(request, 'archive.html', context)
-
-
-state_dict = {
-    -2: 'RETRY PLAYER1 ADVANTAGE',
-    -1: 'PLAYER1 WIN SUSPEND',
-    0: 'STAND BY',
-    1: 'PLAYER2 WIN SUSPEND',
-    2: 'RETRY PLAYER2 ADVANTAGE',
-}
-
 
 def match(request, pk=1):
 

@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0051_songinfo_genre'),
+        ("app", "0051_songinfo_genre"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='league',
-            name='prohibited_leagues',
-            field=models.ManyToManyField(blank=True, related_name='_app_league_prohibited_leagues_+', to='app.League'),
+            model_name="league",
+            name="prohibited_leagues",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="_app_league_prohibited_leagues_+",
+                to="app.League",
+            ),
         ),
     ]

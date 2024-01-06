@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0040_jpmap_uploader'),
+        ("app", "0040_jpmap_uploader"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='jpmap',
-            name='name',
-            field=models.CharField(default='', max_length=200),
+            model_name="jpmap",
+            name="name",
+            field=models.CharField(default="", max_length=200),
         ),
     ]

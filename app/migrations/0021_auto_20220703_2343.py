@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0020_league_isofficial'),
+        ("app", "0020_league_isofficial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='playlist',
-            name='image',
-            field=models.CharField(default='', max_length=400000),
+            model_name="playlist",
+            name="image",
+            field=models.CharField(default="", max_length=400000),
         ),
     ]

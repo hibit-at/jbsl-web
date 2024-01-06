@@ -4,18 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0007_leaguecomment_scorecomment'),
+        ("app", "0007_leaguecomment_scorecomment"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='score',
-            name='comment',
-            field=models.CharField(blank=True, default='', max_length=50),
+            model_name="score",
+            name="comment",
+            field=models.CharField(blank=True, default="", max_length=50),
         ),
         migrations.DeleteModel(
-            name='ScoreComment',
+            name="ScoreComment",
         ),
     ]

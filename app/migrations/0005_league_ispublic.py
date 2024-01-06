@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0004_player_indiscord'),
+        ("app", "0004_player_indiscord"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='league',
-            name='isPublic',
+            model_name="league",
+            name="isPublic",
             field=models.BooleanField(default=False),
         ),
     ]

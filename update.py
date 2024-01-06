@@ -1,10 +1,11 @@
 import os
-import django
-import requests
 import sys
 
+import django
+
+
 def update_player_info(specific=None):
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "jbsl3.settings")
     django.setup()
     from app.operations import top_score_registration
     from app.models import Player
@@ -12,32 +13,24 @@ def update_player_info(specific=None):
     if specific:
         players = Player.objects.filter(isActivated=True, sid=specific)
     else:
-        players = Player.objects.filter(isActivated=True).order_by('-borderPP')
+        players = Player.objects.filter(isActivated=True).order_by("-borderPP")
 
     for player in players:
+        print(f"{player} ({player.sid}) top score registrating")
         top_score_registration(player)
-        print(f'{player} updated!')
-        print(player.sid)
-        url = f'https://api.beatleader.xyz/player/{player.sid}?stats=true'
-        res = requests.get(url)
+        print(f"{player} top score registrated")
 
-        if res.status_code == 200:
-            res = res.json()
-            player.accPP = res['accPp']
-            player.techPP = res['techPp']
-            player.passPP = res['passPp']
-            player.save()
 
 def update_league_player_yurufuwa():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "jbsl3.settings")
     django.setup()
-    from app.models import Player, League, Participant
+    from app.models import Player, League
 
     # initialize
     for player in Player.objects.filter(isActivated=True):
         player.yurufuwa = 0
         player.save()
-    
+
     for league in League.objects.all():
         for player in league.player.all():
             player.yurufuwa += 1
@@ -59,12 +52,11 @@ def update_league_player_yurufuwa():
             league.third.save()
 
 
-if __name__ == '__main__':
-    
+if __name__ == "__main__":
     specific = None
     if len(sys.argv) > 1:
         specific = sys.argv[1]
-        print(f'specific mode on {specific}')
+        print(f"specific mode on {specific}")
         update_player_info(specific)
     else:
         update_player_info()

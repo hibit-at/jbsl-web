@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0018_player_bgcolor'),
+        ("app", "0018_player_bgcolor"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='player',
-            name='isShadow',
+            model_name="player",
+            name="isShadow",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='player',
-            name='bgColor',
-            field=models.CharField(default='#000000', max_length=100),
+            model_name="player",
+            name="bgColor",
+            field=models.CharField(default="#000000", max_length=100),
         ),
     ]

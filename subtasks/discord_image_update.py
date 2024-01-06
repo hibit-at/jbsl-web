@@ -1,29 +1,29 @@
 import os
-import django
 from collections import defaultdict
 
+import discord
+from discord.ext import commands
+
+
+from utils import setup_django
 
 def process():
-    import sys
-    cwd = os.getcwd()
-    sys.path.append(cwd)
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jbsl3.settings')
-    django.setup()
     from app.models import Player
     from allauth.socialaccount.models import SocialAccount
+
     socials = SocialAccount.objects.all()
-    import discord
-    from discord.ext import commands
-    if os.path.exists('local.py'):
+
+    if os.path.exists("local.py"):
         from local import DISCORD_BOT_TOKEN, GUILD_ID
+
         guild_id = GUILD_ID
         token = DISCORD_BOT_TOKEN
     else:
-        guild_id = os.getenv('GUILD_ID')
-        token = os.getenv('DISCORD_BOT_TOKEN')
+        guild_id = os.getenv("GUILD_ID")
+        token = os.getenv("DISCORD_BOT_TOKEN")
     intents = discord.Intents.all()
     intents.members = True
-    bot = commands.Bot(command_prefix='/', intents=intents)
+    bot = commands.Bot(command_prefix="/", intents=intents)
 
     from_id_to_avatar = defaultdict(str)
 
@@ -38,14 +38,14 @@ def process():
         for player in Player.objects.all():
             print(player)
             if not int(player.discordID) in from_id_to_avatar:
-                print('not in discord!')
+                print("not in discord!")
                 continue
             imageURL = player.imageURL
-            if imageURL.startswith('https://cdn.discordapp.com'):
+            if imageURL.startswith("https://cdn.discordapp.com"):
                 new_image = from_id_to_avatar[int(player.discordID)]
                 if type(new_image) == str:
                     continue
-                new_image = new_image.url.split('?')[0]
+                new_image = new_image.url.split("?")[0]
                 print(new_image)
                 if player.imageURL != new_image:
                     player.imageURL = new_image
@@ -55,5 +55,6 @@ def process():
     bot.run(token)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    setup_django()
     process()

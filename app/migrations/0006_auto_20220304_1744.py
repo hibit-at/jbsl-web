@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0005_league_ispublic'),
+        ("app", "0005_league_ispublic"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='league',
-            name='limit',
+            model_name="league",
+            name="limit",
             field=models.FloatField(default=2000),
         ),
         migrations.AlterField(
-            model_name='league',
-            name='isPublic',
+            model_name="league",
+            name="isPublic",
             field=models.BooleanField(default=True),
         ),
     ]

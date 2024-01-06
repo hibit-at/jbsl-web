@@ -4,40 +4,41 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0026_playlist_ishidden'),
+        ("app", "0026_playlist_ishidden"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='score',
-            name='pos',
+            model_name="score",
+            name="pos",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='score',
-            name='rank',
+            model_name="score",
+            name="rank",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='score',
-            name='weight_acc',
+            model_name="score",
+            name="weight_acc",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='playlist',
-            name='CoEditor',
-            field=models.ManyToManyField(blank=True, related_name='CoEditor', to='app.Player'),
+            model_name="playlist",
+            name="CoEditor",
+            field=models.ManyToManyField(
+                blank=True, related_name="CoEditor", to="app.Player"
+            ),
         ),
         migrations.AlterField(
-            model_name='playlist',
-            name='description',
-            field=models.CharField(blank=True, default='', max_length=200),
+            model_name="playlist",
+            name="description",
+            field=models.CharField(blank=True, default="", max_length=200),
         ),
         migrations.AlterField(
-            model_name='playlist',
-            name='songs',
-            field=models.ManyToManyField(blank=True, to='app.Song'),
+            model_name="playlist",
+            name="songs",
+            field=models.ManyToManyField(blank=True, to="app.Song"),
         ),
     ]

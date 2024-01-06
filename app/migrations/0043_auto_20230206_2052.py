@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0042_player_mapper_name'),
+        ("app", "0042_player_mapper_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='player',
-            name='accPP',
+            model_name="player",
+            name="accPP",
             field=models.FloatField(default=0),
         ),
         migrations.AddField(
-            model_name='player',
-            name='passPP',
+            model_name="player",
+            name="passPP",
             field=models.FloatField(default=0),
         ),
         migrations.AddField(
-            model_name='player',
-            name='techPP',
+            model_name="player",
+            name="techPP",
             field=models.FloatField(default=0),
         ),
     ]

@@ -4,27 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0038_auto_20230121_1516'),
+        ("app", "0038_auto_20230121_1516"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='JPMap',
+            name="JPMap",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('bsr', models.CharField(default='', max_length=10)),
-                ('hash', models.CharField(default='', max_length=100)),
-                ('char', models.CharField(default='', max_length=50)),
-                ('diff', models.CharField(default='', max_length=20)),
-                ('nps', models.FloatField(default=0)),
-                ('createdAt', models.DateTimeField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("bsr", models.CharField(default="", max_length=10)),
+                ("hash", models.CharField(default="", max_length=100)),
+                ("char", models.CharField(default="", max_length=50)),
+                ("diff", models.CharField(default="", max_length=20)),
+                ("nps", models.FloatField(default=0)),
+                ("createdAt", models.DateTimeField()),
             ],
         ),
         migrations.AddField(
-            model_name='player',
-            name='mapper',
+            model_name="player",
+            name="mapper",
             field=models.IntegerField(default=0),
         ),
     ]

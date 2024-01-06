@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0015_player_issupporter'),
+        ("app", "0015_player_issupporter"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='player',
-            name='userColor',
-            field=models.CharField(default='firebrick', max_length=100),
+            model_name="player",
+            name="userColor",
+            field=models.CharField(default="firebrick", max_length=100),
         ),
     ]

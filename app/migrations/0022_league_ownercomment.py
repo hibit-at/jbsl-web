@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0021_auto_20220703_2343'),
+        ("app", "0021_auto_20220703_2343"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='league',
-            name='ownerComment',
-            field=models.CharField(default='', max_length=1000),
+            model_name="league",
+            name="ownerComment",
+            field=models.CharField(default="", max_length=1000),
         ),
     ]

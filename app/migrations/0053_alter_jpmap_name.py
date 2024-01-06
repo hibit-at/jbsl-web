@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0052_league_prohibited_leagues'),
+        ("app", "0052_league_prohibited_leagues"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='jpmap',
-            name='name',
-            field=models.CharField(default='', max_length=2000),
+            model_name="jpmap",
+            name="name",
+            field=models.CharField(default="", max_length=2000),
         ),
     ]

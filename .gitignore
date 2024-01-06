@@ -1,12 +1,7 @@
 __pycache__
-db.sqlite3
+*.sqlite3
 local.py
-sudosebug.bat
-discord_manual_message.py
-myenv
 *.dump
-latest*
-bot_test.py
 staticfiles
 test.png
 er.png

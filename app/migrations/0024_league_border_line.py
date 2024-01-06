@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0023_badge'),
+        ("app", "0023_badge"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='league',
-            name='border_line',
+            model_name="league",
+            name="border_line",
             field=models.IntegerField(default=8),
         ),
     ]

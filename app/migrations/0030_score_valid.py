@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0029_auto_20221120_0506'),
+        ("app", "0029_auto_20221120_0506"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='score',
-            name='valid',
+            model_name="score",
+            name="valid",
             field=models.BooleanField(default=False),
         ),
     ]

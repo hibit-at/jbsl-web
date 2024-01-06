@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app', '0030_score_valid'),
+        ("app", "0030_score_valid"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='league',
-            old_name='method',
-            new_name='max_valid',
+            model_name="league",
+            old_name="method",
+            new_name="max_valid",
         ),
     ]

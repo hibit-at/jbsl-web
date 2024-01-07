@@ -159,7 +159,7 @@
                         {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
                     </td>
                     <td>
-                        {% if song.genre != None %}{{ song.genre }}{% endif %}
+                        {% if song.song_info_genre != None %}{{ song.song_info_genre }}{% endif %}
                     </td>
                     <td>
                         {% if isEditor and playlist.isEditable %}

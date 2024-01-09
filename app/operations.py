@@ -29,6 +29,7 @@ from .utils import (
     score_to_acc,
     slope,
     get_player_type,
+    genre_to_col,
 )
 
 
@@ -485,6 +486,8 @@ def make_sorted_playlist(playlist: Playlist):
         if song_info:
             song.order = song_info.order
             song.song_info_genre = song_info.genre
+            if song_info.genre:
+                song.song_info_color = genre_to_col[song_info.genre]
         else:
             song.order = 0
             song.song_info_genre = None

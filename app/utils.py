@@ -94,6 +94,16 @@ char_dict_inv = {
     "NoArrows": "SoloNoArrows",
 }
 
+genre_to_col = {
+    "Acc" : "rgba(130,211,255,.8)",
+    "Tech" : "rgba(220,130,250,.8)",
+    "Balanced" : "rgba(255,255,128,.8)",
+    "Speed" : "rgba(255,128,128,.8)",
+    "Stamina" : "rgba(255,64,64,.8)",
+    "FullRange" : "rgba(255,128,60,.8)",
+    "Concept" : "rgba(128,255,128,.8)",
+}
+
 col_dict = {
     1: "rgba(130,211,255,.8)",
     3: "rgba(128,255,128,.8)",

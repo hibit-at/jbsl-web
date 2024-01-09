@@ -232,15 +232,12 @@
 <hr />
 <h2 style="text-align:center">譜面別リーグ内順位</h2>
 {% for song in LBs %}
-    {% if song.song_info_genre %}
-        <span style="font-size:22px;color:darkgray"><i><strong>{{ song.song_info_genre }}</strong></i></span>
-    {% endif %}
     <form method="POST"
           action="{% url 'app:leaderboard' pk=league.pk %}"
           onsubmit="return confirm('本当に除外してよいですか？');">
-        <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+        <span style="font-size:22px;font-weight:bold"> {{ song.title }} ({{ song.diff }})
             {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
-        </span></span> by {{ song.author }}
+        </span> by {{ song.author }}
         {% if song.lid|length %}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
                style="filter:invert()">
@@ -262,6 +259,13 @@
             <p style="color:gray">
                 ※ こちらはV3譜面になります。スコアの送信にはBeatLeaderへの登録が必要です。
             </p>
+        {% endif %}
+        {% if song.song_info_genre %}
+        <span style="font-size:22px;color:{{ song.song_info_color }}">
+            <i>
+                <strong>{{ song.song_info_genre }}</strong>
+            </i>
+        </span>
         {% endif %}
         {% if user.is_staff and league.isLive %}
             {% csrf_token %}
@@ -408,7 +412,9 @@
 </p>
 <p>
     <a href="{% url "app:koharu_graph" pk=league.pk %}">
-    <button class="btn">Beta 順位変動グラフ</button>
+        <button class="btn">
+            Beta 順位変動グラフ
+        </button>
     </a>
 </p>
 {% comment %} {% if league.isLive and isMember %}

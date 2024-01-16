@@ -409,7 +409,7 @@ def process_score_data(player: Player, league: League, playerScore) -> None:
         "rawPP": pp,
         "miss": miss,
     }
-    Score.objects.update_or_create(
+    new_score = Score.objects.update_or_create(
         player=player,
         song=song,
         league=league,
@@ -418,6 +418,8 @@ def process_score_data(player: Player, league: League, playerScore) -> None:
 
     if hmd != "Unknown" or player.hmd == "Unknown":
         player.hmd = hmd
+        
+    return new_score[0]
 
 
 def calculate_border_pp(player: Player, league: League) -> None:
@@ -446,10 +448,17 @@ def top_score_registration(player: Player):
     # initialize = True
     if initialize:
         initialize_scores(player, league)
-
+    referred_scores = []
     for playerScore in playerScores:
-        process_score_data(player, league, playerScore)
-    delete_over_top10_scores(player, league)
+        score = process_score_data(player, league, playerScore)
+        # print(score)
+        referred_scores.append(score)
+    for score in Score.objects.filter(player=player, league=league):
+        if not score in referred_scores:
+            print(score,'not refereed')
+            score.delete()
+    
+    # delete_over_top10_scores(player, league)
     calculate_border_pp(player, league)
     update_hmd_info_from_beatleader(player)
     each_pp_set(player)

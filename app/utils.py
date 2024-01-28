@@ -83,6 +83,7 @@ char_dict = {
     "Solo90Degree": "90Degree",
     "Solo360Degree": "360Degree",
     "SoloNoArrows": "NoArrows",
+    "SoloLightshow" : "Lightshow",
 }
 
 char_dict_inv = {

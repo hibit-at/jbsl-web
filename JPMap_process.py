@@ -168,9 +168,9 @@ def create_league(songs, start, last, division, superuser):
                     playlist.songs.add(new_song)
                     continue
             else:
-                lid = Song.objects.get(
+                lid = Song.objects.filter(
                     hash=song.hash, diff=song.diff, char=song.char
-                ).lid
+                ).first().lid
                 print(lid)
                 if lid == None:
                     new_song = Song.objects.filter(

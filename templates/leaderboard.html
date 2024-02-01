@@ -235,8 +235,8 @@
     <form method="POST"
           action="{% url 'app:leaderboard' pk=league.pk %}"
           onsubmit="return confirm('本当に除外してよいですか？');">
-        <span style="font-size:22px;font-weight:bold"> {{ song.title }} ({{ song.diff }})
-            {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
+        <span style="font-size:22px;font-weight:bold"> {{ song.title }} ({% if song.char != 'Standard' %}{{ song.char }} {% endif %}{{ song.diff }})
+            
         </span> by {{ song.author }}
         {% if song.lid|length %}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"

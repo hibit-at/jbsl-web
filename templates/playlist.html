@@ -155,11 +155,14 @@
                     <td>{{ song.title|truncatechars:50 }}</td>
                     <td>{{ song.author }}</td>
                     <td>
-                        <span class="diff" style="color:{{ song.color }}">{{ song.diff }}</span>
-                        {% if song.char != 'Standard' %}<b> {{ song.char }}</b>{% endif %}
+                        <b> {% if song.char != 'Standard' %} {{ song.char }} {% endif %} {{ song.diff }}</b>
                     </td>
                     <td>
-                        {% if song.song_info_genre != None %}{{ song.song_info_genre }}{% endif %}
+                        {% if song.song_info_genre != None %}
+                        <span class="diff" style="color:{{ song.song_info_color }}">
+                        {{ song.song_info_genre }}
+                        </span>
+                        {% endif %}
                     </td>
                     <td>
                         {% if isEditor and playlist.isEditable %}

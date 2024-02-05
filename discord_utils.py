@@ -7,6 +7,7 @@ from discord.ext import commands
 
 
 def discord_validation(valid_name):
+    valid_name = valid_name.strip()
     valid_name = valid_name.lower().replace(" ", "-")
     valid_name = valid_name.replace("[", "")
     valid_name = valid_name.replace("]", "")

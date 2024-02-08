@@ -125,6 +125,7 @@ hmd_dict = {
     64: "Valve Index",
     128: "Vive Cosmos",
     256: "Quest 2",
+    512: "Quest 3",
 }
 
 league_colors = [

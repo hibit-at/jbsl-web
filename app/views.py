@@ -437,7 +437,7 @@ def playlist(request, pk):
             diff_num = diff_label_inv[dif]
             print(hash, char, dif)
             lid = get_scoresaber_lid(hash, gameMode, diff_num)
-            sort_index = playlist.songs.all().count()
+            sort_index = playlist.songs.all().count()*2
             if post["sort_index"] != "":
                 sort_index = float(post["sort_index"])
             print(sort_index)

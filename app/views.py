@@ -1415,7 +1415,13 @@ def used_check(request):
         # POST リクエストから 'url' フィールドの値を取得
         url = request.POST.get('url', '')
         bsr = url.split('/')[-1]
-        hit_songs = check_used_song(url)
         params['bsr'] = bsr
-        params['hit_songs'] = hit_songs
+        hit_songs = check_used_song(url)
+        if hit_songs:
+            params['hit_songs'] = hit_songs
+        else:
+            url = f'https://api.beatsaver.com/maps/id/{bsr}'
+            res = requests.get(url)
+            if res.status_code != 200:
+                params['error'] = True
     return render(request, 'used_check.html', params)

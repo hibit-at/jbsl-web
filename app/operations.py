@@ -663,13 +663,11 @@ def check_used_song(bsr_url:str) -> list:
     # https://beatsaver.com/maps/313a4
     bsr = bsr_url.split('/')[-1]
     hit_playlist = []
-    print(bsr)
     for playlist in Playlist.objects.filter(title__in = used_playlist_names):
         # print(playlist)
         for song in playlist.songs.filter(bsr=bsr):
             setattr(song, 'playlist', playlist.title)
             hit_playlist.append(song)
-    print(hit_playlist)
     return hit_playlist
 
 def process_mapper(mapper_id: int, player: Player, context: dict):

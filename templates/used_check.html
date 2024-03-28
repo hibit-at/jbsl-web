@@ -21,9 +21,15 @@
             {% endfor %}
             </ul>
         {% else %}
-        <p>
-            今までの大会で使用されたことはありません。
-        </p>
+            {% if error %}
+            <p style="color:red">
+                bsr キーが存在しません
+            </p>
+            {% else %}
+            <p>
+                今までの大会で使用されたことはありません。
+            </p>
+            {% endif %}
         {% endif %}
     {% endif %}
       

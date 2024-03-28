@@ -44,6 +44,7 @@ urlpatterns = [
     path("userpage/<int:sid>", views.userpage, name="userpage"),
     path("userpage/rival", views.rivalpage, name="rivalpage"),
     path("virtual_league/<int:pk>", views.virtual_league, name="virtual_league"),
+    path("used_check", views.used_check, name="used_check"),
     # api
     path("api/active_league", api_views.api_active_league, name="api_active_league"),
     path("api/dga", api_views.api_dga, name="api_dga"),

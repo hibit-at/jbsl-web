@@ -1,10 +1,12 @@
 from collections import defaultdict
 from datetime import datetime
+from io import BytesIO
 
 import pytz
 import requests
 from django.db.models import Prefetch, Q, QuerySet, Max
 from django.utils import timezone as django_timezone
+from PIL import Image
 
 from .models import (
     Headline,
@@ -30,6 +32,7 @@ from .utils import (
     slope,
     get_player_type,
     genre_to_col,
+    used_playlist_names,
 )
 
 
@@ -389,6 +392,28 @@ def initialize_scores(player: Player, league: League) -> None:
         score.delete()
 
 
+def is_valid_image_url(url):
+    try:
+        # URLからコンテンツを取得
+        response = requests.get(url)
+        response.raise_for_status()  # HTTPエラーをチェック
+
+        # 'Content-Type' ヘッダーを確認して画像であることを確認
+        if "image" in response.headers.get("Content-Type", ""):
+            # （オプショナル）Pillowを使用して画像形式を確認
+            try:
+                Image.open(BytesIO(response.content)).verify()
+                return True  # 画像が有効
+            except Exception as e:
+                print(f"画像形式の確認中にエラーが発生しました: {e}")
+                return False
+        else:
+            return False  # 'Content-Type' が画像ではない
+    except requests.RequestException as e:
+        print(f"URLからのデータ取得中にエラーが発生しました: {e}")
+        return False
+
+
 def process_score_data(player: Player, league: League, playerScore) -> None:
     leaderboard = playerScore["leaderboard"]
     lid = leaderboard["id"]
@@ -418,7 +443,7 @@ def process_score_data(player: Player, league: League, playerScore) -> None:
 
     if hmd != "Unknown" or player.hmd == "Unknown":
         player.hmd = hmd
-        
+
     return new_score[0]
 
 
@@ -455,9 +480,9 @@ def top_score_registration(player: Player):
         referred_scores.append(score)
     for score in Score.objects.filter(player=player, league=league):
         if not score in referred_scores:
-            print(score,'not refereed')
+            print(score, "not refereed")
             score.delete()
-    
+
     # delete_over_top10_scores(player, league)
     calculate_border_pp(player, league)
     update_hmd_info_from_beatleader(player)
@@ -633,6 +658,19 @@ def score_acc_to_headline(new_score, acc, song: Song, player: Player, league: Le
     else:
         return create_headline(player, title, song.diff, None, acc)
 
+
+def check_used_song(bsr_url:str) -> list:
+    # https://beatsaver.com/maps/313a4
+    bsr = bsr_url.split('/')[-1]
+    hit_playlist = []
+    print(bsr)
+    for playlist in Playlist.objects.filter(title__in = used_playlist_names):
+        # print(playlist)
+        for song in playlist.songs.filter(bsr=bsr):
+            setattr(song, 'playlist', playlist.title)
+            hit_playlist.append(song)
+    print(hit_playlist)
+    return hit_playlist
 
 def process_mapper(mapper_id: int, player: Player, context: dict):
     # mapper_id = post["mapper"]

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>大会ですでに使われていた譜面をチェックするやつ</h3>
+<form action="{% url 'app:used_check' %}" method="post">
+    {% csrf_token %}
+    <label for="url">bsr:</label>
+    <input type="text" id="url" name="url"  style="width:300px" placeholder="https://beatsaver.com/maps/313a4">
+    <button class="btn" type="submit">Check</button>
+    </form>
+
+    {% if bsr %}
+    <p>
+        検出された bsr : {{ bsr }}
+    </p>
+        {% if hit_songs %}
+            <ul>
+            {% for song in hit_songs %}
+            <li>
+                {{ song }} ({{ song.diff }}) in {{ song.playlist }}
+            </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+        <p>
+            今までの大会で使用されたことはありません。
+        </p>
+        {% endif %}
+    {% endif %}
+      
+{% endblock content %}

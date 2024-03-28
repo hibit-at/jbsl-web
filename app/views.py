@@ -32,6 +32,7 @@ from .operations import (
     calculate_player_stats,
     calculate_scoredrank_LBs,
     check_membership_and_ownership,
+    check_used_song,
     create_song_by_beatleader,
     create_song_by_scoresaber,
     get_headline_and_league_context,
@@ -1407,3 +1408,14 @@ def koharu_graph(request, pk):
     else:
         # リクエストが失敗した場合は404エラーを返す
         return HttpResponse("Not Found", status=404)
+
+def used_check(request):
+    params = {}
+    if request.method == 'POST':
+        # POST リクエストから 'url' フィールドの値を取得
+        url = request.POST.get('url', '')
+        bsr = url.split('/')[-1]
+        hit_songs = check_used_song(url)
+        params['bsr'] = bsr
+        params['hit_songs'] = hit_songs
+    return render(request, 'used_check.html', params)

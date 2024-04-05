@@ -137,7 +137,7 @@ def create_league(songs, start, last, division, superuser):
         for song in songs:
             print(song)
             dif_num = diff_label_inv[song.diff]
-            if song.char == "Lightshow":
+            if song.char == "Lightshow" or song.char == "Legacy":
                 continue
             gameMode = char_dict_inv[song.char]
             print(gameMode)

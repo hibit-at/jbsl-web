@@ -128,7 +128,7 @@ class League(models.Model):
     ownerComment = models.CharField(default="", max_length=1000, blank=True)
     border_line = models.IntegerField(default=8)
     prohibited_leagues = models.ManyToManyField(
-        "self", blank=True, symmetrical=True, related_name="prohibited"
+        "self", blank=True, symmetrical=True,
     )
 
     def __str__(self):

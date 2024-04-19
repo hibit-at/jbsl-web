@@ -411,8 +411,9 @@ pre {
 
 .match-bomb1 {
     position: fixed;
-    left: 600px;
+    /* left: 600px; */
     /* top: 70px; */
+    left: 675px;
     top: 0px;
     width: auto;
     height: auto;
@@ -428,8 +429,9 @@ pre {
 
 .match-bomb2 {
     position: fixed;
-    right: 600px;
+    /* right: 600px; */
     /* top: 70px; */
+    right: 675px;
     top: 0px;
     width: auto;
     height: auto;

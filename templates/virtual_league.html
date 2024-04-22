@@ -141,7 +141,7 @@
     <h2 style="text-align:center">譜面別リーグ内順位</h2>
     {% for song in LBs %}
         <p>
-            <span style="font-size:22px;font-weight:bold"> {{ song.title }} <span style="color:{{ song.color }}">{{ song.diff }}
+            <span style="font-size:22px;font-weight:bold"> {{ song.title }} ({{ song.diff }})
                 {% if song.char != 'Standard' %}{{ song.char }}{% endif %}
             </span></span> by {{ song.author }}
             <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
@@ -151,7 +151,13 @@
                      height="30px"
                      alt="scoresaber"/>
             </a>
-            <a href="https://beatsaver.com/maps/{{ song.bsr }}"></a>
+            {% if song.song_info_genre %}
+            <span style="font-size:22px;color:{{ song.song_info_color }}">
+                <i>
+                    <strong>{{ song.song_info_genre }}</strong>
+                </i>
+            </span>
+            {% endif %}
         </p>
         <div id="{{ song.lid }}"
              class="top5-target"

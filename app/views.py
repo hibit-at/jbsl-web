@@ -35,6 +35,7 @@ from .operations import (
     check_used_song,
     create_song_by_beatleader,
     create_song_by_scoresaber,
+    get_beatleader_bid,
     get_headline_and_league_context,
     get_join_state,
     get_scoresaber_lid,
@@ -722,7 +723,34 @@ def virtual_league(request, pk):
         url = f"https://scoresaber.com/api/leaderboard/by-id/{song.lid}/scores?countries=JP&search={player.name}"
         res = requests.get(url).json()
         if "errorMessage" in res:
-            print("no score")
+            print("    no score found in scoresaber")
+            url = f"https://api.beatleader.xyz/score/{player.sid}/{song.hash}/{song.diff}/{song.char}"
+            print(url)
+            res = requests.get(url)
+            status_code = res.status_code
+            if status_code != 200:
+                print("    invalid request for BeatLeader")
+                continue
+            res = res.json()
+            score = int(res["modifiedScore"])
+            acc = (
+                float(res["accuracy"]) * 100 * int(res["modifiedScore"]) / int(res["baseScore"])
+            )
+            print("       ", score, acc)
+            rawPP = 0
+            miss = int(res["missedNotes"] + int(res["badCuts"]))
+            defaults = {
+                "score": score,
+                "acc": acc,
+                "rawPP": rawPP,
+                "miss": miss,
+            }
+            Score.objects.update_or_create(
+                player=player,
+                song=song,
+                league=league,
+                defaults=defaults,
+            )
             continue
         print(res)
         notes = song.notes

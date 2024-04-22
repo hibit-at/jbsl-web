@@ -486,7 +486,10 @@ function td(x){
 const timer = 1000*60*5    // ミリ秒で間隔の時間を指定
 
 window.addEventListener('load',function(){
+  var isLive_string = "{{ league.isLive }}"
+  if(isLive_string === "True"){
   setInterval('location.reload()',timer);
+  }
 });
 
 </script>

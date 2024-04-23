@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import DGA, League, Match, Playlist, SongInfo
 from .operations import calculate_scoredrank_LBs
 
+from .utils import genre_to_col
+
 
 def api_active_league(request):
     leagues = League.objects.filter(isLive=True, isOpen=True)
@@ -140,11 +142,13 @@ def api_match(request, pk):
     ans["retry2"] = match.retry2
     ans["imageURL"] = match.now_playing.imageURL
     ans["map-info1"] = match.now_playing.title
-    if info.genre:
-        ans["map-info1"] += f"({info.genre})"
     ans["map-info2"] = match.now_playing.author
     ans["map-info3"] = match.now_playing.diff
-    ans["map-info3-color"] = match.now_playing.color
+    if info.genre:
+        ans["map-info3"] += f"({info.genre})"
+        col = genre_to_col[info.genre]
+        # print(col)
+        ans["map-info3-color"] = col
     ans["map-info4"] = match.map_info
     ans["state"] = match.state
     ans["highest"] = f"{match.highest_acc:.2f}"

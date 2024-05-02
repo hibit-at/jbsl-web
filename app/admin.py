@@ -33,14 +33,19 @@ class LeagueAdmin(admin.ModelAdmin):
     readonly_fields = ["invite", "virtual"]  # 読み取り専用フィールドの追加
 
 
+class ScoreAdmin(admin.ModelAdmin):
+    search_fields = ["player__name", "song__title", "league__name"]
+    readonly_fields = ["song"]
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "player":
+            kwargs["queryset"] = Player.objects.order_by('name')
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 admin.site.register(Player, search_fields=["name"])
 admin.site.register(Song, search_fields=["title", "author"])
 admin.site.register(League, LeagueAdmin)
-admin.site.register(
-    Score,
-    search_fields=["player__name", "song__title", "league__name"],
-    readonly_fields=["song"],
-)
+admin.site.register(Score, ScoreAdmin)
 admin.site.register(
     Playlist,
     search_fields=["title", "editor__name"],

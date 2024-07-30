@@ -45,7 +45,7 @@
                     （有効 PP 上限 : {{ league.limit }} PP）
                 {% endif %}
             {% endif %}
-            有効譜面数 {{ league.method }}
+            有効譜面数 {{ league.max_valid }}/{{ league.playlist.songs.count }}
         </p>
     </div>
     <div id="ranking"

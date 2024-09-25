@@ -239,22 +239,24 @@
             
         </span> by {{ song.author }}
         {% if song.lid|length %}
-            <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
-               style="filter:invert()">
-                <img src="{% static 'ScoreSaberLogo.png' %}"
-                     width="30px"
-                     height="30px"
-                     alt="scoresaber"
-                     loading="lazy"/>
-            </a>
+        <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
+           style="filter:invert()"
+           onclick="openInNewWindow(event, 'https://beatsaver.com/maps/{{ song.bsr }}')">
+            <img src="{% static 'ScoreSaberLogo.png' %}"
+                 width="30px"
+                 height="30px"
+                 alt="scoresaber"
+                 loading="lazy"/>
+        </a>
         {% else %}
             <a href="https://www.beatleader.xyz/leaderboard/global/{{ song.bid }}"
-               style="filter:invert()">
+            style="filter:invert()"
+            onclick="openInNewWindow(event, 'https://beatsaver.com/maps/{{ song.bsr }}')">
                 <img src="{% static 'BeatLeader.png' %}"
-                     width="30px"
-                     height="30px"
-                     alt="BeatLeader"
-                     loading="lazy"/>
+                    width="30px"
+                    height="30px"
+                    alt="BeatLeader"
+                    loading="lazy"/>
             </a>
             <p style="color:gray">
                 ※ この譜面へのスコアの送信には、BeatLeaderへの登録が必要です。
@@ -491,6 +493,13 @@ window.addEventListener('load',function(){
   setInterval('location.reload()',timer);
   }
 });
+
+
+function openInNewWindow(event, url) {
+    if (event.ctrlKey) {
+        window.open(url, '_blank');
+    }
+}
 
 </script>
 {% endblock content %}

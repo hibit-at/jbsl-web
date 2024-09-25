@@ -240,8 +240,7 @@
         </span> by {{ song.author }}
         {% if song.lid|length %}
         <a href="https://scoresaber.com/leaderboard/{{ song.lid }}"
-           style="filter:invert()"
-           onclick="openInNewWindow(event, 'https://beatsaver.com/maps/{{ song.bsr }}')">
+           style="filter:invert()">
             <img src="{% static 'ScoreSaberLogo.png' %}"
                  width="30px"
                  height="30px"
@@ -250,8 +249,7 @@
         </a>
         {% else %}
             <a href="https://www.beatleader.xyz/leaderboard/global/{{ song.bid }}"
-            style="filter:invert()"
-            onclick="openInNewWindow(event, 'https://beatsaver.com/maps/{{ song.bsr }}')">
+            style="filter:invert()">
                 <img src="{% static 'BeatLeader.png' %}"
                     width="30px"
                     height="30px"
@@ -279,7 +277,7 @@
          class="top5-target"
          style="padding:20px;background:linear-gradient(to right, {{ league.color }}, rgba(0,0,0,0));border-radius:20px">
         <div style="display:flex">
-            <img src="{{ song.imageURL }}" class="thumb" alt="thumb" loading="lazy"/>
+            <img src="{{ song.imageURL }}" class="thumb" alt="thumb" loading="lazy" onclick="openInNewWindow(event, 'https://beatsaver.com/maps/{{ song.bsr }}')"/ >
             <table class="table table-striped table-borderless"
                    style="background : rgba(255,255,255,.5)">
                 <thead>

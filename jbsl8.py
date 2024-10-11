@@ -130,7 +130,73 @@ def used_check():
     sample_url = 'https://beatsaver.com/maps/313a4'
     check_used_song(sample_url)
 
-main()
+# コピー処理を行うスクリプト
+def copy_images_between_playlists(source_titles, target_titles):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "jbsl3.settings")
+    django.setup()
+    from app.models import League, Player, Playlist
+    
+    if len(source_titles) != len(target_titles):
+        raise ValueError("Source and target title lists must have the same length.")
+
+    for source_title, target_title in zip(source_titles, target_titles):
+        try:
+            # source_title に対応するプレイリストを取得
+            source_playlist = Playlist.objects.get(title=source_title)
+            # target_title に対応するプレイリストを取得
+            target_playlist = Playlist.objects.get(title=target_title)
+
+            # image フィールドをコピー
+            target_playlist.image = source_playlist.image
+            target_playlist.save()  # 保存
+
+            print(f"Copied image from {source_title} to {target_title}")
+        except Playlist.DoesNotExist:
+            print(f"Playlist with title {source_title} or {target_title} does not exist.")
+
+
+source_titles = [
+    "JBSL7 J1 GF",
+    "JBSL7 J1 SF",
+    "JBSL7 J2 GF",
+    "JBSL7 J2 SF",
+    "JBSL7 J3 GF",
+    "JBSL7 J3 SF",
+    "JBSL7 J4 GF",
+    "JBSL7 J4 SF",
+    "JBSL7 J1 R1",
+    "JBSL7 J2 R1",
+    "JBSL7 J3 R1",
+    "JBSL7 J4 R1",
+    "JBSL7 J1 予選",
+    "JBSL7 J2 予選",
+    "JBSL7 J3 予選",
+    "JBSL7 J4 予選"
+]
+
+target_titles = [
+    "JBSL8 J1 GF",
+    "JBSL8 J1 SF",
+    "JBSL8 J2 GF",
+    "JBSL8 J2 SF",
+    "JBSL8 J3 GF",
+    "JBSL8 J3 SF",
+    "JBSL8 J4 GF",
+    "JBSL8 J4 SF",
+    "JBSL8 J1 R1",
+    "JBSL8 J2 R1",
+    "JBSL8 J3 R1",
+    "JBSL8 J4 R1",
+    "JBSL8 J1 予選",
+    "JBSL8 J2 予選",
+    "JBSL8 J3 予選",
+    "JBSL8 J4 予選"
+]
+
+
+copy_images_between_playlists(source_titles,target_titles)
+
+# main()
 # used_check()
 # qualifier_open()
 

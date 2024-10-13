@@ -24,38 +24,37 @@ live_scores = Score.objects.filter(player__pk=player_pk_live)
 print(f"引き継ぎ元のスコア数: {death_scores.count()}")
 print(f"引き継ぎ先のスコア数: {live_scores.count()}")
 
-assert live_scores.count() <= death_scores.count(), "引き継ぎ先の方がスコア数が多いです！"
-
 # 最終確認
 confirmation = input("引き継ぎを実行しますか？ (y/n): ")
 
 if confirmation != 'y':
     exit()
 
-for score in live_scores:
-    score.delete()
-
-# スコアを引き継ぐ
+# 引き継ぎ先に存在しないスコアを探す
 for score in death_scores:
-    # 新しいスコアオブジェクトを作成
-    new_score = Score(
-        player_id=player_pk_live,
-        song=score.song,
-        league=score.league,
-        score=score.score,
-        acc=score.acc,
-        rawPP=score.rawPP,
-        miss=score.miss,
-        comment=score.comment,
-        rank=score.rank,
-        pos=score.pos,
-        weight_acc=score.weight_acc,
-        decorate=score.decorate,
-        valid=score.valid,
-        beatleader=score.beatleader
-    )
-    # 新しいスコアを保存
-    new_score.save()
+    # 引き継ぎ先の同じ曲・リーグのスコアが存在するか確認
+    exists = live_scores.filter(song=score.song, league=score.league).exists()
+    
+    if not exists:
+        # 新しいスコアオブジェクトを作成
+        new_score = Score(
+            player_id=player_pk_live,
+            song=score.song,
+            league=score.league,
+            score=score.score,
+            acc=score.acc,
+            rawPP=score.rawPP,
+            miss=score.miss,
+            comment=score.comment,
+            rank=score.rank,
+            pos=score.pos,
+            weight_acc=score.weight_acc,
+            decorate=score.decorate,
+            valid=score.valid,
+            beatleader=score.beatleader
+        )
+        # 新しいスコアを保存
+        new_score.save()
 
 # スコアを確認するために出力
 for score in Score.objects.filter(player__pk=player_pk_live):

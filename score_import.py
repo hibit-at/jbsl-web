@@ -24,7 +24,7 @@ live_scores = Score.objects.filter(player__pk=player_pk_live)
 print(f"引き継ぎ元のスコア数: {death_scores.count()}")
 print(f"引き継ぎ先のスコア数: {live_scores.count()}")
 
-assert live_scores.count() < death_scores.count(), "引き継ぎ先の方がスコア数が多いです！"
+assert live_scores.count() <= death_scores.count(), "引き継ぎ先の方がスコア数が多いです！"
 
 # 最終確認
 confirmation = input("引き継ぎを実行しますか？ (y/n): ")
@@ -105,15 +105,16 @@ for league in leagues:
     if league.third_id == player_pk_death:
         league.third_id = player_pk_live
 
-    if player_pk_death in league.player.all():
+    player_death = Player.objects.get(pk=player_pk_death)
+    if player_death in league.player.all():
         league.player.remove(player_pk_death)
         league.player.add(player_pk_live)
 
-    if player_pk_death in league.invite.all():
+    if player_death in league.invite.all():
         league.invite.remove(player_pk_death)
         league.invite.add(player_pk_live)
 
-    if player_pk_death in league.virtual.all():
+    if player_death in league.virtual.all():
         league.virtual.remove(player_pk_death)
         league.virtual.add(player_pk_live)
 

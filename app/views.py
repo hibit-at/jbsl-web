@@ -616,14 +616,31 @@ def leaderboard(request, pk):
     context["scored_rank"] = scored_rank
     context["LBs"] = LBs
 
+    # メンバーシップとオーナーシップをチェック
     is_member, is_owner = check_membership_and_ownership(user, league)
-    close_line = league.end - timedelta(days=2)
-    is_close = datetime.now(timezone.utc) >= close_line and league.isOfficial
+    
+    # 参加締切: 2日前
+    participation_close_line = league.end - timedelta(days=2)
+    
+    # 脱退締切: 7日前
+    withdrawal_close_line = league.end - timedelta(days=7)
+
+    # 現在時刻
+    now = datetime.now(timezone.utc)
+
+    # 締切判定
+    is_close = now >= participation_close_line and league.isOfficial
+    is_withdrawal_close = now >= withdrawal_close_line and league.isOfficial
+    
     join_state = get_join_state(
         user, is_member, league, player, is_close, is_prohibited
     )
     end_str = (league.end + timedelta(hours=9)).strftime("%Y-%m-%dT%H:%M")
     close_str = (league.end + timedelta(hours=9 - 48)).strftime("%Y-%m-%dT%H:%M")
+    # 参加締切はリーグ終了の2日前（48時間前）
+    participation_close_str = (league.end + timedelta(hours=9 - 48)).strftime("%Y-%m-%dT%H:%M")
+    # 脱退締切はリーグ終了の7日前（168時間前）
+    withdrawal_close_str = (league.end + timedelta(hours=9 - 168)).strftime("%Y-%m-%dT%H:%M")
 
     context.update(
         {
@@ -634,7 +651,10 @@ def leaderboard(request, pk):
             "isMember": is_member,
             "end_str": end_str,
             "close_str": close_str,
+            "participation_close_str" : participation_close_str,
+            "withdrawal_close_str" : withdrawal_close_str,
             "isClose": is_close,
+            "isWithdrawlClose" : is_withdrawal_close,
         }
     )
 

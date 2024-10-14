@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
     <div class="song-index">
         <p>
             <a class="trans" href="#top">▲</a>
@@ -20,7 +21,10 @@
             <br>
             終了まで　<span class="countdown" data-date="{{ end_str }}"></span>
             {% if league.isOfficial and not isClose %}
-                （参加／脱退の締切まで　<span class="countdown" data-date="{{ close_str }}"></span>）
+                <br>（参加締切まで　<span class="countdown participation" data-date="{{ participation_close_str }}"></span>）
+            {% endif %}
+            {% if league.isOfficial and not isWithdrawlClose %}
+                <br>（脱退締切まで　<span class="countdown withdrawal" data-date="{{ withdrawal_close_str }}"></span>）
             {% endif %}
         {% else %}
             本リーグは終了しました。
@@ -88,7 +92,7 @@
             {% if join_state < 6 %}
                 {{ join_comment }}
             {% else %}
-                <form method="post">
+                <form method="post" onsubmit="return confirmJoin({{ league.isOfficial|yesno:'true,false' }})">
                     {% csrf_token %}
                     <button class="btn" name="join" type="submit" value="{{ user.player.sid }}">参加</button>
                 </form>
@@ -380,10 +384,15 @@
 <div style="text-align:center">
     {% if isMember %}
         {% if league.isLive %}
-            {% if isClose %}
+            {% if isWithdrawlClose %}
                 <p>
-                    公式リーグでは、終了 48 時間前を過ぎると脱退することはできません
+                    公式リーグでは、終了 168 時間前（7 日前）を過ぎると脱退することはできません
                 </p>
+                <form method="post">
+                    <button class="danger" type="submit" disabled>
+                        脱退
+                    </button>
+                </form>
             {% else %}
                 <p>
                     <form method="post" onSubmit="return check()">
@@ -401,6 +410,11 @@
             <p>
                 終了したリーグから脱退することはできません
             </p>
+            <form method="post">
+                <button class="danger" type="submit" disabled>
+                    脱退
+                </button>
+            </form>
         {% endif %}
     {% endif %}
 </div>
@@ -417,26 +431,15 @@
         </button>
     </a>
 </p>
-{% comment %} {% if league.isLive and isMember %}
-    <form method="POST" action="{% url 'app:beatleader_submission' %}">
-        {% csrf_token %}
-        Beta :
-        <button class="btn" name="league_pk" value="{{ league.pk }}">
-            BeatLeader Submission
-        </button>
-    </a>
-</form>
-{% endif %} {% endcomment %}
 <script>
 function check(){
-if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
-    return true; // 「OK」時は送信を実行
-}
-else{ // 「キャンセル」時の処理
-    window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
-    return false; // 送信を中止
-}
-
+    if(window.confirm('本当に脱退してよろしいですか？　非公開リーグの場合は、再度招待を受けない限り参加できません。')){ // 確認ダイアログを表示
+        return true; // 「OK」時は送信を実行
+    }
+    else{ // 「キャンセル」時の処理
+        window.alert('脱退処理を取り消しました。'); // 警告ダイアログを表示
+        return false; // 送信を中止
+    }
 }
 
 window.addEventListener('load',()=>{
@@ -454,6 +457,8 @@ const cd_areas = document.getElementsByClassName('countdown');
 });
 
 function updateCountdown(target_unix, cd_area) {
+    console.log(target_unix);
+    console.log(cd_area);
     const now_unix = Math.floor(new Date() / 1000);
     let sec = target_unix - now_unix;
     sec = sec;
@@ -497,6 +502,14 @@ function openInNewWindow(event, url) {
     if (event.ctrlKey) {
         window.open(url, '_blank');
     }
+}
+
+function confirmJoin(isOfficial) {
+    console.log(isOfficial); 
+    if (isOfficial) {
+        return confirm("公式リーグにおいては、急な順位変動を防ぐために、168 時間（7 日）前からの脱退を禁止しています。参加してもよろしいですか？");
+    }
+    return true; // 非公式リーグでは確認なしでそのまま送信
 }
 
 </script>

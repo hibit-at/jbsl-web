@@ -605,3 +605,14 @@ html {
     scroll-padding-top: 50px;
     /* ナビゲーションバーの高さに合わせる */
 }
+
+button:disabled {
+    background-color: #cccccc;
+    /* ボタンをグレーに */
+    color: #666666;
+    /* テキストの色も薄くする */
+    cursor: not-allowed;
+    /* マウスカーソルを変更 */
+    border: 1px solid #999999;
+    /* ボーダーも調整 */
+}

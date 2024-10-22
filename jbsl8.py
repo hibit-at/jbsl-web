@@ -74,8 +74,8 @@ def qualifier_open():
     playlists = []
 
     for i in range(4):
-        print(f"JBSL7 J{i+1} 予選")
-        playlists.append(Playlist.objects.get(title=f"JBSL7 J{i+1} 予選"))
+        print(f"JBSL8 J{i+1} 予選")
+        playlists.append(Playlist.objects.get(title=f"JBSL8 J{i+1} 予選"))
 
     print(playlists)
 
@@ -88,10 +88,12 @@ def qualifier_open():
         "rgba(130,211,255,.8)",
     ]
 
-    limits = [2000, 1150, 975, 800]
+    limits = [2000, 1200, 1000, 800]
 
     for i in [3, 2, 1, 0]:
         playlist = playlists[i]
+        playlist.isHidden = False
+        playlist.save()
         league = League.objects.create(
             name=playlist.title,
             owner=Player.objects.get(name="hibit_at"),
@@ -101,8 +103,8 @@ def qualifier_open():
             limit=limits[i],
             end=datetime(
                 year=2024,
-                month=4,
-                day=15,
+                month=11,
+                day=4,
                 hour=0,
                 minute=18,
                 tzinfo=pytz.timezone("Asia/Tokyo"),
@@ -198,5 +200,5 @@ copy_images_between_playlists(source_titles,target_titles)
 
 # main()
 # used_check()
-# qualifier_open()
+qualifier_open()
 

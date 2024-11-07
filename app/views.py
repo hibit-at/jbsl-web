@@ -1358,6 +1358,12 @@ def match(request, pk=1):
             else:
                 match.state = 1
             match.save()
+
+        if "acc_modify" in post:
+            if post["acc_modify"] != "":
+                match.highest_acc = float(post["acc_modify"])
+                match.save()
+
         if "player1_retry" in post:
             match.retry1 = True
             match.state = 2
@@ -1368,7 +1374,7 @@ def match(request, pk=1):
             match.state = -2
             match.save()
 
-        if "no_retry" in post:
+        if "no_retry" in post and "acc_modify" in post and post["acc_modify"]=='':
             if match.state == -1:
                 match.result1 += 1
             if match.state == 1:
@@ -1381,8 +1387,8 @@ def match(request, pk=1):
         "-count_pos", "-count_acc"
     )[: match.league.border_line]
     players = [participant.player for participant in participants]
-    for player in players:
-        print(player)
+    # for player in players:
+    #     print(player)
     context["players"] = players
 
     context["highest"] = match.highest_acc

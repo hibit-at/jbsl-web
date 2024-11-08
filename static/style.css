@@ -299,10 +299,10 @@ pre {
 }
 
 .match-title {
-    font-size: 60px;
+    font-size: 45px;
     position: fixed;
     left: 50%;
-    bottom: 840px;
+    top: 85px;
     transform: translateX(-50%);
     font-family: 'Anton', sans-serif;
 }

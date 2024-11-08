@@ -187,12 +187,12 @@
         <p>
             PLAYER1_SCORE : {{ match.result1 }} / 6 PLAYER2_SCORE : {{ match.result2 }} / 6
         </p>
-        <form method="post">
+        <form method="post" onsubmit="copyToClipboard(event)">
             now_playing :
             {% csrf_token %}
-            <select name="next-song">
+            <select name="next-song" id="next-song-select">
                 {% for song in match.playlist.songs.all %}
-                    <option value={{ song.lid }} {% if song == match.now_playing %}selected{% endif %}> {{ song }}
+                    <option value="{{ song.lid }}" {% if song == match.now_playing %}selected{% endif %}> {{ song }}
                     </option>
                 {% endfor %}
             </select>
@@ -410,4 +410,17 @@
         var tossResult = Math.random() >= 0.5 ? selectedPlayer1 : selectedPlayer2;
         alert("コイントスの結果: " + tossResult);
     });
+
+    function copyToClipboard(event) {
+        // 選択した曲のテキストを取得
+        const selectElement = document.getElementById('next-song-select');
+        const selectedText = selectElement.options[selectElement.selectedIndex].text;
+
+        // クリップボードにコピー
+        navigator.clipboard.writeText(selectedText).then(function() {
+            console.log('クリップボードにコピーしました: ', selectedText);
+        }).catch(function(error) {
+            console.error('クリップボードにコピーできませんでした:', error);
+        });
+    }
 </script>

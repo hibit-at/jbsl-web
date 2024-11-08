@@ -1374,7 +1374,7 @@ def match(request, pk=1):
             match.state = -2
             match.save()
 
-        if "no_retry" in post and "acc_modify" in post and post["acc_modify"]=='':
+        if "no_retry" in post:
             if match.state == -1:
                 match.result1 += 1
             if match.state == 1:

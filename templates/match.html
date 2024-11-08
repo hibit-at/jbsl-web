@@ -165,17 +165,19 @@
             <div class="match-noretry">
                 <button class="btn" name="no_retry">NO RETRY</button>
             </div>
-
+            
+            {% if not match.retry2 and match.state == -1 %}
+            <div class="match-retrybutton2">
+                <button class="btn" name="player2_retry" style="background-color:red">{{ match.player2 }} RETRY</button>
+            </div>
+            {% endif %}
+        </form>
+        <form method="post">
+            {% csrf_token %}
             <div class="match-accmodify">
                 <input name="acc_modify" placeholder="acc_modify" id="acc_modify">
                 <button class="btn" id="acc_modify_button">Acc Modify</button>
             </div>
-
-            {% if not match.retry2 and match.state == -1 %}
-                <div class="match-retrybutton2">
-                    <button class="btn" name="player2_retry" style="background-color:red">{{ match.player2 }} RETRY</button>
-                </div>
-            {% endif %}
         </form>
     {% endif %}
     <div class="coordinator">

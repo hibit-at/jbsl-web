@@ -454,6 +454,15 @@ pre {
     transform: translateX(-50%);
 }
 
+.match-accmodify{
+    position: fixed;
+    left: 50%;
+    top: 300px;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%);
+}
+
 .match-image {
     position: fixed;
     left: 50px;

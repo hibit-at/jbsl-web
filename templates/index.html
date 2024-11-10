@@ -39,9 +39,17 @@
         <h3>Welcome to JBSL-Web!</h3>
         {% if not user.is_authenticated %}
             <h3>
-                <a href="{% url 'app:info' pk=1 %}" style="color:ff8628">JBSL とは？</a>
+                <a href="{% url 'app:info' pk=1 %}" style="color:#ff8628">JBSL とは？</a>
             </h3>
         {% endif %}
+        <h3>JBSL8 本戦開催中！</h3>
+    </div>
+    
+    <div style="text-align:center;color:orange">
+        <p><a href="https://challonge.com/ja/avnqzo6h" target="_blank">J1 トーナメント表</a></p>
+        <p><a href="https://challonge.com/ja/ypnfcp02" target="_blank">J2 トーナメント表</a></p>
+        <p><a href="https://challonge.com/ja/9aywe29k" target="_blank">J3 トーナメント表</a></p>
+        <p><a href="https://challonge.com/ja/wo6imai2" target="_blank">J4 トーナメント表</a></p>
     </div>
     <h3>Headlines</h3>
     {% for headline in headlines %}

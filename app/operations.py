@@ -281,7 +281,7 @@ def create_song_by_scoresaber(hash, diff_num, char, lid) -> Song:
         return Song.objects.get(lid=lid)
     url = f"https://api.beatsaver.com/maps/hash/{hash}"
     res = requests.get(url).json()
-    if "error" in res:
+    if "error" in res or "errors" in res:
         print("error in create_song_by_scoresaber")
         return None
     bsr = res["id"]

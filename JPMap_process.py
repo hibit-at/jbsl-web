@@ -135,19 +135,19 @@ def create_league(songs, start, last, division, superuser):
             },
         )
         for song in songs:
-            print(song)
+            print('song',song)
             dif_num = diff_label_inv[song.diff]
             if song.char == "Lightshow" or song.char == "Legacy":
                 continue
             gameMode = char_dict_inv[song.char]
-            print(gameMode)
+            print(gameMode, song.hash, song.diff, song.char)
             new_song = None
             if not Song.objects.filter(
                 hash=song.hash, diff=song.diff, char=song.char
             ).exists():
+                print('song does NOT exist', gameMode, song.hash, song.diff, song.char)
                 lid = get_scoresaber_lid(song.hash, gameMode, dif_num)
                 if lid == None:
-                    print("no lid detected")
                     # continue
                     # try beatleader
                     hash = song.hash
@@ -158,20 +158,26 @@ def create_league(songs, start, last, division, superuser):
                     if bid == -1:
                         print("bid detection failed")
                         continue
-                    print(bid)
+                    print('bid',bid)
                     new_song = create_song_by_beatleader(
                         hash=hash, char=char, dif=dif, bid=bid
                     )
-                    print(new_song)
+                    print('new_song is ',new_song)
                     if new_song == None:
                         continue
                     playlist.songs.add(new_song)
+                    print(new_song.bsr, new_song.lid, new_song.bid)
                     continue
+                else:
+                    new_song = create_song_by_scoresaber(
+                        song.hash, dif_num, song.char, lid
+                    )
             else:
+                print('song exists')
                 lid = Song.objects.filter(
                     hash=song.hash, diff=song.diff, char=song.char
                 ).first().lid
-                print(lid)
+                print('lid',lid)
                 if lid == None:
                     new_song = Song.objects.filter(
                         hash=song.hash, char=song.char, diff=song.diff
@@ -180,10 +186,11 @@ def create_league(songs, start, last, division, superuser):
                     new_song = create_song_by_scoresaber(
                         song.hash, dif_num, song.char, lid
                     )
-            print(new_song)
+            print('new song is',new_song)
             if new_song == None:
                 continue
             playlist.songs.add(new_song)
+            print(new_song.bsr, new_song.lid, new_song.bid)
 
         league, created = League.objects.update_or_create(
             name=playlist.title,
@@ -202,26 +209,33 @@ def create_league(songs, start, last, division, superuser):
 
 def monthly():
     from django.conf import settings
-
     from app.models import JPMap, Player
+    import pytz
+    from datetime import datetime, timedelta
 
     current_tz = pytz.timezone(settings.TIME_ZONE)
     now = datetime.now(current_tz)
     print(now)
-    pre = now - timedelta(days=26)
+
+    pre = now - timedelta(days=15)
     start = pre.replace(day=1, hour=0, minute=0)
     start_end = get_last_date(start)
+
+    # `bsr` を基準に重複判定するように変更
     songs = {i: [] for i in range(4, 0, -1)}
-    song_hashes = {i: {} for i in range(4, 0, -1)}
+    song_bsr_set = {i: set() for i in range(4, 0, -1)}
 
     for song in JPMap.objects.filter(
         createdAt__gte=start, createdAt__lte=start_end
-    ).order_by("-nps"):
+    ).order_by("-pk","-nps"):
         division = get_division(song.nps)
-        if song.hash in song_hashes[division]:
+
+        # `bsr` を基準に重複判定
+        if song.bsr in song_bsr_set[division]:
             continue
+
         songs[division].append(song)
-        song_hashes[division][song.hash] = 1
+        song_bsr_set[division].add(song.bsr)
 
     superuser = Player.objects.get(sid=76561198405857645)
     last = get_last_date(now)

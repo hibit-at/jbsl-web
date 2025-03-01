@@ -23,8 +23,8 @@ division_colors_transparent = {
 division_borders = {
     0: 2000,
     1: 2000,
-    2: 1150,
-    3: 975,
+    2: 1200,
+    3: 1000,
     4: 800,
 }
 

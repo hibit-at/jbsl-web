@@ -18,6 +18,7 @@ def discord_validation(valid_name):
     valid_name = valid_name.replace(")", "")
     valid_name = valid_name.replace("+", "")
     valid_name = valid_name.replace("&", "")
+    valid_name = valid_name.replace("~", "")
     valid_name = valid_name.strip()
     return valid_name
 

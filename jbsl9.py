@@ -73,8 +73,8 @@ def qualifier_open():
     playlists = []
 
     for i in range(4):
-        print(f"JBSL8 J{i+1} 予選")
-        playlists.append(Playlist.objects.get(title=f"JBSL8 J{i+1} 予選"))
+        print(f"JBSL9 J{i+1} 予選")
+        playlists.append(Playlist.objects.get(title=f"JBSL9 J{i+1} 予選"))
 
     print(playlists)
 
@@ -100,13 +100,8 @@ def qualifier_open():
             color=colors[i],
             max_valid=5,
             limit=limits[i],
-            end=datetime(
-                year=2024,
-                month=11,
-                day=4,
-                hour=0,
-                minute=18,
-                tzinfo=pytz.timezone("Asia/Tokyo"),
+            end=pytz.timezone('Asia/Tokyo').localize(
+                datetime(2025,5,11,23,59)
             ),
             isOpen=True,
             isPublic=True,
@@ -196,8 +191,8 @@ target_titles = [
 
 
 
-main()
-copy_images_between_playlists(source_titles,target_titles)
+# main()
+# copy_images_between_playlists(source_titles,target_titles)
 # used_check()
-# qualifier_open()
+qualifier_open()
 

@@ -171,7 +171,13 @@ def update_score_by_scoresaver(player, song, league, res):
         score = scoreData["modifiedScore"]
         rawPP = scoreData["pp"]
         miss = scoreData["badCuts"] + scoreData["missedNotes"]
-        acc = score_to_acc(score, song.notes)
+        
+        # max_score があればそれを使う
+        if song.max_score > 0:
+            acc = score / song.max_score * 100
+        else:
+            acc = score_to_acc(score, song.notes)
+            
         print("       ", score, acc)
 
         update_score_internal(player, song, league, score, rawPP, miss, acc)

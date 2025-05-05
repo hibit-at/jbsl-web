@@ -63,6 +63,15 @@
                          loading="lazy">
                 </span>
             </a>
+            　<a href="bsplaylist://playlist/{{ download_url }}">
+                <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                    <h4>One-Click Install</h4>">
+                    <img src="{% static 'cloud_white.png' %}"
+                         height="40px"
+                         width="40px"
+                         loading="lazy">
+                </span>
+            </a>
             <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
                     <h4>プレイリストの詳細</h4>

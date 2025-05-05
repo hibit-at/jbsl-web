@@ -83,6 +83,14 @@ def index(request: HttpRequest) -> HttpResponse:
         if response:
             return response
     context.update(get_headline_and_league_context())
+    
+    # 絶対URLを作るのに request が必要なので、ここだけは外部委託せずに処理する
+    for league in context["active_leagues"]:
+        if league.playlist:
+            download_path = reverse("app:download_playlist", kwargs={"pk": league.playlist.pk})
+            download_url = request.build_absolute_uri(download_path)
+            league.download_url = download_url
+            
     return render(request, "index.html", context)
 
 
@@ -292,6 +300,12 @@ def playlists(request, page=1):
     weekly = Playlist.objects.get(title="JP Weekly")
     biweekly = Playlist.objects.get(title="JP Biweekly")
     latest = Playlist.objects.get(title="JP Latest")
+    
+    # 各playlistにdownload_urlを追加
+    for playlist in playlists:
+        download_path = reverse("app:download_playlist", kwargs={"pk": playlist.pk})
+        playlist.download_url = request.build_absolute_uri(download_path)    
+    
     # コンテキストに情報を追加
     context["weekly"] = weekly
     context["biweekly"] = biweekly
@@ -524,6 +538,12 @@ def playlist(request, pk):
     # ]
     context["genres"] = genres
 
+    # One-Click 用のフルパス
+    download_path = reverse("app:download_playlist", kwargs={"pk": playlist.pk})
+    full_url = request.build_absolute_uri(download_path) 
+    
+    context["download_url"] = full_url
+
     return render(request, "playlist.html", context)
 
 
@@ -642,6 +662,11 @@ def leaderboard(request, pk):
     # 脱退締切はリーグ終了の7日前（168時間前）
     withdrawal_close_str = (league.end + timedelta(hours=9 - 168)).strftime("%Y-%m-%dT%H:%M")
 
+    # One-Click 用のフルパス
+    download_path = reverse("app:download_playlist", kwargs={"pk": league.playlist.pk})
+    full_url = request.build_absolute_uri(download_path) 
+    print(full_url)
+
     context.update(
         {
             "join_state": join_state,
@@ -655,6 +680,7 @@ def leaderboard(request, pk):
             "withdrawal_close_str" : withdrawal_close_str,
             "isClose": is_close,
             "isWithdrawlClose" : is_withdrawal_close,
+            "download_url" : full_url,
         }
     )
 

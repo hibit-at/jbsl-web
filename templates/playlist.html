@@ -8,6 +8,15 @@
            download="{{ playlist.title }}.json">
             <span class="dl_link">ダウンロード</span>
         </a>
+        <a href="bsplaylist://playlist/{{ download_url }}">
+            <span data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="
+                <h4>One-Click Install</h4>">
+                <img src="{% static 'cloud_white.png' %}"
+                     height="40px"
+                     width="40px"
+                     loading="lazy">
+            </span>
+        </a>
         {% if playlist.isHidden %}（未公開）{% endif %}
     </h3>
     <p>

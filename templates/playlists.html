@@ -42,6 +42,9 @@
                            download="{{ playlist.title }}.json">
                             <img src="{% static 'DL.png' %}" width="35px" height="35px">
                         </a>
+                        <a href="bsplaylist://playlist/{{ playlist.download_url }}">
+                            <img src="{% static 'cloud.png' %}" width="35px" height="35px" title="One-click install">
+                        </a>
                     </p>
                 </td>
                 <td>{{ playlist.description |truncatechars:50 }}</td>

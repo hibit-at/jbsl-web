@@ -116,6 +116,7 @@ def api_leaderboard(request, pk):
                 "title": LB.title,
                 "lid": LB.lid,
                 "bsr": LB.bsr,
+                "hash" : LB.hash,
                 "scores": append_score,
             }
         )

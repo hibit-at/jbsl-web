@@ -25,8 +25,22 @@
                 {% if league.isOfficial %}
                     <img src="{% static 'Check.png' %}" height="25px"/>
                 {% endif %}
+                <br>
+                <br>
+                <a href="{% url 'app:playlist' pk=league.playlist.pk %}">
+                    <img src="{% static 'pict_playlist_black.png' %}" height="30px" />
+                </a>
+                <a href="{{ league.download_url }}" download="{{ league.playlist.title }}.json">
+                    <img src="{% static 'DL.png' %}" height="30px" />
+                </a>
+                <a href="bsplaylist://playlist/{{ league.download_url }}">
+                    <img src="{% static 'cloud.png' %}" height="30px" />
+                </a>
+
             </td>
-            <td>{{ league.description|truncatechars:50 }}</td>
+            <td>
+                {{ league.description|truncatechars:50 }}
+            </td>
             <td>{% include "border_element.html" %}</td>
             <td>
                 <a href=" {% url 'app:userpage' sid=league.owner.sid %}"

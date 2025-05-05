@@ -586,6 +586,11 @@ def leagues(request : HttpRequest) -> HttpResponse:
         .prefetch_related("playlist")
     )
 
+    for league in active_leagues:
+        if league.playlist:
+            path = reverse("app:download_playlist", kwargs={"pk": league.playlist.pk})
+            league.download_url = request.build_absolute_uri(path)
+
     end_leagues = (
         League.objects.filter(isOpen=True, isLive=False)
         .select_related("owner", "first", "second", "third")  # ForeignKey フィールドの名称に基づく
